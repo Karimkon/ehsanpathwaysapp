@@ -433,9 +433,9 @@ class _AuthenticatedProfile extends ConsumerWidget {
                     _SettingsTile(
                       icon: Icons.notifications_rounded,
                       iconColor: ProfileScreen._gold,
-                      title: 'Notifications',
+                      title: 'Notifications & Prayer Times',
                       isDark: isDark,
-                      onTap: () {},
+                      onTap: () => context.push('/notifications'),
                     ),
                   ],
                 ),

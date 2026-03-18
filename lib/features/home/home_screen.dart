@@ -165,6 +165,9 @@ class _HomeContent extends ConsumerWidget {
           // -- Islamic Quote -------------------------------------------------
           SliverToBoxAdapter(child: _IslamicQuoteSection(isDark: isDark)),
 
+          // -- Explore More --------------------------------------------------
+          SliverToBoxAdapter(child: _DiscoverGrid(isDark: isDark)),
+
           // -- Bottom spacing ------------------------------------------------
           const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
@@ -1719,6 +1722,82 @@ class _IslamicQuoteSection extends StatelessWidget {
                     : const Color(0xFFD1D5DB),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ===========================================================================
+// Discover Grid  — links to all content types
+// ===========================================================================
+
+class _DiscoverGrid extends StatelessWidget {
+  const _DiscoverGrid({required this.isDark});
+  final bool isDark;
+
+  static const _items = [
+    _DiscoverItem(label: 'Arabic', sublabel: 'Learn the language', icon: Icons.translate_rounded, route: '/arabic', color: Color(0xFF7C3AED)),
+    _DiscoverItem(label: 'Khutbahs', sublabel: 'Friday sermons', icon: Icons.record_voice_over_rounded, route: '/khutbahs', color: Color(0xFF16A34A)),
+    _DiscoverItem(label: 'Hajj & Umrah', sublabel: 'Complete guides', icon: Icons.home_work_rounded, route: '/hajj-umrah', color: Color(0xFFF59E0B)),
+    _DiscoverItem(label: 'Live', sublabel: 'Watch live streams', icon: Icons.live_tv_rounded, route: '/live', color: Color(0xFFEF4444)),
+    _DiscoverItem(label: 'Sadaqah', sublabel: 'Give in charity', icon: Icons.volunteer_activism_rounded, route: '/sadaqah', color: Color(0xFF0EA5E9)),
+    _DiscoverItem(label: 'Pathways', sublabel: 'Structured learning', icon: Icons.route_rounded, route: '/pathways', color: Color(0xFFEC4899)),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 3,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 1.0,
+        children: _items.map((item) => _DiscoverTile(item: item, isDark: isDark)).toList(),
+      ),
+    );
+  }
+}
+
+class _DiscoverItem {
+  final String label;
+  final String sublabel;
+  final IconData icon;
+  final String route;
+  final Color color;
+  const _DiscoverItem({required this.label, required this.sublabel, required this.icon, required this.route, required this.color});
+}
+
+class _DiscoverTile extends StatelessWidget {
+  const _DiscoverTile({required this.item, required this.isDark});
+  final _DiscoverItem item;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.push(item.route),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: item.color.withValues(alpha: 0.12), shape: BoxShape.circle),
+              child: Icon(item.icon, color: item.color, size: 24),
+            ),
+            const SizedBox(height: 8),
+            Text(item.label, style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white : const Color(0xFF111827))),
+            Text(item.sublabel, style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey.shade500), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
           ],
         ),
       ),

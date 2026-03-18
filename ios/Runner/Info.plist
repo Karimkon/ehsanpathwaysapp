@@ -45,6 +45,21 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Location permissions for prayer times -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Ehsan Pathways uses your location to calculate accurate prayer times for your area.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Ehsan Pathways uses your location to send you prayer time reminders even when the app is in the background.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Ehsan Pathways uses your location to calculate accurate prayer times for your area.</string>
+
+	<!-- Push notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

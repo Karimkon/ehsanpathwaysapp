@@ -22,6 +22,15 @@ import 'package:ehsan_pathways/features/pathways/pathways_screen.dart';
 import 'package:ehsan_pathways/features/pathways/pathway_detail_screen.dart';
 import 'package:ehsan_pathways/features/history/history_screen.dart';
 import 'package:ehsan_pathways/features/onboarding/onboarding_screen.dart';
+import 'package:ehsan_pathways/features/notifications/notification_settings_screen.dart';
+import 'package:ehsan_pathways/features/arabic/arabic_screen.dart';
+import 'package:ehsan_pathways/features/arabic/arabic_course_detail_screen.dart';
+import 'package:ehsan_pathways/features/khutbahs/khutbahs_screen.dart';
+import 'package:ehsan_pathways/features/khutbahs/khutbah_detail_screen.dart';
+import 'package:ehsan_pathways/features/hajj/hajj_umrah_screen.dart';
+import 'package:ehsan_pathways/features/hajj/hajj_guide_detail_screen.dart';
+import 'package:ehsan_pathways/features/live/live_streams_screen.dart';
+import 'package:ehsan_pathways/features/sadaqah/sadaqah_screen.dart';
 
 /// Holds the initial route to open on cold start.
 /// Overridden in main() after async-checking SharedPreferences.
@@ -211,6 +220,72 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/onboarding',
         name: 'onboarding',
         builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/notifications',
+        name: 'notifications',
+        builder: (context, state) => const NotificationSettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/arabic',
+        name: 'arabic',
+        builder: (context, state) => const ArabicScreen(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: ':slug',
+            name: 'arabic-detail',
+            builder: (context, state) => ArabicCourseDetailScreen(
+              slug: state.pathParameters['slug']!,
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/khutbahs',
+        name: 'khutbahs',
+        builder: (context, state) => const KhutbahsScreen(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: ':slug',
+            name: 'khutbah-detail',
+            builder: (context, state) => KhutbahDetailScreen(
+              slug: state.pathParameters['slug']!,
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/hajj-umrah',
+        name: 'hajj-umrah',
+        builder: (context, state) => const HajjUmrahScreen(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: ':slug',
+            name: 'hajj-guide-detail',
+            builder: (context, state) => HajjGuideDetailScreen(
+              slug: state.pathParameters['slug']!,
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/live',
+        name: 'live',
+        builder: (context, state) => const LiveStreamsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/sadaqah',
+        name: 'sadaqah',
+        builder: (context, state) => const SadaqahScreen(),
       ),
     ],
   );
