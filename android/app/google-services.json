@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "246875707165",
+    "project_id": "ehsanpathways",
+    "storage_bucket": "ehsanpathways.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246875707165:android:5c5476a34cbf0e39bc73f4",
+        "android_client_info": {
+          "package_name": "com.ehsanpathways.ehsan_pathways"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUEGHFM852L48Hjn4uADhjw5w_DqYL-TE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
