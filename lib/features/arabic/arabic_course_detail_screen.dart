@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
@@ -261,13 +262,14 @@ class _CourseDetailBody extends StatelessWidget {
                     final current =
                         ref.read(_completedLessonsProvider(courseSlug));
                     if (isComplete) {
+                      final updated = Set<int>.from(current)..remove(lessonId);
                       ref
                           .read(_completedLessonsProvider(courseSlug).notifier)
-                          .state = {...current}..remove(lessonId);
+                          .state = updated;
                     } else {
                       ref
                           .read(_completedLessonsProvider(courseSlug).notifier)
-                          .state = {...current, lessonId};
+                          .state = <int>{...current, lessonId};
                     }
                   },
                 );

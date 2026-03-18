@@ -15,7 +15,11 @@ enum PrayerCalculationMethod {
   qatar('Qatar', 'Qatar'),
   singapore('Singapore', 'Singapore'),
   turkey('Turkey', 'Turkey'),
-  tehran('Tehran', 'Iran'),
+  tehran('Tehran', 'Iran');
+
+  final String displayName;
+  final String region;
+  const PrayerCalculationMethod(this.displayName, this.region);
 }
 
 extension PrayerCalculationMethodExt on PrayerCalculationMethod {
