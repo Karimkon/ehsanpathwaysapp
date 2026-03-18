@@ -12,7 +12,20 @@
           "package_name": "com.ehsanpathways.ehsan_pathways"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "246875707165-8d44glgclsbb20l4hit0g4biltetm490.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ehsanpathways.ehsan_pathways",
+            "certificate_hash": "18ac9aad7b78db082a87fabdb01ae59122e50f3e"
+          }
+        },
+        {
+          "client_id": "246875707165-0sbf8f8thrs14b9h73fh2l4lm6g0ecip.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDUEGHFM852L48Hjn4uADhjw5w_DqYL-TE"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "246875707165-0sbf8f8thrs14b9h73fh2l4lm6g0ecip.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "246875707165-o7ipce8cf6e3t5aih8p99cu4eqp7g50m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ehsanpathways.ehsanPathways"
+              }
+            }
+          ]
         }
       }
     }

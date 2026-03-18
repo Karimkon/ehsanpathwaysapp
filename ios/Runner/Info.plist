@@ -79,7 +79,7 @@
 			<string>google-sign-in</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>GOOGLE_REVERSED_CLIENT_ID_PLACEHOLDER</string>
+				<string>com.googleusercontent.apps.246875707165-o7ipce8cf6e3t5aih8p99cu4eqp7g50m</string>
 			</array>
 		</dict>
 	</array>
