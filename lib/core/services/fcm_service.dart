@@ -27,10 +27,17 @@ class FcmService {
       provisional: false,
     );
 
-    // Get and save token
-    final token = await _messaging.getToken();
-    if (token != null) {
-      await _saveAndSyncToken(token);
+    // Get and save token (iOS requires APNs token before FCM token)
+    try {
+      if (Platform.isIOS) {
+        await _messaging.getAPNSToken().timeout(const Duration(seconds: 5));
+      }
+      final token = await _messaging.getToken();
+      if (token != null) {
+        await _saveAndSyncToken(token);
+      }
+    } catch (_) {
+      // APNs unavailable on simulator — non-critical, will retry on real device
     }
 
     // Listen for token refresh

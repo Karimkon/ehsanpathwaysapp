@@ -8,12 +8,15 @@ import 'package:ehsan_pathways/core/providers/theme_provider.dart';
 import 'package:ehsan_pathways/core/providers/onboarding_provider.dart';
 import 'package:ehsan_pathways/core/services/notification_service.dart';
 import 'package:ehsan_pathways/core/services/fcm_service.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // Register FCM background handler before anything else
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
