@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 
 /// A beautiful registration screen mirroring the login screen's aesthetic
@@ -27,6 +31,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
   bool _obscureConfirm = true;
   bool _isGoogleLoading = false;
   String? _googleError;
+  bool _isAppleLoading = false;
+  String? _appleError;
 
   late final AnimationController _fadeController;
   late final Animation<double> _fadeAnimation;
@@ -82,6 +88,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
       await googleSignIn.signOut();
       final account = await googleSignIn.signIn();
       if (account == null) {
+        // User cancelled
         setState(() => _isGoogleLoading = false);
         return;
       }
@@ -101,6 +108,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
           );
 
       if (mounted) context.go('/');
+    } on PlatformException catch (e) {
+      setState(() {
+        _googleError = e.code == 'sign_in_canceled'
+            ? null
+            : 'Google sign-in failed. Please try again.';
+        _isGoogleLoading = false;
+      });
     } catch (e) {
       setState(() {
         final msg = e.toString();
@@ -112,11 +126,60 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     }
   }
 
+  Future<void> _signInWithApple() async {
+    setState(() {
+      _isAppleLoading = true;
+      _appleError = null;
+    });
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      final identityToken = credential.identityToken;
+      if (identityToken == null) {
+        throw Exception('Apple Sign-In failed: No identity token received.');
+      }
+      final name = [credential.givenName, credential.familyName]
+          .whereType<String>()
+          .join(' ');
+
+      await ref.read(authProvider.notifier).socialLogin(
+            provider: 'apple',
+            token: identityToken,
+            name: name.isNotEmpty ? name : null,
+          );
+
+      if (mounted) context.go('/');
+    } on SignInWithAppleAuthorizationException catch (e) {
+      setState(() {
+        _appleError = e.code == AuthorizationErrorCode.canceled
+            ? null
+            : 'Apple sign-in failed. Please try again.';
+        _isAppleLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _appleError = 'Apple sign-in failed. Please try again.';
+        _isAppleLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final isLoading = authState.status == AuthStatus.loading;
     final size = MediaQuery.sizeOf(context);
+
+    // Navigate home after successful registration
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.status == AuthStatus.authenticated && mounted) {
+        context.go('/');
+      }
+    });
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -352,10 +415,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       // -- Google Sign In button -----------------------------
                       _GoogleButton(
                         isLoading: _isGoogleLoading,
-                        onPressed: (isLoading || _isGoogleLoading)
+                        onPressed: (isLoading || _isGoogleLoading || _isAppleLoading)
                             ? null
                             : _signInWithGoogle,
                       ),
+
+                      const SizedBox(height: 12),
+
+                      // -- Apple error ---------------------------------------
+                      if (_appleError != null) ...[
+                        _ErrorCard(message: _appleError!),
+                        const SizedBox(height: 12),
+                      ],
+
+                      // -- Sign in with Apple button -------------------------
+                      if (Platform.isIOS || Platform.isMacOS)
+                        _AppleButton(
+                          isLoading: _isAppleLoading,
+                          onPressed: (isLoading || _isGoogleLoading || _isAppleLoading)
+                              ? null
+                              : _signInWithApple,
+                        ),
 
                       const SizedBox(height: 24),
 
@@ -685,6 +765,55 @@ class _ErrorCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Sign in with Apple button.
+class _AppleButton extends StatelessWidget {
+  const _AppleButton({required this.isLoading, this.onPressed});
+
+  final bool isLoading;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 52,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: Colors.grey.shade300),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          backgroundColor: Colors.black,
+        ),
+        child: isLoading
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.apple, color: Colors.white, size: 24),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Sign in with Apple',
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }

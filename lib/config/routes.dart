@@ -31,6 +31,14 @@ import 'package:ehsan_pathways/features/hajj/hajj_umrah_screen.dart';
 import 'package:ehsan_pathways/features/hajj/hajj_guide_detail_screen.dart';
 import 'package:ehsan_pathways/features/live/live_streams_screen.dart';
 import 'package:ehsan_pathways/features/sadaqah/sadaqah_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/islamic_tools_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/quran/quran_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/quran/quran_reader_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_collection_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/dua/dua_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/dua/dua_category_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/hifz/hifz_screen.dart';
 
 /// Holds the initial route to open on cold start.
 /// Overridden in main() after async-checking SharedPreferences.
@@ -286,6 +294,76 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/sadaqah',
         name: 'sadaqah',
         builder: (context, state) => const SadaqahScreen(),
+      ),
+
+      // ── Islamic Tools ──────────────────────────────────────────────────
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/islamic-tools',
+        name: 'islamic-tools',
+        builder: (context, state) => const IslamicToolsScreen(),
+        routes: [
+          // Quran
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'quran',
+            name: 'quran',
+            builder: (context, state) => const QuranScreen(),
+            routes: [
+              GoRoute(
+                parentNavigatorKey: _rootNavigatorKey,
+                path: ':no',
+                name: 'quran-reader',
+                builder: (context, state) => QuranReaderScreen(
+                  surahNo: int.tryParse(
+                          state.pathParameters['no'] ?? '1') ??
+                      1,
+                ),
+              ),
+            ],
+          ),
+          // Hadith
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'hadith',
+            name: 'hadith',
+            builder: (context, state) => const HadithScreen(),
+            routes: [
+              GoRoute(
+                parentNavigatorKey: _rootNavigatorKey,
+                path: ':id',
+                name: 'hadith-collection',
+                builder: (context, state) => HadithCollectionScreen(
+                  collectionId: state.pathParameters['id']!,
+                ),
+              ),
+            ],
+          ),
+          // Dua
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'dua',
+            name: 'dua',
+            builder: (context, state) => const DuaScreen(),
+            routes: [
+              GoRoute(
+                parentNavigatorKey: _rootNavigatorKey,
+                path: ':id',
+                name: 'dua-category',
+                builder: (context, state) => DuaCategoryScreen(
+                  categoryId: state.pathParameters['id']!,
+                ),
+              ),
+            ],
+          ),
+          // Hifz
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'hifz',
+            name: 'hifz',
+            builder: (context, state) => const HifzScreen(),
+          ),
+        ],
       ),
     ],
   );

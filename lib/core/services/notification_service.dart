@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -131,6 +132,32 @@ class NotificationService {
     return false;
   }
 
+  /// On Android 12+ (API 31+), SCHEDULE_EXACT_ALARM requires user consent.
+  /// Returns true if exact alarms are permitted (or on platforms where
+  /// this check is not needed).
+  Future<bool> canScheduleExactAlarms() async {
+    if (!Platform.isAndroid) return true;
+    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return false;
+    return await androidPlugin.canScheduleExactNotifications() ?? false;
+  }
+
+  /// Opens the system "Alarms & Reminders" special-access settings page
+  /// so the user can grant SCHEDULE_EXACT_ALARM permission.
+  Future<void> openExactAlarmSettings() async {
+    if (!Platform.isAndroid) return;
+    const channel = MethodChannel('com.ehsanpathways/permissions');
+    try {
+      await channel.invokeMethod('openAlarmPermissionSettings');
+    } catch (_) {
+      // Fallback: the plugin may handle it via requestExactAlarmsPermission
+      final androidPlugin = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      await androidPlugin?.requestExactAlarmsPermission();
+    }
+  }
+
   // ─────────────────────────────────────────────────────────────────────────
   // Prayer time notifications
   // ─────────────────────────────────────────────────────────────────────────
@@ -188,6 +215,13 @@ class NotificationService {
     final arabic = _prayerArabicName(prayer);
     final tzTime = tz.TZDateTime.from(scheduledTime, tz.local);
 
+    // Use exact alarms if SCHEDULE_EXACT_ALARM is granted; otherwise fall back
+    // to inexact (still reliable within a few minutes on modern Android).
+    final useExact = await canScheduleExactAlarms();
+    final scheduleMode = useExact
+        ? AndroidScheduleMode.exactAllowWhileIdle
+        : AndroidScheduleMode.inexactAllowWhileIdle;
+
     await _plugin.zonedSchedule(
       id,
       '$arabic — Time for $name Prayer',
@@ -217,7 +251,7 @@ class NotificationService {
           presentSound: true,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: scheduleMode,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
@@ -267,7 +301,9 @@ class NotificationService {
           presentSound: false,
         ),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: await canScheduleExactAlarms()
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
@@ -307,7 +343,9 @@ class NotificationService {
         ),
         iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: await canScheduleExactAlarms()
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
