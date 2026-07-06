@@ -6,6 +6,18 @@ import 'package:ehsan_pathways/config/theme.dart';
 class IslamicToolsScreen extends StatelessWidget {
   const IslamicToolsScreen({super.key});
 
+  /// Graceful placeholder for tools that aren't built yet — avoids navigating
+  /// to a non-existent route (which would show a router error page).
+  static void _comingSoon(BuildContext context, String feature) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$feature is coming soon, in shaa Allah.'),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +134,7 @@ class IslamicToolsScreen extends StatelessWidget {
                         title: "Asma'ul Husna",
                         subtitle: '99 Names of Allah',
                         color: const Color(0xFF7C3AED),
-                        onTap: () => context.push('/islamic-tools/asmaul-husna'),
+                        onTap: () => _comingSoon(context, "Asma'ul Husna"),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -171,7 +183,7 @@ class IslamicToolsScreen extends StatelessWidget {
                   title: 'Islamic Calendar',
                   subtitle: 'Hijri calendar & Islamic dates',
                   color: const Color(0xFF9D174D),
-                  onTap: () => context.push('/islamic-tools/calendar'),
+                  onTap: () => _comingSoon(context, 'Islamic Calendar'),
                   wide: true,
                 ),
                 const SizedBox(height: 32),

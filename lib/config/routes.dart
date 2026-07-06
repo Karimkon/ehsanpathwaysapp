@@ -39,6 +39,10 @@ import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_collection_s
 import 'package:ehsan_pathways/features/islamic_tools/dua/dua_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/dua/dua_category_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hifz/hifz_screen.dart';
+import 'package:ehsan_pathways/features/prayer/prayer_times_screen.dart';
+import 'package:ehsan_pathways/features/qibla/qibla_screen.dart';
+import 'package:ehsan_pathways/features/tasbih/tasbih_screen.dart';
+import 'package:ehsan_pathways/features/videos/category_videos_screen.dart';
 
 /// Holds the initial route to open on cold start.
 /// Overridden in main() after async-checking SharedPreferences.
@@ -363,7 +367,39 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'hifz',
             builder: (context, state) => const HifzScreen(),
           ),
+          // Prayer Times
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'prayer-times',
+            name: 'prayer-times',
+            builder: (context, state) => const PrayerTimesScreen(),
+          ),
+          // Qibla
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'qibla',
+            name: 'qibla',
+            builder: (context, state) => const QiblaScreen(),
+          ),
+          // Tasbih
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'tasbih',
+            name: 'tasbih',
+            builder: (context, state) => const TasbihScreen(),
+          ),
         ],
+      ),
+
+      // ── Category-filtered videos ───────────────────────────────────────
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/category/:slug',
+        name: 'category-videos',
+        builder: (context, state) => CategoryVideosScreen(
+          slug: state.pathParameters['slug']!,
+          name: state.uri.queryParameters['name'] ?? 'Category',
+        ),
       ),
     ],
   );

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -10,33 +12,66 @@ import 'package:ehsan_pathways/core/services/notification_service.dart';
 import 'package:ehsan_pathways/core/services/fcm_service.dart';
 import 'firebase_options.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  // Run everything inside a guarded zone so that ANY uncaught async error
+  // during startup is logged instead of crashing the app on launch. A release
+  // build that throws before runApp() otherwise black-screens and is killed by
+  // the iOS watchdog — which is exactly what App Review reports as a crash.
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+    // Report Flutter framework errors instead of letting them escalate.
+    FlutterError.onError = (details) {
+      FlutterError.presentError(details);
+      debugPrint('FlutterError: ${details.exceptionAsString()}');
+    };
 
-  // Register FCM background handler before anything else
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    // Firebase must succeed for messaging, but a failure here must not stop
+    // the app from opening — the reviewer's device may have transient issues.
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      // Register FCM background handler (only valid once Firebase is up).
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    } catch (e, s) {
+      debugPrint('Firebase init failed: $e\n$s');
+    }
 
-  // Initialize local notifications (timezone, channels, etc.)
-  await NotificationService.instance.initialize();
+    // Local notifications: timezone/channel setup. Non-fatal on failure.
+    try {
+      await NotificationService.instance.initialize();
+    } catch (e, s) {
+      debugPrint('NotificationService init failed: $e\n$s');
+    }
 
-  // Initialize FCM (token, permission, listeners)
-  await FcmService.instance.initialize();
+    // FCM token/permission/listeners. Non-fatal on failure.
+    try {
+      await FcmService.instance.initialize();
+    } catch (e, s) {
+      debugPrint('FcmService init failed: $e\n$s');
+    }
 
-  final hasSeen = await hasSeenOnboarding();
+    // Onboarding flag — default to showing onboarding if it can't be read.
+    bool hasSeen = false;
+    try {
+      hasSeen = await hasSeenOnboarding();
+    } catch (e, s) {
+      debugPrint('hasSeenOnboarding failed: $e\n$s');
+    }
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        initialRouteProvider.overrideWithValue(hasSeen ? '/' : '/onboarding'),
-      ],
-      child: const EhsanPathwaysApp(),
-    ),
-  );
+    runApp(
+      ProviderScope(
+        overrides: [
+          initialRouteProvider.overrideWithValue(hasSeen ? '/' : '/onboarding'),
+        ],
+        child: const EhsanPathwaysApp(),
+      ),
+    );
+  }, (error, stack) {
+    // Last line of defence — an error escaped every guard above.
+    debugPrint('Uncaught zone error: $error\n$stack');
+  });
 }
 
 class EhsanPathwaysApp extends ConsumerWidget {

@@ -5,7 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import 'dart:async';
+
 import 'package:ehsan_pathways/features/home/home_provider.dart';
+import 'package:ehsan_pathways/features/prayer/prayer_provider.dart';
+import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
 import 'package:ehsan_pathways/shared/widgets/content_card.dart';
 import 'package:ehsan_pathways/shared/widgets/section_header.dart';
 import 'package:ehsan_pathways/shared/widgets/scholar_avatar.dart';
@@ -81,6 +85,9 @@ class _HomeContent extends ConsumerWidget {
 
           // -- Greeting ------------------------------------------------------
           SliverToBoxAdapter(child: _GreetingBanner(isDark: isDark)),
+
+          // -- Next Prayer ---------------------------------------------------
+          const SliverToBoxAdapter(child: _NextPrayerCard()),
 
           // -- Quick Actions -------------------------------------------------
           SliverToBoxAdapter(child: _QuickActions(isDark: isDark)),
@@ -705,7 +712,9 @@ class _CategoriesRow extends StatelessWidget {
                 name: cat.name,
                 icon: _resolveIcon(cat.icon),
                 isDark: isDark,
-                onTap: () => context.push('/videos'), // TODO: filter by category
+                onTap: () => context.push(
+                  '/category/${cat.slug}?name=${Uri.encodeComponent(cat.name)}',
+                ),
               );
             },
           ),
@@ -974,6 +983,162 @@ class _ScholarsRow extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+// ===========================================================================
+// Next Prayer Card (live countdown) — taps through to full prayer screen
+// ===========================================================================
+
+class _NextPrayerCard extends ConsumerStatefulWidget {
+  const _NextPrayerCard();
+
+  @override
+  ConsumerState<_NextPrayerCard> createState() => _NextPrayerCardState();
+}
+
+class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
+  Timer? _ticker;
+
+  @override
+  void initState() {
+    super.initState();
+    // Keep the countdown live without re-fetching the schedule.
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker?.cancel();
+    super.dispose();
+  }
+
+  String _remaining(Duration d) {
+    if (d.isNegative) return 'now';
+    final h = d.inHours;
+    final m = d.inMinutes % 60;
+    if (h > 0) return '${h}h ${m}m';
+    final s = d.inSeconds % 60;
+    return '${m}m ${s}s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final async = ref.watch(prayerScheduleProvider);
+
+    return async.when(
+      loading: () => const SizedBox.shrink(),
+      // If location isn't set up yet, show a gentle prompt rather than nothing.
+      error: (err, _) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+        child: GestureDetector(
+          onTap: () => context.push('/islamic-tools/prayer-times'),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: _primaryGreen.withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: _primaryGreen.withValues(alpha: 0.12)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.mosque_rounded, color: _primaryGreen, size: 22),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Set up prayer times for your location',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: _primaryGreenDark,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.chevron_right_rounded, color: _primaryGreen),
+              ],
+            ),
+          ),
+        ),
+      ),
+      data: (data) {
+        final next = data.nextEntry;
+        final remaining = data.nextPrayerTime.difference(DateTime.now());
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: GestureDetector(
+            onTap: () => context.push('/islamic-tools/prayer-times'),
+            child: Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [_primaryGreenDark, Color(0xFF052E16)],
+                ),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: _primaryGreen.withValues(alpha: 0.25),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 46,
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(Icons.mosque_rounded,
+                        color: _accentGold, size: 24),
+                  ),
+                  const SizedBox(width: 14),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Next: ${next.name}',
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'in ${_remaining(remaining)}  •  ${data.locationLabel}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.75),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Text(
+                    PrayerTimesService.formatTime(next.time),
+                    style: GoogleFonts.inter(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                      color: _accentGold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

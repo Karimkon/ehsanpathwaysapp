@@ -37,10 +37,16 @@ class NotificationService {
   Future<void> initialize() async {
     if (_initialized) return;
 
-    // Init timezones
+    // Init timezones. getLocation() throws LocationNotFoundException for any
+    // identifier not in the bundled tz database, so fall back to UTC rather
+    // than letting it crash app startup.
     tz.initializeTimeZones();
-    final timeZoneName = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
+    try {
+      final timeZoneName = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+    } catch (_) {
+      tz.setLocalLocation(tz.getLocation('UTC'));
+    }
 
     const androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');

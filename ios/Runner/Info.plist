@@ -54,6 +54,10 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Ehsan Pathways uses your location to calculate accurate prayer times for your area.</string>
 
+	<!-- Motion sensor for the Qibla compass -->
+	<key>NSMotionUsageDescription</key>
+	<string>Ehsan Pathways uses the compass to show you the direction of the Qibla.</string>
+
 	<!-- Push notifications -->
 	<key>UIBackgroundModes</key>
 	<array>
