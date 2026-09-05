@@ -25,14 +25,14 @@ class HadithBook {
   final int chapterCount;
 
   factory HadithBook.fromJson(Map<String, dynamic> j) => HadithBook(
-        slug: j['slug'] as String,
-        name: j['name'] as String? ?? '',
-        arabicName: j['arabic_name'] as String?,
-        compiler: j['compiler'] as String?,
-        description: j['description'] as String?,
-        hadithCount: (j['hadith_count'] as num?)?.toInt() ?? 0,
-        chapterCount: (j['chapter_count'] as num?)?.toInt() ?? 0,
-      );
+    slug: j['slug'] as String,
+    name: j['name'] as String? ?? '',
+    arabicName: j['arabic_name'] as String?,
+    compiler: j['compiler'] as String?,
+    description: j['description'] as String?,
+    hadithCount: (j['hadith_count'] as num?)?.toInt() ?? 0,
+    chapterCount: (j['chapter_count'] as num?)?.toInt() ?? 0,
+  );
 }
 
 class HadithChapter {
@@ -49,11 +49,11 @@ class HadithChapter {
   final int hadithCount;
 
   factory HadithChapter.fromJson(Map<String, dynamic> j) => HadithChapter(
-        number: (j['number'] as num).toInt(),
-        name: j['name'] as String?,
-        arabicName: j['arabic_name'] as String?,
-        hadithCount: (j['hadith_count'] as num?)?.toInt() ?? 0,
-      );
+    number: (j['number'] as num).toInt(),
+    name: j['name'] as String?,
+    arabicName: j['arabic_name'] as String?,
+    hadithCount: (j['hadith_count'] as num?)?.toInt() ?? 0,
+  );
 }
 
 class Hadith {
@@ -125,16 +125,17 @@ final hadithBooksProvider = FutureProvider<List<HadithBook>>((ref) async {
 
 final hadithChaptersProvider = FutureProvider.autoDispose
     .family<List<HadithChapter>, String>((ref, slug) async {
-  final res = await ref
-      .watch(apiProvider)
-      .get('/islamic-tools/hadith/books/$slug/chapters');
+      final res = await ref
+          .watch(apiProvider)
+          .get('/islamic-tools/hadith/books/$slug/chapters');
 
-  final data = (res.data as Map<String, dynamic>)['data'] as Map<String, dynamic>;
+      final data =
+          (res.data as Map<String, dynamic>)['data'] as Map<String, dynamic>;
 
-  return (data['chapters'] as List)
-      .map((e) => HadithChapter.fromJson(e as Map<String, dynamic>))
-      .toList(growable: false);
-});
+      return (data['chapters'] as List)
+          .map((e) => HadithChapter.fromJson(e as Map<String, dynamic>))
+          .toList(growable: false);
+    });
 
 /// Identifies one run of hadith: a whole book, or one chapter of it.
 class HadithQuery {
@@ -156,7 +157,8 @@ class HadithQuery {
 /// Pages through a book or chapter. Collections run to thousands of hadith, so
 /// nothing here ever asks for all of them at once.
 class HadithListNotifier extends StateNotifier<AsyncValue<HadithPage>> {
-  HadithListNotifier(this._dio, this._query) : super(const AsyncValue.loading()) {
+  HadithListNotifier(this._dio, this._query)
+    : super(const AsyncValue.loading()) {
     loadFirst();
   }
 
@@ -181,13 +183,15 @@ class HadithListNotifier extends StateNotifier<AsyncValue<HadithPage>> {
     _loadingMore = true;
     try {
       final next = await _fetch(current.currentPage + 1);
-      state = AsyncValue.data(HadithPage(
-        items: [...current.items, ...next.items],
-        currentPage: next.currentPage,
-        lastPage: next.lastPage,
-        total: next.total,
-        hasMore: next.hasMore,
-      ));
+      state = AsyncValue.data(
+        HadithPage(
+          items: [...current.items, ...next.items],
+          currentPage: next.currentPage,
+          lastPage: next.lastPage,
+          total: next.total,
+          hasMore: next.hasMore,
+        ),
+      );
     } catch (_) {
       // Keep what is already on screen; the footer will offer another try.
     } finally {
@@ -221,20 +225,22 @@ class HadithListNotifier extends StateNotifier<AsyncValue<HadithPage>> {
 
 final hadithListProvider = StateNotifierProvider.autoDispose
     .family<HadithListNotifier, AsyncValue<HadithPage>, HadithQuery>(
-  (ref, query) => HadithListNotifier(ref.watch(apiProvider), query),
-);
+      (ref, query) => HadithListNotifier(ref.watch(apiProvider), query),
+    );
 
 /// The hadith of the day, shared by every device.
 final dailyHadithProvider = FutureProvider<Hadith>((ref) async {
   final res = await ref.watch(apiProvider).get('/islamic-tools/hadith/daily');
 
   return Hadith.fromJson(
-      (res.data as Map<String, dynamic>)['data'] as Map<String, dynamic>);
+    (res.data as Map<String, dynamic>)['data'] as Map<String, dynamic>,
+  );
 });
 
 final hadithStatsProvider = FutureProvider<Map<String, int>>((ref) async {
   final res = await ref.watch(apiProvider).get('/islamic-tools/hadith/stats');
-  final data = (res.data as Map<String, dynamic>)['data'] as Map<String, dynamic>;
+  final data =
+      (res.data as Map<String, dynamic>)['data'] as Map<String, dynamic>;
 
   return data.map((k, v) => MapEntry(k, (v as num).toInt()));
 });
@@ -281,10 +287,10 @@ class HadithSearchNotifier extends StateNotifier<HadithSearchState> {
     state = HadithSearchState(query: trimmed, loading: true);
 
     try {
-      final res = await _dio.get('/islamic-tools/hadith/search', queryParameters: {
-        'q': trimmed,
-        if (bookSlug != null) 'book': bookSlug,
-      });
+      final res = await _dio.get(
+        '/islamic-tools/hadith/search',
+        queryParameters: {'q': trimmed, if (bookSlug != null) 'book': bookSlug},
+      );
 
       final body = res.data as Map<String, dynamic>;
 
@@ -312,4 +318,5 @@ class HadithSearchNotifier extends StateNotifier<HadithSearchState> {
 
 final hadithSearchProvider =
     StateNotifierProvider.autoDispose<HadithSearchNotifier, HadithSearchState>(
-        (ref) => HadithSearchNotifier(ref.watch(apiProvider)));
+      (ref) => HadithSearchNotifier(ref.watch(apiProvider)),
+    );

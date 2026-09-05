@@ -46,44 +46,53 @@ class HadithCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryGreen.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(7),
-              ),
-              child: Text('#${hadith.number}',
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: Text(
+                  '#${hadith.number}',
                   style: AppTheme.ui(
-                      size: 11.5,
-                      weight: FontWeight.w800,
-                      color: AppTheme.primaryGreen)),
-            ),
-            const SizedBox(width: 8),
-            if (hadith.grade != null && hadith.grade!.trim().isNotEmpty)
-              Flexible(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentGold.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(7),
+                    size: 11.5,
+                    weight: FontWeight.w800,
+                    color: AppTheme.primaryGreen,
                   ),
-                  child: Text(hadith.grade!,
+                ),
+              ),
+              const SizedBox(width: 8),
+              if (hadith.grade != null && hadith.grade!.trim().isNotEmpty)
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentGold.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: Text(
+                      hadith.grade!,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTheme.ui(
-                          size: 11.5,
-                          weight: FontWeight.w700,
-                          color: AppTheme.accentGoldDark)),
+                        size: 11.5,
+                        weight: FontWeight.w700,
+                        color: AppTheme.accentGoldDark,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-          ]),
+            ],
+          ),
 
           if (showSource && hadith.bookName != null) ...[
             const SizedBox(height: 10),
-            Text(hadith.bookName!,
-                style: AppTheme.eyebrow(muted)),
+            Text(hadith.bookName!, style: AppTheme.eyebrow(muted)),
           ],
 
           if (hasArabic) ...[
@@ -101,7 +110,10 @@ class HadithCard extends StatelessWidget {
 
           if (hasArabic && hasEnglish) ...[
             const SizedBox(height: 14),
-            Divider(color: isDark ? AppTheme.inkLine : AppTheme.sand, height: 1),
+            Divider(
+              color: isDark ? AppTheme.inkLine : AppTheme.sand,
+              height: 1,
+            ),
           ],
 
           if (hasEnglish) ...[
@@ -116,40 +128,52 @@ class HadithCard extends StatelessWidget {
           if (!hasArabic && !hasEnglish)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 14),
-              child: Text('This entry has no text.',
-                  style: AppTheme.ui(size: 13, color: muted)),
+              child: Text(
+                'This entry has no text.',
+                style: AppTheme.ui(size: 13, color: muted),
+              ),
             ),
 
           if (hadith.chapterName != null &&
               hadith.chapterName!.trim().isNotEmpty) ...[
             const SizedBox(height: 12),
-            Text(hadith.chapterName!,
-                style: AppTheme.ui(
-                    size: 11.5, weight: FontWeight.w600, color: muted)),
+            Text(
+              hadith.chapterName!,
+              style: AppTheme.ui(
+                size: 11.5,
+                weight: FontWeight.w600,
+                color: muted,
+              ),
+            ),
           ],
 
           const SizedBox(height: 4),
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-            IconButton(
-              tooltip: 'Copy',
-              visualDensity: VisualDensity.compact,
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: _plainText()));
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: const Text('Hadith copied'),
-                  backgroundColor: AppTheme.primaryGreenDark,
-                  duration: const Duration(seconds: 2),
-                ));
-              },
-              icon: Icon(Icons.copy_rounded, size: 18, color: muted),
-            ),
-            IconButton(
-              tooltip: 'Share',
-              visualDensity: VisualDensity.compact,
-              onPressed: () => Share.share(_plainText()),
-              icon: Icon(Icons.ios_share_rounded, size: 18, color: muted),
-            ),
-          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                tooltip: 'Copy',
+                visualDensity: VisualDensity.compact,
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: _plainText()));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Hadith copied'),
+                      backgroundColor: AppTheme.primaryGreenDark,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.copy_rounded, size: 18, color: muted),
+              ),
+              IconButton(
+                tooltip: 'Share',
+                visualDensity: VisualDensity.compact,
+                onPressed: () => Share.share(_plainText()),
+                icon: Icon(Icons.ios_share_rounded, size: 18, color: muted),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -157,7 +181,8 @@ class HadithCard extends StatelessWidget {
 
   String _plainText() {
     final parts = <String>[
-      if ((hadith.arabicText ?? '').trim().isNotEmpty) hadith.arabicText!.trim(),
+      if ((hadith.arabicText ?? '').trim().isNotEmpty)
+        hadith.arabicText!.trim(),
       if ((hadith.englishText ?? '').trim().isNotEmpty)
         hadith.englishText!.trim(),
       if (hadith.bookName != null) '— ${hadith.bookName}, #${hadith.number}',
@@ -205,13 +230,15 @@ class _Translation extends StatelessWidget {
         spans.add(TextSpan(text: text.substring(start, index)));
       }
 
-      spans.add(TextSpan(
-        text: text.substring(index, index + term.length),
-        style: TextStyle(
-          backgroundColor: AppTheme.accentGold.withValues(alpha: 0.28),
-          fontWeight: FontWeight.w700,
+      spans.add(
+        TextSpan(
+          text: text.substring(index, index + term.length),
+          style: TextStyle(
+            backgroundColor: AppTheme.accentGold.withValues(alpha: 0.28),
+            fontWeight: FontWeight.w700,
+          ),
         ),
-      ));
+      );
 
       start = index + term.length;
     }

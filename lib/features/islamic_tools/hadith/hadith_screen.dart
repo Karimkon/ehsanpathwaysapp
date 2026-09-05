@@ -22,8 +22,10 @@ class HadithScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Hadith', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('الحديث النبوي',
-                style: TextStyle(fontSize: 12, color: Colors.white70)),
+            Text(
+              'الحديث النبوي',
+              style: TextStyle(fontSize: 12, color: Colors.white70),
+            ),
           ],
         ),
         actions: [
@@ -35,8 +37,8 @@ class HadithScreen extends ConsumerWidget {
       ),
       body: collectionsAsync.when(
         loading: () => _buildShimmer(),
-        error: (e, _) => _buildError(
-            () => ref.invalidate(hadithCollectionsProvider)),
+        error: (e, _) =>
+            _buildError(() => ref.invalidate(hadithCollectionsProvider)),
         data: (collections) => ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: collections.length,
@@ -58,7 +60,9 @@ class HadithScreen extends ConsumerWidget {
           height: 120,
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(16)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       ),
     );
@@ -66,14 +70,23 @@ class HadithScreen extends ConsumerWidget {
 
   Widget _buildError(VoidCallback retry) {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.wifi_off_rounded, size: 48, color: Color(0xFFD1D5DB)),
-        const SizedBox(height: 12),
-        const Text('Failed to load collections',
-            style: TextStyle(color: Color(0xFF6B7280))),
-        const SizedBox(height: 12),
-        TextButton(onPressed: retry, child: const Text('Retry')),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.wifi_off_rounded,
+            size: 48,
+            color: Color(0xFFD1D5DB),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Failed to load collections',
+            style: TextStyle(color: Color(0xFF6B7280)),
+          ),
+          const SizedBox(height: 12),
+          TextButton(onPressed: retry, child: const Text('Retry')),
+        ],
+      ),
     );
   }
 }
@@ -192,7 +205,9 @@ class _CollectionCard extends StatelessWidget {
                     Text(
                       'hadiths',
                       style: TextStyle(
-                          fontSize: 10, color: color.withOpacity(0.7)),
+                        fontSize: 10,
+                        color: color.withOpacity(0.7),
+                      ),
                     ),
                   ],
                 ),

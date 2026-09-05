@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
+import 'package:ehsan_pathways/shared/widgets/reading_width.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_library_provider.dart';
 
 /// The ten collections.
@@ -29,10 +30,18 @@ class HadithBooksScreen extends ConsumerWidget {
       ),
       body: books.when(
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppTheme.primaryGreen)),
-        error: (e, _) => _Retry(onRetry: () => ref.invalidate(hadithBooksProvider)),
+          child: CircularProgressIndicator(color: AppTheme.primaryGreen),
+        ),
+        error: (e, _) =>
+            _Retry(onRetry: () => ref.invalidate(hadithBooksProvider)),
         data: (list) => ListView.separated(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+          padding: readingInsets(
+            context,
+            horizontal: 20,
+            top: 12,
+            bottom: 28,
+            maxWidth: 900,
+          ),
           itemCount: list.length + 1,
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, i) {
@@ -66,7 +75,9 @@ class HadithBooksScreen extends ConsumerWidget {
   }
 
   static String _thousands(int n) => n.toString().replaceAllMapped(
-      RegExp(r'(\d)(?=(\d{3})+$)'), (m) => '${m[1]},');
+    RegExp(r'(\d)(?=(\d{3})+$)'),
+    (m) => '${m[1]},',
+  );
 }
 
 class _BookRow extends StatelessWidget {
@@ -84,14 +95,18 @@ class _BookRow extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        onTap: () => context.pushNamed('hadith-chapters',
-            pathParameters: {'slug': book.slug}),
+        onTap: () => context.pushNamed(
+          'hadith-chapters',
+          pathParameters: {'slug': book.slug},
+        ),
         child: Container(
           padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
           decoration: BoxDecoration(
             color: isDark ? AppTheme.inkSoft : Colors.white,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: isDark ? AppTheme.inkLine : AppTheme.sand),
+            border: Border.all(
+              color: isDark ? AppTheme.inkLine : AppTheme.sand,
+            ),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,30 +126,44 @@ class _BookRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (book.arabicName != null)
-                      Text(book.arabicName!,
-                          textDirection: TextDirection.rtl,
-                          style: AppTheme.arabic(
-                              size: 19, color: fg, height: 1.5)),
+                      Text(
+                        book.arabicName!,
+                        textDirection: TextDirection.rtl,
+                        style: AppTheme.arabic(
+                          size: 19,
+                          color: fg,
+                          height: 1.5,
+                        ),
+                      ),
                     const SizedBox(height: 2),
-                    Text(book.name,
-                        style: AppTheme.ui(
-                            size: 15.5, weight: FontWeight.w800, color: fg)),
+                    Text(
+                      book.name,
+                      style: AppTheme.ui(
+                        size: 15.5,
+                        weight: FontWeight.w800,
+                        color: fg,
+                      ),
+                    ),
                     if (book.compiler != null) ...[
                       const SizedBox(height: 4),
-                      Text(book.compiler!,
-                          style: AppTheme.ui(
-                              size: 12.5,
-                              weight: FontWeight.w500,
-                              color: muted)),
+                      Text(
+                        book.compiler!,
+                        style: AppTheme.ui(
+                          size: 12.5,
+                          weight: FontWeight.w500,
+                          color: muted,
+                        ),
+                      ),
                     ],
                     const SizedBox(height: 9),
                     Text(
                       '${HadithBooksScreen._thousands(book.hadithCount)} hadith'
                       '${book.chapterCount > 0 ? ' · ${book.chapterCount} chapters' : ''}',
                       style: AppTheme.ui(
-                          size: 12,
-                          weight: FontWeight.w700,
-                          color: AppTheme.primaryGreen),
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: AppTheme.primaryGreen,
+                      ),
                     ),
                   ],
                 ),
@@ -156,18 +185,25 @@ class _Retry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.wifi_off_rounded, size: 40),
-        const SizedBox(height: 14),
-        Text('The collections could not be loaded.',
-            style: AppTheme.ui(size: 14, weight: FontWeight.w600)),
-        const SizedBox(height: 14),
-        FilledButton(
-          onPressed: onRetry,
-          style: FilledButton.styleFrom(backgroundColor: AppTheme.primaryGreen),
-          child: const Text('Try again'),
-        ),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.wifi_off_rounded, size: 40),
+          const SizedBox(height: 14),
+          Text(
+            'The collections could not be loaded.',
+            style: AppTheme.ui(size: 14, weight: FontWeight.w600),
+          ),
+          const SizedBox(height: 14),
+          FilledButton(
+            onPressed: onRetry,
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.primaryGreen,
+            ),
+            child: const Text('Try again'),
+          ),
+        ],
+      ),
     );
   }
 }

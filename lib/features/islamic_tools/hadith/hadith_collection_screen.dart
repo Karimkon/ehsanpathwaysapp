@@ -34,12 +34,12 @@ class HadithCollectionScreen extends ConsumerWidget {
       body: hadithsAsync.when(
         loading: () => _buildShimmer(),
         error: (e, _) => _buildError(
-            () => ref.invalidate(hadithCollectionProvider(collectionId))),
+          () => ref.invalidate(hadithCollectionProvider(collectionId)),
+        ),
         data: (hadiths) => ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: hadiths.length,
-          itemBuilder: (context, index) =>
-              _HadithCard(hadith: hadiths[index]),
+          itemBuilder: (context, index) => _HadithCard(hadith: hadiths[index]),
         ),
       ),
     );
@@ -71,7 +71,9 @@ class HadithCollectionScreen extends ConsumerWidget {
           height: 180,
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(12)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
@@ -79,14 +81,23 @@ class HadithCollectionScreen extends ConsumerWidget {
 
   Widget _buildError(VoidCallback retry) {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.wifi_off_rounded, size: 48, color: Color(0xFFD1D5DB)),
-        const SizedBox(height: 12),
-        const Text('Failed to load hadiths',
-            style: TextStyle(color: Color(0xFF6B7280))),
-        const SizedBox(height: 12),
-        TextButton(onPressed: retry, child: const Text('Retry')),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.wifi_off_rounded,
+            size: 48,
+            color: Color(0xFFD1D5DB),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Failed to load hadiths',
+            style: TextStyle(color: Color(0xFF6B7280)),
+          ),
+          const SizedBox(height: 12),
+          TextButton(onPressed: retry, child: const Text('Retry')),
+        ],
+      ),
     );
   }
 }
@@ -121,8 +132,10 @@ class _HadithCardState extends State<_HadithCard> {
             child: Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF1D4ED8).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
@@ -142,7 +155,9 @@ class _HadithCardState extends State<_HadithCard> {
                     child: Text(
                       h.topic,
                       style: const TextStyle(
-                          fontSize: 12, color: Color(0xFF6B7280)),
+                        fontSize: 12,
+                        color: Color(0xFF6B7280),
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -153,8 +168,9 @@ class _HadithCardState extends State<_HadithCard> {
                     Clipboard.setData(ClipboardData(text: h.english));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Hadith copied'),
-                          duration: Duration(seconds: 1)),
+                        content: Text('Hadith copied'),
+                        duration: Duration(seconds: 1),
+                      ),
                     );
                   },
                   padding: EdgeInsets.zero,
@@ -191,14 +207,20 @@ class _HadithCardState extends State<_HadithCard> {
               firstChild: Text(
                 h.english,
                 style: const TextStyle(
-                    fontSize: 14, height: 1.7, color: Color(0xFF374151)),
+                  fontSize: 14,
+                  height: 1.7,
+                  color: Color(0xFF374151),
+                ),
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               ),
               secondChild: Text(
                 h.english,
                 style: const TextStyle(
-                    fontSize: 14, height: 1.7, color: Color(0xFF374151)),
+                  fontSize: 14,
+                  height: 1.7,
+                  color: Color(0xFF374151),
+                ),
               ),
               crossFadeState: _expanded
                   ? CrossFadeState.showSecond
@@ -230,14 +252,19 @@ class _HadithCardState extends State<_HadithCard> {
                   Expanded(
                     child: Row(
                       children: [
-                        const Icon(Icons.person_outline_rounded,
-                            size: 12, color: Color(0xFF9CA3AF)),
+                        const Icon(
+                          Icons.person_outline_rounded,
+                          size: 12,
+                          color: Color(0xFF9CA3AF),
+                        ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             h.narrator,
                             style: const TextStyle(
-                                fontSize: 11, color: Color(0xFF9CA3AF)),
+                              fontSize: 11,
+                              color: Color(0xFF9CA3AF),
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -248,7 +275,9 @@ class _HadithCardState extends State<_HadithCard> {
                   Text(
                     h.ref,
                     style: const TextStyle(
-                        fontSize: 11, color: Color(0xFF9CA3AF)),
+                      fontSize: 11,
+                      color: Color(0xFF9CA3AF),
+                    ),
                   ),
               ],
             ),
