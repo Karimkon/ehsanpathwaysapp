@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'dart:async';
 
+import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/features/home/home_provider.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_library_provider.dart';
 import 'package:ehsan_pathways/features/prayer/prayer_provider.dart';
@@ -1162,7 +1163,7 @@ class _QuickActions extends StatelessWidget {
           _QuickActionItem(
             icon: Icons.route_rounded,
             label: 'Pathways',
-            color: const Color(0xFF8B5CF6),
+            color: AppTheme.shelfColors['adab']!,
             isDark: isDark,
             onTap: () => context.push('/pathways'),
           ),
@@ -1170,7 +1171,7 @@ class _QuickActions extends StatelessWidget {
           _QuickActionItem(
             icon: Icons.bookmark_rounded,
             label: 'Bookmarks',
-            color: const Color(0xFF3B82F6),
+            color: AppTheme.shelfColors['quran-sciences']!,
             isDark: isDark,
             onTap: () => context.push('/bookmarks'),
           ),
@@ -1178,7 +1179,7 @@ class _QuickActions extends StatelessWidget {
           _QuickActionItem(
             icon: Icons.note_alt_rounded,
             label: 'Notes',
-            color: const Color(0xFF10B981),
+            color: AppTheme.shelfColors['hadith']!,
             isDark: isDark,
             onTap: () => context.push('/notes'),
           ),
@@ -1186,7 +1187,7 @@ class _QuickActions extends StatelessWidget {
           _QuickActionItem(
             icon: Icons.people_rounded,
             label: 'Scholars',
-            color: _accentGold,
+            color: AppTheme.shelfColors['matn']!,
             isDark: isDark,
             onTap: () => context.push('/scholars'),
           ),

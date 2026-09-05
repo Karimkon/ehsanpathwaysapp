@@ -75,6 +75,28 @@ class BookCover extends StatelessWidget {
                   else
                     _FallbackBoard(book: book),
 
+                  // A hairline edge. Several of these books have near-white
+                  // title pages for covers, and without it they dissolve into
+                  // the parchment ground instead of reading as objects.
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black.withValues(alpha: 0.14),
+                            width: 0.8,
+                          ),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(3),
+                            bottomLeft: Radius.circular(3),
+                            topRight: Radius.circular(9),
+                            bottomRight: Radius.circular(9),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
                   // Spine shading: a highlight just off the leading edge, so
                   // the board looks bound rather than printed flat.
                   Positioned(
