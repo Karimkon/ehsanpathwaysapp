@@ -144,7 +144,7 @@ class _CourseDetailBody extends StatelessWidget {
                       const SizedBox(height: 10),
                       Text(
                         title,
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.lora(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -157,7 +157,7 @@ class _CourseDetailBody extends StatelessWidget {
                           description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: Colors.white.withValues(alpha: 0.85),
                             height: 1.5,
@@ -196,7 +196,7 @@ class _CourseDetailBody extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   '${completedLessons.length}/${lessons.length} done',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: AppTheme.primaryGreen,
@@ -213,7 +213,7 @@ class _CourseDetailBody extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
             child: Text(
               'Lessons',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -374,7 +374,7 @@ class _LessonTile extends StatelessWidget {
                       size: 18, color: Colors.white)
                   : Text(
                       '$number',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: isDark
@@ -386,7 +386,7 @@ class _LessonTile extends StatelessWidget {
           ),
           title: Text(
             title,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: isDark ? Colors.white : const Color(0xFF111827),
@@ -413,7 +413,7 @@ class _LessonTile extends StatelessWidget {
                   ),
                   child: Text(
                     isComplete ? 'Done' : 'Mark',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: isComplete
@@ -511,7 +511,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                     child: Center(
                       child: Text(
                         '$lessonNumber',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: AppTheme.primaryGreen,
@@ -523,7 +523,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       lessonTitle,
-                      style: GoogleFonts.playfairDisplay(
+                      style: GoogleFonts.lora(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: isDark
@@ -553,7 +553,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                 error: (e, _) => Center(
                   child: Text(
                     'Could not load lesson content.',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark
                           ? const Color(0xFF9CA3AF)
@@ -578,7 +578,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                         const SizedBox(height: 20),
                         Text(
                           'Exercises',
-                          style: GoogleFonts.playfairDisplay(
+                          style: GoogleFonts.lora(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: isDark
@@ -618,7 +618,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                         icon: const Icon(Icons.check_circle_outline_rounded),
                         label: Text(
                           'Mark as Complete',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
@@ -657,7 +657,7 @@ class _LessonContentText extends StatelessWidget {
             padding: const EdgeInsets.only(top: 12, bottom: 4),
             child: Text(
               line.substring(2),
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -670,7 +670,7 @@ class _LessonContentText extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10, bottom: 4),
             child: Text(
               line.substring(3),
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: AppTheme.primaryGreen,
@@ -698,7 +698,7 @@ class _LessonContentText extends StatelessWidget {
                 Expanded(
                   child: Text(
                     line.substring(2),
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       height: 1.6,
                       color: isDark
@@ -716,7 +716,7 @@ class _LessonContentText extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2),
           child: Text(
             line,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               height: 1.7,
               color:
@@ -782,7 +782,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
           const SizedBox(height: 8),
           Text(
             question,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: widget.isDark ? Colors.white : const Color(0xFF111827),
@@ -817,7 +817,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                   const SizedBox(width: 6),
                   Text(
                     _showAnswer ? 'Hide Answer' : 'Show Answer',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: _showAnswer
@@ -841,7 +841,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
               ),
               child: Text(
                 answer,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   color: AppTheme.primaryGreen,
                   fontWeight: FontWeight.w600,
@@ -853,7 +853,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
             const SizedBox(height: 6),
             Text(
               explanation,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 color: widget.isDark
                     ? const Color(0xFF9CA3AF)

@@ -239,7 +239,7 @@ class _ContentCardState extends State<ContentCard>
                                 ],
                                 Text(
                                   widget.trailingInfo!,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
@@ -275,7 +275,7 @@ class _ContentCardState extends State<ContentCard>
                       widget.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         height: 1.35,
@@ -289,7 +289,7 @@ class _ContentCardState extends State<ContentCard>
                         widget.subtitle!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: isDark
@@ -317,7 +317,7 @@ class _ContentCardState extends State<ContentCard>
                             ],
                             Text(
                               widget.trailingInfo!,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 color: isDark
@@ -371,7 +371,7 @@ class _TypeBadge extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
               color: Colors.white,

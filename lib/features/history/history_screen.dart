@@ -48,7 +48,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
         appBar: AppBar(
           title: Text('Watch History',
-              style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.w700)),
+              style: GoogleFonts.plusJakartaSans(fontSize: 20, fontWeight: FontWeight.w700)),
           backgroundColor:
               isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
           surfaceTintColor: Colors.transparent,
@@ -93,7 +93,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 24, 20, 10),
                 child: Text(
                   'All History',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : const Color(0xFF111827),
@@ -194,7 +194,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                           const SizedBox(width: 5),
                           Text(
                             'Watch History',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: _gold,
@@ -207,7 +207,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     if (history.items.isNotEmpty)
                       Text(
                         '${history.items.length} videos',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: Colors.white60,
                           fontWeight: FontWeight.w500,
@@ -220,7 +220,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
                 Text(
                   'Continue\nYour Journey',
-                  style: GoogleFonts.playfairDisplay(
+                  style: GoogleFonts.lora(
                     fontSize: 26,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -285,7 +285,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             const SizedBox(height: 16),
             Text(
               'Could not load history',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w700, fontSize: 16),
             ),
             const SizedBox(height: 8),
@@ -325,7 +325,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             const SizedBox(height: 24),
             Text(
               'No videos watched yet',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -335,7 +335,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             Text(
               '"Seek knowledge from the cradle to the grave"\n— Prophet Muhammad ﷺ',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white54 : Colors.grey.shade500,
@@ -356,7 +356,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               ),
               child: Text(
                 'Browse Videos',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w700, fontSize: 15),
               ),
             ),
@@ -375,16 +375,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20)),
         title: Text('Clear Watch History',
-            style: GoogleFonts.inter(fontWeight: FontWeight.w800)),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800)),
         content: Text(
           'This will remove all videos from your watch history. This action cannot be undone.',
-          style: GoogleFonts.inter(fontSize: 14, height: 1.5),
+          style: GoogleFonts.plusJakartaSans(fontSize: 14, height: 1.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Cancel',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                     color: Colors.grey, fontWeight: FontWeight.w600)),
           ),
           TextButton(
@@ -393,7 +393,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               ref.read(historyProvider.notifier).clearAll();
             },
             child: Text('Clear All',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                     color: Colors.red, fontWeight: FontWeight.w700)),
           ),
         ],
@@ -433,7 +433,7 @@ class _ContinueWatchingSection extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 'Continue Watching',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -558,7 +558,7 @@ class _ContinueCard extends StatelessWidget {
                       ),
                       child: Text(
                         '${(item.progressPercent * 100).round()}%',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -577,7 +577,7 @@ class _ContinueCard extends StatelessWidget {
               item.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -591,7 +591,7 @@ class _ContinueCard extends StatelessWidget {
                 item.scholarName!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 11,
                   color: _green,
                   fontWeight: FontWeight.w500,
@@ -688,7 +688,7 @@ class _HistoryListItem extends ConsumerWidget {
                             ),
                             child: Text(
                               item.durationFormatted!,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -712,7 +712,7 @@ class _HistoryListItem extends ConsumerWidget {
                       item.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: isDark
@@ -729,7 +729,7 @@ class _HistoryListItem extends ConsumerWidget {
                         item.scholarName!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
                           color: _green,
                           fontWeight: FontWeight.w600,
@@ -748,7 +748,7 @@ class _HistoryListItem extends ConsumerWidget {
                         const SizedBox(width: 3),
                         Text(
                           item.timeAgoLabel,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 11,
                             color: isDark
                                 ? Colors.white38
@@ -767,7 +767,7 @@ class _HistoryListItem extends ConsumerWidget {
                             ),
                             child: Text(
                               item.resumeLabel,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: _green,
@@ -794,7 +794,7 @@ class _HistoryListItem extends ConsumerWidget {
                                 const SizedBox(width: 3),
                                 Text(
                                   'Watched',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
                                     color: isDark
@@ -882,7 +882,7 @@ class _ClearAllButton extends StatelessWidget {
                   const SizedBox(width: 5),
                   Text(
                     'Clear All',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,

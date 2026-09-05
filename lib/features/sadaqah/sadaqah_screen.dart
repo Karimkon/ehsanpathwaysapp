@@ -105,7 +105,7 @@ class _SadaqahScreenState extends ConsumerState<SadaqahScreen>
                             const SizedBox(width: 12),
                             Text(
                               'Sadaqah',
-                              style: GoogleFonts.playfairDisplay(
+                              style: GoogleFonts.lora(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -116,7 +116,7 @@ class _SadaqahScreenState extends ConsumerState<SadaqahScreen>
                         const SizedBox(height: 6),
                         Text(
                           '"The believer\'s shade on the Day of Resurrection will be their charity"',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             color: Colors.white.withValues(alpha: 0.85),
                             fontStyle: FontStyle.italic,
@@ -135,11 +135,11 @@ class _SadaqahScreenState extends ConsumerState<SadaqahScreen>
               indicatorWeight: 3,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
-              labelStyle: GoogleFonts.poppins(
+              labelStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
-              unselectedLabelStyle: GoogleFonts.poppins(
+              unselectedLabelStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -231,7 +231,7 @@ class _GiveTab extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       'Give Sadaqah — purify your wealth and earn ongoing rewards.',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: isDark
                             ? const Color(0xFFFCD34D)
@@ -246,7 +246,7 @@ class _GiveTab extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               'Choose a Cause',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -352,7 +352,7 @@ class _PurposeCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     name,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white : const Color(0xFF111827),
@@ -367,7 +367,7 @@ class _PurposeCard extends StatelessWidget {
                 description,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   color:
                       isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
@@ -382,7 +382,7 @@ class _PurposeCard extends StatelessWidget {
                 children: [
                   Text(
                     '$currency ${currentAmount.toStringAsFixed(0)} raised',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFFF59E0B),
@@ -390,7 +390,7 @@ class _PurposeCard extends StatelessWidget {
                   ),
                   Text(
                     'Goal: $currency ${targetAmount.toStringAsFixed(0)}',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       color: isDark
                           ? const Color(0xFF9CA3AF)
@@ -428,7 +428,7 @@ class _PurposeCard extends StatelessWidget {
                 icon: const Icon(Icons.favorite_rounded, size: 16),
                 label: Text(
                   'Donate',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -551,7 +551,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
             const SizedBox(height: 16),
             Text(
               'JazakAllah Khair!',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: widget.isDark ? Colors.white : const Color(0xFF111827),
@@ -561,7 +561,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
             Text(
               'Your donation is being processed. May Allah bless your generosity.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: widget.isDark
                     ? const Color(0xFF9CA3AF)
@@ -583,7 +583,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
               ),
               child: Text(
                 'Ameen',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),
@@ -630,7 +630,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                 children: [
                   Text(
                     'Donate to $purposeName',
-                    style: GoogleFonts.playfairDisplay(
+                    style: GoogleFonts.lora(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: widget.isDark
@@ -643,7 +643,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                   // Amount presets
                   Text(
                     'Select Amount',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: widget.isDark
@@ -685,7 +685,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                           ),
                           child: Text(
                             '\$${amt.toInt()}',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: selected
@@ -712,7 +712,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                     ],
                     onChanged: (_) =>
                         setState(() => _selectedAmount = null),
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: widget.isDark
                           ? Colors.white
@@ -720,7 +720,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                     ),
                     decoration: InputDecoration(
                       hintText: 'Custom amount',
-                      hintStyle: GoogleFonts.poppins(
+                      hintStyle: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         color: widget.isDark
                             ? const Color(0xFF6B7280)
@@ -761,7 +761,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                   // Currency
                   Text(
                     'Currency',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: widget.isDark
@@ -776,7 +776,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                         .map((c) => DropdownMenuItem(
                               value: c,
                               child: Text(c,
-                                  style: GoogleFonts.poppins(fontSize: 14)),
+                                  style: GoogleFonts.plusJakartaSans(fontSize: 14)),
                             ))
                         .toList(),
                     onChanged: (v) =>
@@ -811,7 +811,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                   // Payment method
                   Text(
                     'Payment Method',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: widget.isDark
@@ -875,7 +875,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                               const SizedBox(width: 6),
                               Text(
                                 method,
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 13,
                                   fontWeight: selected
                                       ? FontWeight.w700
@@ -899,7 +899,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                   if (!_isAnonymous) ...[
                     TextField(
                       controller: _nameController,
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         color: widget.isDark
                             ? Colors.white
@@ -907,7 +907,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                       ),
                       decoration: InputDecoration(
                         hintText: 'Your name (optional)',
-                        hintStyle: GoogleFonts.poppins(
+                        hintStyle: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           color: widget.isDark
                               ? const Color(0xFF6B7280)
@@ -958,7 +958,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                       const SizedBox(width: 8),
                       Text(
                         'Give anonymously',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: widget.isDark
@@ -999,7 +999,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                         _isSubmitting
                             ? 'Processing...'
                             : 'Donate $_currency ${_effectiveAmount > 0 ? _effectiveAmount.toStringAsFixed(2) : ""}',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1084,7 +1084,7 @@ class _TransparencyTab extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       'We are committed to full transparency in how your donations are used.',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: isDark
                             ? const Color(0xFF86EFAC)
@@ -1098,7 +1098,7 @@ class _TransparencyTab extends ConsumerWidget {
             ),
             Text(
               'Spending Reports',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -1162,7 +1162,7 @@ class _ReportCard extends StatelessWidget {
               children: [
                 Text(
                   period,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white : const Color(0xFF111827),
@@ -1211,7 +1211,7 @@ class _ReportCard extends StatelessWidget {
                         children: [
                           Text(
                             'Utilization',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 11,
                               color: isDark
                                   ? const Color(0xFF9CA3AF)
@@ -1220,7 +1220,7 @@ class _ReportCard extends StatelessWidget {
                           ),
                           Text(
                             '${(spentPercent * 100).toStringAsFixed(1)}%',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: AppTheme.primaryGreen,
@@ -1295,7 +1295,7 @@ class _AmountTile extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
             ),
@@ -1303,7 +1303,7 @@ class _AmountTile extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             amount,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: color,

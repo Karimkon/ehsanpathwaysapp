@@ -137,7 +137,7 @@ class _GuideDetailBody extends StatelessWidget {
                         const SizedBox(height: 10),
                         Text(
                           title,
-                          style: GoogleFonts.playfairDisplay(
+                          style: GoogleFonts.lora(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -265,7 +265,7 @@ class _SectionExpansionTileState extends State<_SectionExpansionTile> {
               child: Center(
                 child: Text(
                   '$sortOrder',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: _expanded
@@ -277,7 +277,7 @@ class _SectionExpansionTileState extends State<_SectionExpansionTile> {
             ),
             title: Text(
               sectionTitle,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: widget.isDark ? Colors.white : const Color(0xFF111827),
@@ -369,7 +369,7 @@ class _SectionContent extends StatelessWidget {
                 Expanded(
                   child: Text(
                     stepMatch.group(2) ?? '',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       height: 1.6,
                       color: isDark
@@ -389,7 +389,7 @@ class _SectionContent extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10, bottom: 4),
             child: Text(
               line.substring(3),
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: AppTheme.primaryGreen,
@@ -421,7 +421,7 @@ class _SectionContent extends StatelessWidget {
                     line.startsWith('• ')
                         ? line.substring(2)
                         : line.substring(2),
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       height: 1.6,
                       color: isDark
@@ -441,7 +441,7 @@ class _SectionContent extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
             line,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               height: 1.7,
               color:

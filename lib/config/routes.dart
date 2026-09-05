@@ -36,6 +36,13 @@ import 'package:ehsan_pathways/features/islamic_tools/quran/quran_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_reader_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_collection_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_books_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_chapters_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_reader_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_search_screen.dart';
+import 'package:ehsan_pathways/features/library/library_screen.dart';
+import 'package:ehsan_pathways/features/library/book_detail_screen.dart';
+import 'package:ehsan_pathways/features/library/book_reader_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/dua/dua_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/dua/dua_category_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hifz/hifz_screen.dart';
@@ -52,8 +59,8 @@ final initialRouteProvider = Provider<String>((ref) => '/');
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _homeNavKey = GlobalKey<NavigatorState>(debugLabel: 'home');
 final _videosNavKey = GlobalKey<NavigatorState>(debugLabel: 'videos');
-final _articlesNavKey = GlobalKey<NavigatorState>(debugLabel: 'articles');
-final _podcastsNavKey = GlobalKey<NavigatorState>(debugLabel: 'podcasts');
+final _quranNavKey = GlobalKey<NavigatorState>(debugLabel: 'quran');
+final _libraryNavKey = GlobalKey<NavigatorState>(debugLabel: 'library');
 final _profileNavKey = GlobalKey<NavigatorState>(debugLabel: 'profile');
 
 /// Application router exposed as a Riverpod provider.
@@ -118,40 +125,33 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
 
-          // Tab 2 – Articles
+          // Tab 2 – Quran. The reader itself stays at /islamic-tools/quran/:no
+          // on the root navigator, so every existing link to it still resolves.
           StatefulShellBranch(
-            navigatorKey: _articlesNavKey,
+            navigatorKey: _quranNavKey,
             routes: [
               GoRoute(
-                path: '/articles',
-                name: 'articles',
-                builder: (context, state) => const ArticlesScreen(),
-                routes: [
-                  GoRoute(
-                    path: ':slug',
-                    name: 'article-detail',
-                    builder: (context, state) => ArticleDetailScreen(
-                      slug: state.pathParameters['slug']!,
-                    ),
-                  ),
-                ],
+                path: '/quran',
+                name: 'quran-tab',
+                builder: (context, state) => const QuranScreen(),
               ),
             ],
           ),
 
-          // Tab 3 – Podcasts
+          // Tab 3 – Library: the scanned books, and the way in to the hadith
+          // collections.
           StatefulShellBranch(
-            navigatorKey: _podcastsNavKey,
+            navigatorKey: _libraryNavKey,
             routes: [
               GoRoute(
-                path: '/podcasts',
-                name: 'podcasts',
-                builder: (context, state) => const PodcastsScreen(),
+                path: '/library',
+                name: 'library',
+                builder: (context, state) => const LibraryScreen(),
                 routes: [
                   GoRoute(
-                    path: ':slug',
-                    name: 'podcast-detail',
-                    builder: (context, state) => PodcastDetailScreen(
+                    path: 'book/:slug',
+                    name: 'library-book',
+                    builder: (context, state) => BookDetailScreen(
                       slug: state.pathParameters['slug']!,
                     ),
                   ),
@@ -175,6 +175,88 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // ── Full-screen routes (no bottom nav) ─────────────────────────
+
+      // Articles and podcasts were tabs; they are now reached from Home and
+      // Profile. Paths and route names are unchanged so existing links work.
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/articles',
+        name: 'articles',
+        builder: (context, state) => const ArticlesScreen(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: ':slug',
+            name: 'article-detail',
+            builder: (context, state) =>
+                ArticleDetailScreen(slug: state.pathParameters['slug']!),
+          ),
+        ],
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/podcasts',
+        name: 'podcasts',
+        builder: (context, state) => const PodcastsScreen(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: ':slug',
+            name: 'podcast-detail',
+            builder: (context, state) =>
+                PodcastDetailScreen(slug: state.pathParameters['slug']!),
+          ),
+        ],
+      ),
+
+      // Reading a scanned book is immersive, so it sits outside the shell.
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/read/:slug',
+        name: 'library-reader',
+        builder: (context, state) =>
+            BookReaderScreen(slug: state.pathParameters['slug']!),
+      ),
+
+      // ── Hadith collections ─────────────────────────────────────────
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/hadith-library',
+        name: 'hadith-books',
+        builder: (context, state) => const HadithBooksScreen(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: ':slug',
+            name: 'hadith-chapters',
+            builder: (context, state) =>
+                HadithChaptersScreen(slug: state.pathParameters['slug']!),
+            routes: [
+              GoRoute(
+                parentNavigatorKey: _rootNavigatorKey,
+                path: 'read',
+                name: 'hadith-reader',
+                builder: (context, state) {
+                  final chapter = state.uri.queryParameters['chapter'];
+                  return HadithReaderScreen(
+                    slug: state.pathParameters['slug']!,
+                    chapter: chapter == null ? null : int.tryParse(chapter),
+                    title: state.uri.queryParameters['title'],
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/hadith-search',
+        name: 'hadith-search',
+        builder: (context, state) =>
+            HadithSearchScreen(bookSlug: state.uri.queryParameters['book']),
+      ),
+
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/search',

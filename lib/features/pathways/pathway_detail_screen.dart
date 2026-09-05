@@ -110,7 +110,7 @@ class _PathwayDetailBody extends StatelessWidget {
                         ),
                         child: Text(
                           pathway.levelLabel,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -121,7 +121,7 @@ class _PathwayDetailBody extends StatelessWidget {
 
                       Text(
                         pathway.title,
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.lora(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -181,7 +181,7 @@ class _PathwayDetailBody extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'Your Progress',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: isDark
@@ -192,7 +192,7 @@ class _PathwayDetailBody extends StatelessWidget {
                         const Spacer(),
                         Text(
                           '${detail.progressPercentage.toStringAsFixed(0)}%',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w800,
                             color: _green,
@@ -216,7 +216,7 @@ class _PathwayDetailBody extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       '${detail.completedItems} of ${pathway.totalItems} completed',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
                         color: isDark
                             ? const Color(0xFF6B7280)
@@ -239,7 +239,7 @@ class _PathwayDetailBody extends StatelessWidget {
                 children: [
                   Text(
                     'About',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color:
@@ -249,7 +249,7 @@ class _PathwayDetailBody extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     pathway.description!,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark
                           ? const Color(0xFFD1D5DB)
@@ -269,7 +269,7 @@ class _PathwayDetailBody extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
               child: Text(
                 'Stages',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -337,7 +337,7 @@ class _HeaderStat extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: Colors.white.withValues(alpha: 0.85),
@@ -404,7 +404,7 @@ class _StageItem extends StatelessWidget {
                             size: 16, color: Colors.white)
                         : Text(
                             '${index + 1}',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: isCurrent
@@ -468,7 +468,7 @@ class _StageItem extends StatelessWidget {
                       Expanded(
                         child: Text(
                           stage.title,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: isDark
@@ -490,7 +490,7 @@ class _StageItem extends StatelessWidget {
                           ),
                           child: Text(
                             stage.contentType,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: levelColor,
@@ -506,7 +506,7 @@ class _StageItem extends StatelessWidget {
                       stage.description!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: isDark
                             ? const Color(0xFF9CA3AF)

@@ -153,7 +153,7 @@ class _VideosScreenState extends ConsumerState<VideosScreen> {
           const SizedBox(width: 12),
           Text(
             'Videos',
-            style: GoogleFonts.playfairDisplay(
+            style: GoogleFonts.lora(
               fontSize: 26,
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : const Color(0xFF111827),
@@ -318,14 +318,14 @@ class _SearchBar extends StatelessWidget {
         focusNode: focusNode,
         onChanged: onChanged,
         textInputAction: TextInputAction.search,
-        style: GoogleFonts.inter(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: isDark ? Colors.white : const Color(0xFF111827),
         ),
         decoration: InputDecoration(
           hintText: 'Search videos...',
-          hintStyle: GoogleFonts.inter(
+          hintStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),

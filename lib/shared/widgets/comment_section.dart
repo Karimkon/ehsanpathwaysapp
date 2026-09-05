@@ -288,11 +288,11 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
       builder: (_) => AlertDialog(
         title: Text(
           'Delete comment?',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
         ),
         content: Text(
           'This action cannot be undone.',
-          style: GoogleFonts.poppins(fontSize: 14),
+          style: GoogleFonts.plusJakartaSans(fontSize: 14),
         ),
         actions: [
           TextButton(
@@ -337,7 +337,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
               const SizedBox(width: 8),
               Text(
                 '${commentState.total} Comment${commentState.total == 1 ? '' : 's'}',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -365,7 +365,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                   Expanded(
                     child: Text(
                       'Replying to $_replyToName',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: AppTheme.primaryGreen,
                         fontWeight: FontWeight.w500,
@@ -396,7 +396,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                     authState.user?.name.isNotEmpty == true
                         ? authState.user!.name[0].toUpperCase()
                         : 'U',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.primaryGreen,
@@ -411,7 +411,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                   maxLines: 3,
                   minLines: 1,
                   textCapitalization: TextCapitalization.sentences,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     color:
                         isDark ? Colors.white : const Color(0xFF111827),
@@ -420,7 +420,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                     hintText: _replyToName != null
                         ? 'Write a reply...'
                         : 'Add a comment...',
-                    hintStyle: GoogleFonts.poppins(
+                    hintStyle: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark
                           ? const Color(0xFF6B7280)
@@ -527,7 +527,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                   const SizedBox(height: 10),
                   Text(
                     'No comments yet',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: isDark
@@ -538,7 +538,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                   const SizedBox(height: 4),
                   Text(
                     'Be the first to share your thoughts.',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       color: isDark
                           ? const Color(0xFF4B5563)
@@ -619,7 +619,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                       ref.read(_commentProvider(_key).notifier).loadMore(),
                   child: Text(
                     'Load more comments',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: AppTheme.primaryGreen,
@@ -711,7 +711,7 @@ class _CommentTile extends StatelessWidget {
                 child: Center(
                   child: Text(
                     initial,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: isOwn
@@ -730,7 +730,7 @@ class _CommentTile extends StatelessWidget {
                       children: [
                         Text(
                           authorName,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
                             color: isDark
@@ -750,7 +750,7 @@ class _CommentTile extends StatelessWidget {
                             ),
                             child: Text(
                               'You',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: AppTheme.primaryGreen,
@@ -761,7 +761,7 @@ class _CommentTile extends StatelessWidget {
                         const Spacer(),
                         Text(
                           _timeAgo(createdAt),
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 11,
                             color: isDark
                                 ? const Color(0xFF6B7280)
@@ -773,7 +773,7 @@ class _CommentTile extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       body,
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         height: 1.5,
                         color: isDark
@@ -800,7 +800,7 @@ class _CommentTile extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   'Reply',
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: isDark
@@ -826,7 +826,7 @@ class _CommentTile extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   'Delete',
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.red.withValues(alpha: 0.7),
@@ -881,7 +881,7 @@ class _SignInPrompt extends StatelessWidget {
           Expanded(
             child: Text(
               'Sign in to comment',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: isDark
                     ? const Color(0xFF9CA3AF)
@@ -902,7 +902,7 @@ class _SignInPrompt extends StatelessWidget {
             ),
             child: Text(
               'Sign in',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: AppTheme.primaryGreen,

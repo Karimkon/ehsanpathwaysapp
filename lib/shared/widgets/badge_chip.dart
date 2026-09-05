@@ -117,7 +117,7 @@ class BadgeChip extends StatelessWidget {
           ],
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: fontSize,
               fontWeight: FontWeight.w700,
               color: textColor,

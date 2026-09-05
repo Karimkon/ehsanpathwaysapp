@@ -197,7 +197,7 @@ class _KhutbahsScreenState extends ConsumerState<KhutbahsScreen> {
                             const SizedBox(width: 12),
                             Text(
                               'Khutbahs',
-                              style: GoogleFonts.playfairDisplay(
+                              style: GoogleFonts.lora(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -208,7 +208,7 @@ class _KhutbahsScreenState extends ConsumerState<KhutbahsScreen> {
                         const SizedBox(height: 6),
                         Text(
                           'Friday sermons and Islamic lectures',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: Colors.white.withValues(alpha: 0.8),
                           ),
@@ -383,7 +383,7 @@ class _KhutbahCard extends StatelessWidget {
                           title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: isDark
@@ -396,7 +396,7 @@ class _KhutbahCard extends StatelessWidget {
                           const SizedBox(height: 3),
                           Text(
                             scholarName,
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: AppTheme.primaryGreen,
@@ -420,7 +420,7 @@ class _KhutbahCard extends StatelessWidget {
                   description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
                     color: isDark
                         ? const Color(0xFF9CA3AF)

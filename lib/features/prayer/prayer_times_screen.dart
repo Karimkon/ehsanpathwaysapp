@@ -159,7 +159,7 @@ class _Content extends StatelessWidget {
                 Expanded(
                   child: Text(
                     data.locationLabel,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: isDark ? Colors.white70 : const Color(0xFF4B5563),
@@ -168,7 +168,7 @@ class _Content extends StatelessWidget {
                 ),
                 Text(
                   DateFormat('EEE, d MMM').format(DateTime.now()),
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: isDark ? Colors.white38 : const Color(0xFF9CA3AF),
@@ -244,7 +244,7 @@ class _NextPrayerHeader extends StatelessWidget {
             children: [
               Text(
                 'NEXT PRAYER',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2,
@@ -262,7 +262,7 @@ class _NextPrayerHeader extends StatelessWidget {
               ),
               Text(
                 next.name,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: Colors.white.withValues(alpha: 0.85),
@@ -284,7 +284,7 @@ class _NextPrayerHeader extends StatelessWidget {
                     const SizedBox(width: 6),
                     Text(
                       '${PrayerTimesService.formatTime(next.time)}  •  in ${_formatRemaining(remaining)}',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
@@ -380,7 +380,7 @@ class _PrayerRow extends StatelessWidget {
                 children: [
                   Text(
                     entry.name,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: highlight
@@ -399,7 +399,7 @@ class _PrayerRow extends StatelessWidget {
                       ),
                       child: Text(
                         'NOW',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           color: _gold,
@@ -424,7 +424,7 @@ class _PrayerRow extends StatelessWidget {
           const Spacer(),
           Text(
             PrayerTimesService.formatTime(entry.time),
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: highlight
@@ -472,7 +472,7 @@ class _MethodPicker extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Text(
                 'Calculation Method',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -494,7 +494,7 @@ class _MethodPicker extends StatelessWidget {
                     ),
                     title: Text(
                       m.displayName,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: isDark ? Colors.white : const Color(0xFF111827),
@@ -502,7 +502,7 @@ class _MethodPicker extends StatelessWidget {
                     ),
                     subtitle: Text(
                       m.region,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
                         color: Colors.grey,
                       ),

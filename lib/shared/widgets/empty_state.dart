@@ -37,7 +37,7 @@ class LoginPrompt extends StatelessWidget {
             Text(
               'Sign in to view your $feature',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -48,7 +48,7 @@ class LoginPrompt extends StatelessWidget {
             Text(
               'Create a free account to save and access your $feature across all your devices.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
                 height: 1.5,
@@ -63,7 +63,7 @@ class LoginPrompt extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 elevation: 0,
-                textStyle: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700),
+                textStyle: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w700),
               ),
               icon: const Icon(Icons.login_rounded, size: 18),
               label: const Text('Sign In'),
@@ -73,7 +73,7 @@ class LoginPrompt extends StatelessWidget {
               onPressed: () => context.push('/register'),
               child: Text(
                 'Create a free account',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: green,
@@ -180,7 +180,7 @@ class EmptyState extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: compact ? 17 : 20,
                 fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -195,7 +195,7 @@ class EmptyState extends StatelessWidget {
               Text(
                 subtitle!,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: compact ? 13 : 14,
                   fontWeight: FontWeight.w500,
                   color: isDark
@@ -222,7 +222,7 @@ class EmptyState extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   elevation: 0,
-                  textStyle: GoogleFonts.inter(
+                  textStyle: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),

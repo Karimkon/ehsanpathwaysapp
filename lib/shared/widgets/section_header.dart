@@ -49,7 +49,7 @@ class SectionHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : const Color(0xFF111827),
@@ -61,7 +61,7 @@ class SectionHeader extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     subtitle!,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: isDark
@@ -125,7 +125,7 @@ class _SeeAllButton extends StatelessWidget {
             children: [
               Text(
                 text,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: primaryGreen,

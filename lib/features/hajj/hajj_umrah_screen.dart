@@ -110,7 +110,7 @@ class _HajjUmrahScreenState extends ConsumerState<HajjUmrahScreen>
                       const SizedBox(height: 10),
                       Text(
                         'Hajj & Umrah',
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.lora(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -119,7 +119,7 @@ class _HajjUmrahScreenState extends ConsumerState<HajjUmrahScreen>
                       const SizedBox(height: 4),
                       Text(
                         'Complete guides for your pilgrimage',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.8),
                         ),
@@ -135,11 +135,11 @@ class _HajjUmrahScreenState extends ConsumerState<HajjUmrahScreen>
               indicatorWeight: 3,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
-              labelStyle: GoogleFonts.poppins(
+              labelStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
-              unselectedLabelStyle: GoogleFonts.poppins(
+              unselectedLabelStyle: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -287,7 +287,7 @@ class _GuideCard extends StatelessWidget {
                               children: [
                                 Text(
                                   title,
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700,
                                     color: isDark
@@ -339,7 +339,7 @@ class _GuideCard extends StatelessWidget {
                           description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: isDark
                                 ? const Color(0xFF9CA3AF)

@@ -60,7 +60,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
             isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
         appBar: AppBar(
           title: Text('Bookmarks',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                   fontSize: 24, fontWeight: FontWeight.w700)),
           centerTitle: false,
           backgroundColor:
@@ -83,7 +83,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
       appBar: AppBar(
         title: Text(
           'Bookmarks',
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.lora(
             fontSize: 24,
             fontWeight: FontWeight.w700,
           ),
@@ -112,7 +112,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
                   child: FilterChip(
                     selected: selected,
                     label: Text(entry.value),
-                    labelStyle: GoogleFonts.inter(
+                    labelStyle: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                       color: selected
@@ -228,16 +228,16 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Remove Bookmark',
-            style: GoogleFonts.inter(fontWeight: FontWeight.w800)),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800)),
         content: Text(
           'Remove "${bookmark.item.title}" from your bookmarks?',
-          style: GoogleFonts.inter(fontSize: 14),
+          style: GoogleFonts.plusJakartaSans(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Cancel',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w600, color: Colors.grey)),
           ),
           TextButton(
@@ -246,7 +246,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
               ref.read(bookmarkListProvider.notifier).deleteBookmark(bookmark.id);
             },
             child: Text('Remove',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w700, color: Colors.redAccent)),
           ),
         ],
@@ -358,7 +358,7 @@ class _BookmarkCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             bookmark.typeLabel,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: _typeColor,
@@ -374,7 +374,7 @@ class _BookmarkCard extends StatelessWidget {
                       bookmark.item.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: isDark
@@ -391,7 +391,7 @@ class _BookmarkCard extends StatelessWidget {
                         bookmark.notes!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: isDark
                               ? const Color(0xFF9CA3AF)

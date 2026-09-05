@@ -135,7 +135,7 @@ class _KhutbahDetailBody extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           'Khutbah',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -191,7 +191,7 @@ class _KhutbahDetailBody extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   title,
-                  style: GoogleFonts.playfairDisplay(
+                  style: GoogleFonts.lora(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -223,7 +223,7 @@ class _KhutbahDetailBody extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         scholarName,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.white.withValues(alpha: 0.9),
@@ -280,7 +280,7 @@ class _KhutbahDetailBody extends StatelessWidget {
                           if (mosqueName.isNotEmpty)
                             Text(
                               mosqueName,
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
                                 color: isDark
@@ -291,7 +291,7 @@ class _KhutbahDetailBody extends StatelessWidget {
                           if (city.isNotEmpty)
                             Text(
                               city,
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
                                 color: isDark
                                     ? const Color(0xFF9CA3AF)
@@ -325,7 +325,7 @@ class _KhutbahDetailBody extends StatelessWidget {
                 icon: const Icon(Icons.play_circle_fill_rounded),
                 label: Text(
                   'Watch Khutbah',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                   ),
@@ -344,7 +344,7 @@ class _KhutbahDetailBody extends StatelessWidget {
                 isDark: isDark,
                 child: Text(
                   description,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     height: 1.7,
                     color: isDark
@@ -384,7 +384,7 @@ class _KhutbahDetailBody extends StatelessWidget {
                           Expanded(
                             child: Text(
                               point.toString(),
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 height: 1.6,
                                 color: isDark
@@ -460,7 +460,7 @@ class _SectionCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: GoogleFonts.playfairDisplay(
+            style: GoogleFonts.lora(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : const Color(0xFF111827),
@@ -516,7 +516,7 @@ class _ScholarCard extends StatelessWidget {
         children: [
           Text(
             'About the Scholar',
-            style: GoogleFonts.playfairDisplay(
+            style: GoogleFonts.lora(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : const Color(0xFF111827),
@@ -539,7 +539,7 @@ class _ScholarCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     name.isNotEmpty ? name[0].toUpperCase() : 'S',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: AppTheme.primaryGreen,
@@ -554,7 +554,7 @@ class _ScholarCard extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: isDark ? Colors.white : const Color(0xFF111827),
@@ -563,7 +563,7 @@ class _ScholarCard extends StatelessWidget {
                     if (title.isNotEmpty)
                       Text(
                         title,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: AppTheme.primaryGreen,
                           fontWeight: FontWeight.w500,
@@ -580,7 +580,7 @@ class _ScholarCard extends StatelessWidget {
               bio,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 height: 1.6,
                 color: isDark
@@ -600,7 +600,7 @@ class _ScholarCard extends StatelessWidget {
               icon: const Icon(Icons.person_rounded, size: 16),
               label: Text(
                 'View Scholar Profile',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),

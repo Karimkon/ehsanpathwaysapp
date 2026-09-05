@@ -83,7 +83,7 @@ class _UnauthenticatedProfile extends StatelessWidget {
 
             Text(
               'Welcome to Ehsan Pathways',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -95,7 +95,7 @@ class _UnauthenticatedProfile extends StatelessWidget {
             Text(
               'Sign in to track your learning progress, bookmark content, and personalize your experience.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: isDark
@@ -133,7 +133,7 @@ class _UnauthenticatedProfile extends StatelessWidget {
                     child: Center(
                       child: Text(
                         'Sign In',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -163,7 +163,7 @@ class _UnauthenticatedProfile extends StatelessWidget {
                 ),
                 child: Text(
                   'Create Account',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: ProfileScreen._green,
@@ -191,7 +191,7 @@ class _UnauthenticatedProfile extends StatelessWidget {
             Text(
               'All content is completely FREE\nfor the sake of Allah',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 color: isDark ? Colors.white38 : Colors.grey.shade500,
                 fontWeight: FontWeight.w500,
@@ -241,7 +241,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                       children: [
                         Text(
                           'Profile',
-                          style: GoogleFonts.playfairDisplay(
+                          style: GoogleFonts.lora(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -279,7 +279,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                             children: [
                               Text(
                                 user.name,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w800,
                                   color: Colors.white,
@@ -288,7 +288,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                               const SizedBox(height: 4),
                               Text(
                                 user.email,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.white70,
@@ -322,7 +322,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
 
                 Text(
                   'Your Library',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : const Color(0xFF111827),
@@ -395,7 +395,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
 
                 Text(
                   'Settings',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : const Color(0xFF111827),
@@ -469,7 +469,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                 Center(
                   child: Text(
                     'Ehsan Pathways v1.0.0',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       color: isDark ? Colors.white24 : Colors.grey.shade400,
                     ),
@@ -498,18 +498,18 @@ class _AuthenticatedProfile extends ConsumerWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Sign Out',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w800),
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800),
         ),
         content: Text(
           'Are you sure you want to sign out?',
-          style: GoogleFonts.inter(fontSize: 14),
+          style: GoogleFonts.plusJakartaSans(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               'Cancel',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.w600,
                 color: Colors.grey,
               ),
@@ -522,7 +522,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
             },
             child: Text(
               'Sign Out',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.w700,
                 color: Colors.redAccent,
               ),
@@ -612,7 +612,7 @@ class _QuickAccessTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white : const Color(0xFF111827),
@@ -681,7 +681,7 @@ class _SettingsTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: titleColor ??
@@ -693,7 +693,7 @@ class _SettingsTile extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
                         subtitle!,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: isDark
                               ? const Color(0xFF9CA3AF)
@@ -765,7 +765,7 @@ class _StatItem extends StatelessWidget {
         children: [
           Text(
             value,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 20,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -774,7 +774,7 @@ class _StatItem extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w500,
               color: Colors.white70,

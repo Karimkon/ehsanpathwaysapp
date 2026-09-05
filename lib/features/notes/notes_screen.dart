@@ -27,7 +27,7 @@ class NotesScreen extends ConsumerWidget {
             isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
         appBar: AppBar(
           title: Text('My Notes',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                   fontSize: 24, fontWeight: FontWeight.w700)),
           centerTitle: false,
           backgroundColor:
@@ -50,7 +50,7 @@ class NotesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           'My Notes',
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.lora(
             fontSize: 24,
             fontWeight: FontWeight.w700,
           ),
@@ -139,7 +139,7 @@ class NotesScreen extends ConsumerWidget {
 
               Text(
                 'Edit Note',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -151,13 +151,13 @@ class NotesScreen extends ConsumerWidget {
                 controller: controller,
                 maxLines: 6,
                 autofocus: true,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   color: isDark ? Colors.white : const Color(0xFF111827),
                 ),
                 decoration: InputDecoration(
                   hintText: 'Write your note...',
-                  hintStyle: GoogleFonts.inter(
+                  hintStyle: GoogleFonts.plusJakartaSans(
                     color: isDark
                         ? const Color(0xFF6B7280)
                         : const Color(0xFF9CA3AF),
@@ -200,7 +200,7 @@ class NotesScreen extends ConsumerWidget {
                   ),
                   child: Text(
                     'Save',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
@@ -220,16 +220,16 @@ class NotesScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Delete Note',
-            style: GoogleFonts.inter(fontWeight: FontWeight.w800)),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800)),
         content: Text(
           'Are you sure you want to delete this note?',
-          style: GoogleFonts.inter(fontSize: 14),
+          style: GoogleFonts.plusJakartaSans(fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Cancel',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w600, color: Colors.grey)),
           ),
           TextButton(
@@ -238,7 +238,7 @@ class NotesScreen extends ConsumerWidget {
               ref.read(noteListProvider.notifier).deleteNote(note.id);
             },
             child: Text('Delete',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                     fontWeight: FontWeight.w700, color: Colors.redAccent)),
           ),
         ],
@@ -318,7 +318,7 @@ class _NoteCard extends StatelessWidget {
                   children: [
                     Text(
                       note.typeLabel,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: _green,
@@ -326,7 +326,7 @@ class _NoteCard extends StatelessWidget {
                     ),
                     Text(
                       dateFormat.format(note.createdAt),
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 11,
                         color: isDark
                             ? const Color(0xFF6B7280)
@@ -353,7 +353,7 @@ class _NoteCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         note.formattedTimestamp,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: _gold,
@@ -383,7 +383,7 @@ class _NoteCard extends StatelessWidget {
                       children: [
                         const Icon(Icons.edit_rounded, size: 18),
                         const SizedBox(width: 8),
-                        Text('Edit', style: GoogleFonts.inter(fontSize: 14)),
+                        Text('Edit', style: GoogleFonts.plusJakartaSans(fontSize: 14)),
                       ],
                     ),
                   ),
@@ -395,7 +395,7 @@ class _NoteCard extends StatelessWidget {
                             size: 18, color: Colors.redAccent),
                         const SizedBox(width: 8),
                         Text('Delete',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14, color: Colors.redAccent)),
                       ],
                     ),
@@ -409,7 +409,7 @@ class _NoteCard extends StatelessWidget {
           // Note content
           Text(
             note.content,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
               color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),

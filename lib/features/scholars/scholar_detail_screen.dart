@@ -139,7 +139,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                             ),
                             child: Text(
                               scholar.title!,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -148,7 +148,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                           ),
                         Text(
                           scholar.name,
-                          style: GoogleFonts.playfairDisplay(
+                          style: GoogleFonts.lora(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -228,7 +228,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                   children: [
                     Text(
                       'About',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: isDark
@@ -239,7 +239,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                     const SizedBox(height: 8),
                     Text(
                       scholar.bio!,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: isDark
@@ -326,7 +326,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
       child: Center(
         child: Text(
           name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 80,
             fontWeight: FontWeight.w700,
             color: Colors.white.withValues(alpha: 0.3),
@@ -372,7 +372,7 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           count.toString(),
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 18,
             fontWeight: FontWeight.w800,
             color: isDark ? Colors.white : const Color(0xFF111827),
@@ -381,7 +381,7 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 11,
             fontWeight: FontWeight.w500,
             color: isDark
@@ -453,11 +453,11 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
             isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
         indicatorColor: AppTheme.primaryGreen,
         indicatorWeight: 3,
-        labelStyle: GoogleFonts.inter(
+        labelStyle: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w700,
         ),
-        unselectedLabelStyle: GoogleFonts.inter(
+        unselectedLabelStyle: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),

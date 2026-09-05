@@ -75,7 +75,7 @@ class _ArticlesScreenState extends ConsumerState<ArticlesScreen> {
       appBar: AppBar(
         title: Text(
           'Articles',
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.lora(
             fontSize: 24,
             fontWeight: FontWeight.w700,
           ),
@@ -89,10 +89,10 @@ class _ArticlesScreenState extends ConsumerState<ArticlesScreen> {
             child: TextField(
               controller: _searchController,
               onChanged: _onSearchChanged,
-              style: GoogleFonts.inter(fontSize: 14),
+              style: GoogleFonts.plusJakartaSans(fontSize: 14),
               decoration: InputDecoration(
                 hintText: 'Search articles...',
-                hintStyle: GoogleFonts.inter(
+                hintStyle: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   color: isDark
                       ? const Color(0xFF9CA3AF)
@@ -306,7 +306,7 @@ class _ArticleListItem extends StatelessWidget {
                         article.title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           height: 1.35,
@@ -324,7 +324,7 @@ class _ArticleListItem extends StatelessWidget {
                           article.scholar!.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: isDark

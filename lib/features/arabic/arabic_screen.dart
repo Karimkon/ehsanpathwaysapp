@@ -119,7 +119,7 @@ class _ArabicScreenState extends ConsumerState<ArabicScreen> {
                       const SizedBox(height: 10),
                       Text(
                         'Arabic Learning',
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.lora(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -128,7 +128,7 @@ class _ArabicScreenState extends ConsumerState<ArabicScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'Master the language of the Quran',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.85),
                         ),
@@ -175,7 +175,7 @@ class _ArabicScreenState extends ConsumerState<ArabicScreen> {
                           ),
                           child: Text(
                             _levels[i],
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: selected
@@ -349,7 +349,7 @@ class _CourseCard extends StatelessWidget {
                         children: [
                           Text(
                             title,
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: isDark
@@ -393,7 +393,7 @@ class _CourseCard extends StatelessWidget {
                     description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       color: isDark
                           ? const Color(0xFF9CA3AF)

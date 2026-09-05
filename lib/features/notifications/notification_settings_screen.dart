@@ -30,7 +30,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
         title: Text(
           'Notifications',
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.lora(
             fontWeight: FontWeight.w700,
             color: Colors.white,
             fontSize: 20,
@@ -87,7 +87,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               settings.error!,
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
                                   color: Colors.red.shade700),
                             ),
@@ -106,14 +106,14 @@ class NotificationSettingsScreen extends ConsumerWidget {
                       color: _green, size: 22),
                   title: Text(
                     'Calculation Method',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: isDark ? Colors.white : _green900),
                   ),
                   subtitle: Text(
                     settings.calculationMethod.label,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
                         color: Colors.grey.shade500),
                   ),
@@ -130,7 +130,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                       const EdgeInsets.fromLTRB(16, 12, 16, 4),
                   child: Text(
                     'Enable notifications for each prayer',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       color: Colors.grey.shade500,
                     ),
@@ -212,14 +212,14 @@ class NotificationSettingsScreen extends ConsumerWidget {
                       color: Color(0xFF7C3AED), size: 22),
                   title: Text(
                     'Reminder Time',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: isDark ? Colors.white : _green900),
                   ),
                   subtitle: Text(
                     settings.learningReminderTime.format(context),
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                         fontSize: 12, color: Colors.grey.shade500),
                   ),
                   trailing: Icon(Icons.chevron_right,
@@ -316,7 +316,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
               child: Text(
                 'Calculation Method',
-                style: GoogleFonts.playfairDisplay(
+                style: GoogleFonts.lora(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: _green900,
@@ -331,7 +331,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                   return ListTile(
                     title: Text(
                       method.label,
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontWeight: isSelected
                             ? FontWeight.w600
                             : FontWeight.normal,
@@ -340,7 +340,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                     ),
                     subtitle: Text(
                       method.region,
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                           fontSize: 12, color: Colors.grey.shade500),
                     ),
                     trailing: isSelected
@@ -383,7 +383,7 @@ class _SectionHeader extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           title,
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: NotificationSettingsScreen._green,
@@ -460,7 +460,7 @@ class _SwitchTile extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: isDark ? Colors.white : const Color(0xFF14532D),
@@ -468,7 +468,7 @@ class _SwitchTile extends StatelessWidget {
       ),
       subtitle: Text(
         subtitle,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: 12,
           color: Colors.grey.shade500,
         ),
@@ -501,7 +501,7 @@ class _LocationTile extends StatelessWidget {
       ),
       title: Text(
         settings.hasLocation ? 'Location Detected' : 'Detect My Location',
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: isDark ? Colors.white : const Color(0xFF14532D),
@@ -511,7 +511,7 @@ class _LocationTile extends StatelessWidget {
         settings.hasLocation
             ? settings.locationLabel
             : 'Required for accurate prayer times',
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: 12,
           color: settings.hasLocation
               ? Colors.blue.shade600
@@ -525,7 +525,7 @@ class _LocationTile extends StatelessWidget {
               onPressed: onDetect,
               child: Text(
                 settings.hasLocation ? 'Update' : 'Detect',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   color: NotificationSettingsScreen._green,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
@@ -549,7 +549,7 @@ class _LocationPrompt extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'Location needed for prayer times',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             color: Colors.grey.shade600,
           ),
@@ -560,7 +560,7 @@ class _LocationPrompt extends StatelessWidget {
           icon: const Icon(Icons.gps_fixed_rounded, size: 18),
           label: Text(
             'Detect My Location',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: NotificationSettingsScreen._green,
@@ -596,7 +596,7 @@ class _PrayerTile extends StatelessWidget {
       ),
       title: Text(
         entry.name,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: 13,
           fontWeight: FontWeight.w500,
           color: isDark ? Colors.white : const Color(0xFF14532D),
@@ -604,7 +604,7 @@ class _PrayerTile extends StatelessWidget {
       ),
       subtitle: Text(
         PrayerTimesService.formatTime(entry.time),
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: 12,
           color: Colors.grey.shade500,
         ),
@@ -646,7 +646,7 @@ class _TodayPrayerCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 "Today's Prayer Times",
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
@@ -673,7 +673,7 @@ class _TodayPrayerCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         e.name,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           color: Colors.white,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -683,7 +683,7 @@ class _TodayPrayerCard extends StatelessWidget {
                   ),
                   Text(
                     PrayerTimesService.formatTime(e.time),
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       color: Colors.white,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

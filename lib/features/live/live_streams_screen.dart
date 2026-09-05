@@ -149,7 +149,7 @@ class _LiveStreamsScreenState extends ConsumerState<LiveStreamsScreen> {
                             const SizedBox(width: 12),
                             Text(
                               'Live Streams',
-                              style: GoogleFonts.playfairDisplay(
+                              style: GoogleFonts.lora(
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -160,7 +160,7 @@ class _LiveStreamsScreenState extends ConsumerState<LiveStreamsScreen> {
                         const SizedBox(height: 4),
                         Text(
                           'Watch Islamic content live',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: Colors.white.withValues(alpha: 0.8),
                           ),
@@ -337,7 +337,7 @@ class _SectionHeaderState extends State<_SectionHeader>
           const SizedBox(width: 6),
           Text(
             widget.label,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w800,
               color: widget.iconColor,
@@ -433,7 +433,7 @@ class _StreamCard extends StatelessWidget {
                         title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: isDark
@@ -446,7 +446,7 @@ class _StreamCard extends StatelessWidget {
                         const SizedBox(height: 3),
                         Text(
                           scholarName,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: AppTheme.primaryGreen,
@@ -465,7 +465,7 @@ class _StreamCard extends StatelessWidget {
                 description,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   color: isDark
                       ? const Color(0xFF9CA3AF)
@@ -525,7 +525,7 @@ class _StreamCard extends StatelessWidget {
                     icon: const Icon(Icons.play_arrow_rounded, size: 16),
                     label: Text(
                       'Watch',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),

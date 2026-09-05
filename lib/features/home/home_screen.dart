@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:async';
 
 import 'package:ehsan_pathways/features/home/home_provider.dart';
+import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_library_provider.dart';
 import 'package:ehsan_pathways/features/prayer/prayer_provider.dart';
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
 import 'package:ehsan_pathways/shared/widgets/content_card.dart';
@@ -232,7 +233,7 @@ class _SliverAppBar extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             'Ehsan Pathways',
-            style: GoogleFonts.playfairDisplay(
+            style: GoogleFonts.lora(
               fontSize: 22,
               fontWeight: FontWeight.w700,
               color: isDark ? Colors.white : const Color(0xFF111827),
@@ -346,7 +347,7 @@ class _GreetingBanner extends StatelessWidget {
                 children: [
                   Text(
                     'Assalamu Alaikum',
-                    style: GoogleFonts.playfairDisplay(
+                    style: GoogleFonts.lora(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white : const Color(0xFF111827),
@@ -356,7 +357,7 @@ class _GreetingBanner extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     info.greeting,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: _primaryGreen,
@@ -366,7 +367,7 @@ class _GreetingBanner extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     info.subtitle,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: isDark
@@ -523,7 +524,7 @@ class _FeaturedVideoHero extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         'Featured',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -555,7 +556,7 @@ class _FeaturedVideoHero extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           video.formattedDuration,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -604,7 +605,7 @@ class _FeaturedVideoHero extends StatelessWidget {
                         video.title,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 17,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -631,7 +632,7 @@ class _FeaturedVideoHero extends StatelessWidget {
                               video.scholar.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white.withValues(alpha: 0.85),
@@ -772,7 +773,7 @@ class _CategoryChip extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
@@ -958,7 +959,7 @@ class _ScholarsRow extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
@@ -969,7 +970,7 @@ class _ScholarsRow extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     '${s.videoCount} videos',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: isDark
@@ -1050,7 +1051,7 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
                 Expanded(
                   child: Text(
                     'Set up prayer times for your location',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: _primaryGreenDark,
@@ -1105,7 +1106,7 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
                     children: [
                       Text(
                         'Next: ${next.name}',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -1116,7 +1117,7 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
                         'in ${_remaining(remaining)}  •  ${data.locationLabel}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: Colors.white.withValues(alpha: 0.75),
@@ -1127,7 +1128,7 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
                   const Spacer(),
                   Text(
                     PrayerTimesService.formatTime(next.time),
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
                       color: _accentGold,
@@ -1233,7 +1234,7 @@ class _QuickActionItem extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 label,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: isDark
@@ -1436,12 +1437,14 @@ class _HomeError extends StatelessWidget {
 // Daily Hadith Card
 // ===========================================================================
 
-class _DailyHadithCard extends StatelessWidget {
+class _DailyHadithCard extends ConsumerWidget {
   const _DailyHadithCard({required this.isDark});
 
   final bool isDark;
 
-  // Rotating collection of beautiful hadith/quotes
+  // Fallback only. The card normally shows the hadith of the day served by the
+  // API, which is drawn from the full collections and is the same on every
+  // device; these are what it falls back to with no connection.
   static const _hadithCollection = [
     (
       arabic: 'مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الْجَنَّةِ',
@@ -1481,10 +1484,27 @@ class _DailyHadithCard extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
-    // Pick a hadith based on day of year for daily rotation
+  Widget build(BuildContext context, WidgetRef ref) {
     final dayIndex = DateTime.now().difference(DateTime(2026)).inDays;
-    final hadith = _hadithCollection[dayIndex % _hadithCollection.length];
+    final offline = _hadithCollection[dayIndex % _hadithCollection.length];
+
+    // Prefer the served hadith; fall back to the bundled one while it loads or
+    // if the request fails, so the card is never empty.
+    final daily = ref.watch(dailyHadithProvider).value;
+
+    final hadith = daily == null
+        ? offline
+        : (
+            arabic: (daily.arabicText ?? '').trim().isEmpty
+                ? offline.arabic
+                : daily.arabicText!.trim(),
+            english: (daily.englishText ?? '').trim().isEmpty
+                ? offline.english
+                : daily.englishText!.trim(),
+            source: daily.bookName == null
+                ? offline.source
+                : '${daily.bookName} #${daily.number}',
+          );
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
@@ -1535,7 +1555,7 @@ class _DailyHadithCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   'Daily Hadith',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: _accentGold,
@@ -1554,7 +1574,7 @@ class _DailyHadithCard extends StatelessWidget {
                   ),
                   child: Text(
                     hadith.source,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: Colors.white.withValues(alpha: 0.7),
@@ -1596,7 +1616,7 @@ class _DailyHadithCard extends StatelessWidget {
             // English translation
             Text(
               '"${hadith.english}"',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.white.withValues(alpha: 0.85),
@@ -1712,7 +1732,7 @@ class _DailyDuaCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Daily Dua',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: _accentGold,
@@ -1731,7 +1751,7 @@ class _DailyDuaCard extends StatelessWidget {
                   ),
                   child: Text(
                     dua.occasion,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: isDark
@@ -1763,7 +1783,7 @@ class _DailyDuaCard extends StatelessWidget {
             // English
             Text(
               dua.english,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.italic,
@@ -1778,7 +1798,7 @@ class _DailyDuaCard extends StatelessWidget {
             // Reference
             Text(
               dua.reference,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: isDark
@@ -1854,7 +1874,7 @@ class _IslamicQuoteSection extends StatelessWidget {
             Text(
               '"And cooperate in righteousness and piety"',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.italic,
@@ -1867,7 +1887,7 @@ class _IslamicQuoteSection extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               'Surah Al-Ma\'idah 5:2',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: isDark
@@ -1879,7 +1899,7 @@ class _IslamicQuoteSection extends StatelessWidget {
             Text(
               'Made with love for the Ummah',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: isDark
@@ -1961,8 +1981,8 @@ class _DiscoverTile extends StatelessWidget {
               child: Icon(item.icon, color: item.color, size: 24),
             ),
             const SizedBox(height: 8),
-            Text(item.label, style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white : const Color(0xFF111827))),
-            Text(item.sublabel, style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey.shade500), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(item.label, style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white : const Color(0xFF111827))),
+            Text(item.sublabel, style: GoogleFonts.plusJakartaSans(fontSize: 10, color: Colors.grey.shade500), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
           ],
         ),
       ),

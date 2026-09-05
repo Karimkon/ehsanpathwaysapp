@@ -145,7 +145,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
                       ),
                       child: Text(
                         _dhikrList[i].transliteration,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: selected
@@ -172,7 +172,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
             const SizedBox(height: 4),
             Text(
               _current.meaning,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 fontStyle: FontStyle.italic,
                 color: isDark ? Colors.white54 : const Color(0xFF6B7280),
@@ -220,7 +220,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
                       children: [
                         Text(
                           '$_count',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 68,
                             fontWeight: FontWeight.w800,
                             color: Colors.white,
@@ -229,7 +229,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
                         ),
                         Text(
                           'of ${_current.target}',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.white.withValues(alpha: 0.8),
@@ -244,7 +244,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
             const SizedBox(height: 16),
             Text(
               'Tap anywhere on the circle to count',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 color: isDark ? Colors.white38 : const Color(0xFF9CA3AF),
               ),
@@ -297,7 +297,7 @@ class _StatTile extends StatelessWidget {
           children: [
             Text(
               value,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
                 color: _green,
@@ -306,7 +306,7 @@ class _StatTile extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               label,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white54 : const Color(0xFF6B7280),

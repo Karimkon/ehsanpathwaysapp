@@ -46,7 +46,7 @@ class CategoryVideosScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           name,
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.lora(
             fontSize: 22,
             fontWeight: FontWeight.w700,
           ),

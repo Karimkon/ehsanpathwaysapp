@@ -78,7 +78,7 @@ class PathwaysScreen extends ConsumerWidget {
                               const SizedBox(width: 6),
                               Text(
                                 'Learning Pathways',
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   color: _gold,
@@ -90,7 +90,7 @@ class PathwaysScreen extends ConsumerWidget {
                         const SizedBox(height: 10),
                         Text(
                           'Structured Journeys\nto Knowledge',
-                          style: GoogleFonts.playfairDisplay(
+                          style: GoogleFonts.lora(
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -248,7 +248,7 @@ class _PathwayCard extends StatelessWidget {
                       ),
                       child: Text(
                         pathway.levelLabel,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -276,7 +276,7 @@ class _PathwayCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             '${pathway.totalItems} items',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
@@ -316,7 +316,7 @@ class _PathwayCard extends StatelessWidget {
                     pathway.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
                       color:
@@ -331,7 +331,7 @@ class _PathwayCard extends StatelessWidget {
                       pathway.description!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: isDark
                             ? const Color(0xFF9CA3AF)
@@ -352,7 +352,7 @@ class _PathwayCard extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           '~${pathway.estimatedHours}h estimated',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: isDark

@@ -158,7 +158,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Sign in to take notes',
-              style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
           backgroundColor: _primaryGreen,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -310,7 +310,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
               padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
               child: Text(
                 video.title,
-                style: GoogleFonts.playfairDisplay(
+                style: GoogleFonts.lora(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -402,7 +402,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
               title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.white),
@@ -435,7 +435,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
                   color: isDark ? Colors.white24 : Colors.black26),
               const SizedBox(height: 10),
               Text('Video unavailable',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark ? Colors.white38 : Colors.black38)),
             ],
@@ -569,7 +569,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(scholar.name,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: isDark
@@ -577,7 +577,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
                               : const Color(0xFF111827))),
                   const SizedBox(height: 3),
                   Text('View scholar profile',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: _primaryGreen)),
@@ -601,7 +601,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('About this video',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -627,7 +627,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
               children: [
                 Text(
                   _descriptionExpanded ? 'Show less' : 'Read more',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: _primaryGreen),
@@ -648,7 +648,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
     );
   }
 
-  TextStyle _descStyle(bool isDark) => GoogleFonts.inter(
+  TextStyle _descStyle(bool isDark) => GoogleFonts.plusJakartaSans(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         height: 1.6,
@@ -664,7 +664,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Topics',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -788,7 +788,7 @@ class _ActionButton extends StatelessWidget {
             const SizedBox(width: 7),
             Text(
               label,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: fg,
@@ -893,7 +893,7 @@ class _BookmarkActionButtonState
             const SizedBox(width: 7),
             Text(
               _isBookmarked ? 'Saved' : 'Save',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                   fontSize: 13, fontWeight: FontWeight.w600, color: fg),
             ),
           ],
@@ -948,7 +948,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
         SnackBar(
           content: Text(
             ok ? 'Note saved!' : 'Failed to save note',
-            style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
           ),
           backgroundColor: ok ? _primaryGreen : Colors.red,
           behavior: SnackBarBehavior.floating,
@@ -1001,7 +1001,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
                   color: _primaryGreen, size: 22),
               const SizedBox(width: 8),
               Text('Quick Note',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
                       color: isDark ? Colors.white : const Color(0xFF111827))),
@@ -1014,7 +1014,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
             widget.video.title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 color: isDark ? Colors.white54 : Colors.grey.shade500),
           ),
@@ -1029,7 +1029,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
             minLines: 3,
             decoration: InputDecoration(
               hintText: 'Write your note here...',
-              hintStyle: GoogleFonts.inter(
+              hintStyle: GoogleFonts.plusJakartaSans(
                   color: isDark ? Colors.white38 : Colors.grey.shade400),
               filled: true,
               fillColor: isDark
@@ -1041,7 +1041,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
               ),
               contentPadding: const EdgeInsets.all(14),
             ),
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               color: isDark ? Colors.white : const Color(0xFF111827),
             ),
@@ -1079,7 +1079,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
                     const SizedBox(width: 8),
                     Text(
                       'Link to timestamp $_timestampLabel',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: isDark
@@ -1115,7 +1115,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
                           strokeWidth: 2, color: Colors.white),
                     )
                   : Text('Save Note',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.w700, fontSize: 15)),
             ),
           ),
@@ -1180,7 +1180,7 @@ class _MoreOptionsSheet extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Link copied!',
-                      style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
+                      style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
                   backgroundColor: _primaryGreen,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
@@ -1240,7 +1240,7 @@ class _MoreOption extends StatelessWidget {
             ),
             const SizedBox(width: 14),
             Text(label,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: c)),
@@ -1322,7 +1322,7 @@ class _MetaItem extends StatelessWidget {
         Icon(icon, size: 15, color: c),
         const SizedBox(width: 4),
         Text(label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
                 fontSize: 13, fontWeight: FontWeight.w500, color: c)),
       ],
     );

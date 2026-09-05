@@ -214,7 +214,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     const SizedBox(height: 14),
                     Text(
                       'Ehsan Pathways',
-                      style: GoogleFonts.playfairDisplay(
+                      style: GoogleFonts.lora(
                         fontSize: 26,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
@@ -224,7 +224,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     const SizedBox(height: 4),
                     Text(
                       'Begin your path of knowledge',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: Colors.white70,
                         fontWeight: FontWeight.w400,
@@ -249,7 +249,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                     children: [
                       Text(
                         'Join Ehsan Pathways',
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.lora(
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
                           color: _green900,
@@ -263,7 +263,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                           const SizedBox(width: 6),
                           Text(
                             'Access FREE Islamic knowledge',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 13,
                               color: Colors.grey.shade600,
                               fontWeight: FontWeight.w500,
@@ -394,7 +394,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Text(
                               'or continue with',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
                                 color: Colors.grey.shade500,
                               ),
@@ -445,7 +445,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                         children: [
                           Text(
                             'Already have an account? ',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               color: Colors.grey.shade600,
                             ),
@@ -454,7 +454,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             onTap: () => Navigator.of(context).pop(),
                             child: Text(
                               'Sign In',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: _green500,
@@ -486,7 +486,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       Center(
                         child: Text(
                           'All content is completely FREE',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             color: Colors.grey.shade500,
                             fontWeight: FontWeight.w500,
@@ -620,7 +620,7 @@ class _StyledField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: Colors.grey.shade700,
@@ -633,11 +633,11 @@ class _StyledField extends StatelessWidget {
           keyboardType: keyboardType,
           validator: validator,
           textCapitalization: textCapitalization,
-          style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey.shade900),
+          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: Colors.grey.shade900),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle:
-                GoogleFonts.poppins(fontSize: 13, color: Colors.grey.shade400),
+                GoogleFonts.plusJakartaSans(fontSize: 13, color: Colors.grey.shade400),
             prefixIcon:
                 Icon(icon, size: 20, color: const Color(0xFF16A34A)),
             suffixIcon: suffixIcon,
@@ -720,7 +720,7 @@ class _GradientButton extends StatelessWidget {
                   )
                 : Text(
                     label,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -757,7 +757,7 @@ class _ErrorCard extends StatelessWidget {
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 color: Colors.red.shade700,
                 fontWeight: FontWeight.w500,
@@ -806,7 +806,7 @@ class _AppleButton extends StatelessWidget {
                   const SizedBox(width: 10),
                   Text(
                     'Sign in with Apple',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
@@ -863,7 +863,7 @@ class _GoogleButton extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     'Continue with Google',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: Colors.grey.shade800,

@@ -215,7 +215,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                       ),
                       child: Text(
                         'Skip',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -322,7 +322,7 @@ class _PageContent extends StatelessWidget {
           Text(
             page.title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.playfairDisplay(
+            style: GoogleFonts.lora(
               fontSize: 32,
               fontWeight: FontWeight.w700,
               color: Colors.white,
@@ -335,7 +335,7 @@ class _PageContent extends StatelessWidget {
           Text(
             page.subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               color: Colors.white.withValues(alpha: 0.85),
               height: 1.6,
@@ -379,7 +379,7 @@ class _NextButton extends StatelessWidget {
           children: [
             Text(
               'Next',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF052E16),
@@ -430,7 +430,7 @@ class _LastPageActions extends StatelessWidget {
             child: Text(
               errorMessage!,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                   fontSize: 13, color: Colors.red.shade200),
             ),
           ),
@@ -470,7 +470,7 @@ class _LastPageActions extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
                 'or',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   color: Colors.white.withValues(alpha: 0.6),
                 ),
@@ -512,7 +512,7 @@ class _LastPageActions extends StatelessWidget {
         Text(
           'By continuing, you agree to our Terms & Privacy Policy',
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 11,
             color: Colors.white.withValues(alpha: 0.5),
           ),
@@ -568,7 +568,7 @@ class _SocialButton extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               label,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: textColor,

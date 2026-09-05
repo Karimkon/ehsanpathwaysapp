@@ -103,7 +103,7 @@ class _PodcastsScreenState extends ConsumerState<PodcastsScreen> {
             const SizedBox(width: 12),
             Text(
               'Podcasts',
-              style: GoogleFonts.playfairDisplay(
+              style: GoogleFonts.lora(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : const Color(0xFF111827),
@@ -120,14 +120,14 @@ class _PodcastsScreenState extends ConsumerState<PodcastsScreen> {
             child: TextField(
               controller: _searchController,
               onChanged: _onSearchChanged,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: isDark ? Colors.white : const Color(0xFF111827),
               ),
               decoration: InputDecoration(
                 hintText: 'Search podcasts...',
-                hintStyle: GoogleFonts.inter(
+                hintStyle: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isDark
@@ -381,7 +381,7 @@ class _PodcastListItemState extends State<_PodcastListItem>
                       podcast.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         height: 1.35,
@@ -398,7 +398,7 @@ class _PodcastListItemState extends State<_PodcastListItem>
                         podcast.scholar!.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: isDark
@@ -419,7 +419,7 @@ class _PodcastListItemState extends State<_PodcastListItem>
                         const SizedBox(width: 4),
                         Text(
                           podcast.formattedDuration,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: _podcastPurple,
@@ -440,7 +440,7 @@ class _PodcastListItemState extends State<_PodcastListItem>
                           const SizedBox(width: 10),
                           Text(
                             'Ep. ${podcast.episodeNumber}',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: isDark

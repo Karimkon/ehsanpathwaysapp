@@ -210,7 +210,7 @@ class _PodcastDetailScreenState extends ConsumerState<PodcastDetailScreen> {
                 // -- Title --------------------------------------------------
                 Text(
                   podcast.title,
-                  style: GoogleFonts.playfairDisplay(
+                  style: GoogleFonts.lora(
                     fontSize: 26,
                     fontWeight: FontWeight.w800,
                     height: 1.25,
@@ -616,7 +616,7 @@ class _ScholarRow extends StatelessWidget {
             children: [
               Text(
                 scholar.name,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -626,7 +626,7 @@ class _ScholarRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   'Episode $episodeNumber',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: _podcastPurple,
@@ -793,7 +793,7 @@ class _SeekBar extends StatelessWidget {
                 children: [
                   Text(
                     _formatDuration(position),
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isDark
@@ -803,7 +803,7 @@ class _SeekBar extends StatelessWidget {
                   ),
                   Text(
                     _formatDuration(duration),
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isDark
@@ -957,7 +957,7 @@ class _ControlButton extends StatelessWidget {
               bottom: 2,
               child: Text(
                 label,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
                   color: color,
@@ -995,7 +995,7 @@ class _ExpandableDescription extends StatelessWidget {
       children: [
         Text(
           'About this Episode',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w800,
             color: isDark ? Colors.white : const Color(0xFF111827),
@@ -1008,7 +1008,7 @@ class _ExpandableDescription extends StatelessWidget {
             description,
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
               color: isDark
@@ -1019,7 +1019,7 @@ class _ExpandableDescription extends StatelessWidget {
           ),
           secondChild: Text(
             description,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
               color: isDark
@@ -1041,7 +1041,7 @@ class _ExpandableDescription extends StatelessWidget {
             children: [
               Text(
                 isExpanded ? 'Show less' : 'Read more',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: _podcastPurple,
@@ -1141,7 +1141,7 @@ class _RelatedEpisodeItem extends StatelessWidget {
                     podcast.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       height: 1.35,
@@ -1161,7 +1161,7 @@ class _RelatedEpisodeItem extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         podcast.formattedDuration,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: _podcastPurple,
@@ -1171,7 +1171,7 @@ class _RelatedEpisodeItem extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'Ep. ${podcast.episodeNumber}',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                             color: isDark

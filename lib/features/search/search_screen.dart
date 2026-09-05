@@ -141,13 +141,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         controller: _controller,
                         focusNode: _focusNode,
                         onChanged: _onSearchChanged,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 15,
                           color: isDark ? Colors.white : const Color(0xFF111827),
                         ),
                         decoration: InputDecoration(
                           hintText: 'Search for Islamic knowledge...',
-                          hintStyle: GoogleFonts.inter(
+                          hintStyle: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             color: isDark
                                 ? const Color(0xFF6B7280)
@@ -381,7 +381,7 @@ class _SearchResultTile extends StatelessWidget {
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white : const Color(0xFF111827),
@@ -394,7 +394,7 @@ class _SearchResultTile extends StatelessWidget {
                       subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: isDark
@@ -452,7 +452,7 @@ class _ScholarResultTile extends StatelessWidget {
             Expanded(
               child: Text(
                 name,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : const Color(0xFF111827),

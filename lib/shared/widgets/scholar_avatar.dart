@@ -195,7 +195,7 @@ class ScholarAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         _initials,
-        style: GoogleFonts.inter(
+        style: GoogleFonts.plusJakartaSans(
           fontSize: _fontSize,
           fontWeight: FontWeight.w700,
           color: Colors.white,

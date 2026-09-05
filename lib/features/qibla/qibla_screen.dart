@@ -142,7 +142,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
               const SizedBox(height: 8),
               Text(
                 _locationLabel ?? '',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white60 : const Color(0xFF6B7280),
@@ -151,7 +151,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
               const SizedBox(height: 8),
               Text(
                 '${bearing.toStringAsFixed(0)}° from North',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: _green,
@@ -186,7 +186,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
                       Expanded(
                         child: Text(
                           'Compass sensor unavailable. Face ${bearing.toStringAsFixed(0)}° from North (use a physical compass) to face the Qibla.',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color:
@@ -326,7 +326,7 @@ class _CompassDial extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Text(
           label,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 18,
             fontWeight: FontWeight.w800,
             color: color ??
@@ -389,7 +389,7 @@ class _AlignmentHint extends StatelessWidget {
                 : diff > 0
                     ? 'Turn right ${diff.abs().toStringAsFixed(0)}°'
                     : 'Turn left ${diff.abs().toStringAsFixed(0)}°',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w700,
               color: aligned

@@ -53,7 +53,7 @@ class _ScholarsScreenState extends ConsumerState<ScholarsScreen> {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
               child: Text(
                 'Scholars',
-                style: GoogleFonts.playfairDisplay(
+                style: GoogleFonts.lora(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : const Color(0xFF111827),
@@ -64,7 +64,7 @@ class _ScholarsScreenState extends ConsumerState<ScholarsScreen> {
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
               child: Text(
                 'Learn from trusted Islamic scholars',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isDark
@@ -94,10 +94,10 @@ class _ScholarsScreenState extends ConsumerState<ScholarsScreen> {
                 child: TextField(
                   controller: _searchController,
                   onChanged: (value) => setState(() => _searchQuery = value),
-                  style: GoogleFonts.inter(fontSize: 14),
+                  style: GoogleFonts.plusJakartaSans(fontSize: 14),
                   decoration: InputDecoration(
                     hintText: 'Search scholars...',
-                    hintStyle: GoogleFonts.inter(
+                    hintStyle: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark
                           ? const Color(0xFF6B7280)
@@ -299,7 +299,7 @@ class _ScholarCardState extends State<_ScholarCard>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white : const Color(0xFF111827),
@@ -314,7 +314,7 @@ class _ScholarCardState extends State<_ScholarCard>
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.accentGold,
@@ -383,7 +383,7 @@ class _CountChip extends StatelessWidget {
         const SizedBox(width: 3),
         Text(
           count.toString(),
-          style: GoogleFonts.inter(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),

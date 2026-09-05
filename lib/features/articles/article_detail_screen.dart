@@ -214,7 +214,7 @@ class _ArticleDetailBody extends ConsumerWidget {
                   // Title
                   Text(
                     article.title,
-                    style: GoogleFonts.playfairDisplay(
+                    style: GoogleFonts.lora(
                       fontSize: 26,
                       fontWeight: FontWeight.w800,
                       height: 1.3,
@@ -241,7 +241,7 @@ class _ArticleDetailBody extends ConsumerWidget {
                             children: [
                               Text(
                                 article.scholar!.name,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   color: isDark
@@ -254,7 +254,7 @@ class _ArticleDetailBody extends ConsumerWidget {
                                   padding: const EdgeInsets.only(top: 2),
                                   child: Text(
                                     dateFormat.format(article.publishedAt!),
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                       color: isDark
@@ -335,28 +335,28 @@ class _ArticleDetailBody extends ConsumerWidget {
                       color: isDark
                           ? const Color(0xFFD1D5DB)
                           : const Color(0xFF374151),
-                      fontFamily: GoogleFonts.inter().fontFamily,
+                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                       margin: Margins.zero,
                       padding: HtmlPaddings.zero,
                     ),
                     'h1': Style(
                       fontSize: FontSize(24),
                       fontWeight: FontWeight.w800,
-                      fontFamily: GoogleFonts.playfairDisplay().fontFamily,
+                      fontFamily: GoogleFonts.lora().fontFamily,
                       color: isDark ? Colors.white : const Color(0xFF111827),
                       margin: Margins.only(top: 24, bottom: 12),
                     ),
                     'h2': Style(
                       fontSize: FontSize(20),
                       fontWeight: FontWeight.w700,
-                      fontFamily: GoogleFonts.playfairDisplay().fontFamily,
+                      fontFamily: GoogleFonts.lora().fontFamily,
                       color: isDark ? Colors.white : const Color(0xFF111827),
                       margin: Margins.only(top: 20, bottom: 10),
                     ),
                     'h3': Style(
                       fontSize: FontSize(18),
                       fontWeight: FontWeight.w700,
-                      fontFamily: GoogleFonts.inter().fontFamily,
+                      fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                       color: isDark ? Colors.white : const Color(0xFF111827),
                       margin: Margins.only(top: 18, bottom: 8),
                     ),
@@ -545,7 +545,7 @@ class _RelatedArticleCard extends StatelessWidget {
                       article.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         height: 1.3,
@@ -558,7 +558,7 @@ class _RelatedArticleCard extends StatelessWidget {
                     if (article.readingTimeMinutes != null)
                       Text(
                         '${article.readingTimeMinutes} min read',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: isDark
@@ -629,7 +629,7 @@ class _ArticleBookmarkButtonState
         SnackBar(
           content: Text(
             result ? 'Bookmarked!' : 'Bookmark removed',
-            style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
           ),
           backgroundColor: AppTheme.primaryGreen,
           behavior: SnackBarBehavior.floating,
