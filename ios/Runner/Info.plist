@@ -64,6 +64,12 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+	<!-- Google Sign-In configuration. Without GIDClientID the native SDK
+	     raises an uncatchable exception and the app crashes. -->
+	<key>GIDClientID</key>
+	<string>246875707165-o7ipce8cf6e3t5aih8p99cu4eqp7g50m.apps.googleusercontent.com</string>
+	<key>GIDServerClientID</key>
+	<string>246875707165-0sbf8f8thrs14b9h73fh2l4lm6g0ecip.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

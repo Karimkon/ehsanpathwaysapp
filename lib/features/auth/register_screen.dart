@@ -1,13 +1,11 @@
-import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
+import 'package:ehsan_pathways/core/services/social_sign_in_service.dart';
 
 /// A beautiful registration screen mirroring the login screen's aesthetic
 /// with an Islamic-inspired gradient header and warm design.
@@ -39,7 +37,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   // -- Colours ----------------------------------------------------------------
   static const _green500 = Color(0xFF16A34A);
-  static const _green700 = Color(0xFF15803D);
   static const _green900 = Color(0xFF14532D);
   static const _gold = Color(0xFFF59E0B);
 
@@ -69,7 +66,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authProvider.notifier).register(
+    await ref
+        .read(authProvider.notifier)
+        .register(
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
           password: _passwordController.text,
@@ -81,90 +80,49 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
     setState(() {
       _isGoogleLoading = true;
       _googleError = null;
+      _appleError = null;
     });
-    try {
-      final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
-      // Sign out first to always show the account picker
-      await googleSignIn.signOut();
-      final account = await googleSignIn.signIn();
-      if (account == null) {
-        // User cancelled
-        setState(() => _isGoogleLoading = false);
-        return;
-      }
-      final auth = await account.authentication;
-      final idToken = auth.idToken;
-      if (idToken == null) {
-        throw Exception(
-          'Google Sign-In is not fully configured. '
-          'Please enable Google Sign-In in Firebase Console > '
-          'Authentication > Sign-in method.',
-        );
-      }
-
-      await ref.read(authProvider.notifier).socialLogin(
-            provider: 'google',
-            token: idToken,
-          );
-
-      if (mounted) context.go('/');
-    } on PlatformException catch (e) {
-      setState(() {
-        _googleError = e.code == 'sign_in_canceled'
-            ? null
-            : 'Google sign-in failed. Please try again.';
-        _isGoogleLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        final msg = e.toString();
-        _googleError = msg.contains('not fully configured')
-            ? msg.replaceFirst('Exception: ', '')
-            : 'Google sign-in failed. Please try again.';
-        _isGoogleLoading = false;
-      });
-    }
+    final result = await SocialSignInService.google();
+    await _completeSocialSignIn(
+      'google',
+      result,
+      onError: (message) => _googleError = message,
+    );
+    if (mounted) setState(() => _isGoogleLoading = false);
   }
 
   Future<void> _signInWithApple() async {
     setState(() {
       _isAppleLoading = true;
       _appleError = null;
+      _googleError = null;
     });
-    try {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-      final identityToken = credential.identityToken;
-      if (identityToken == null) {
-        throw Exception('Apple Sign-In failed: No identity token received.');
-      }
-      final name = [credential.givenName, credential.familyName]
-          .whereType<String>()
-          .join(' ');
+    final result = await SocialSignInService.apple();
+    await _completeSocialSignIn(
+      'apple',
+      result,
+      onError: (message) => _appleError = message,
+    );
+    if (mounted) setState(() => _isAppleLoading = false);
+  }
 
-      await ref.read(authProvider.notifier).socialLogin(
-            provider: 'apple',
-            token: identityToken,
-            name: name.isNotEmpty ? name : null,
-          );
-
-      if (mounted) context.go('/');
-    } on SignInWithAppleAuthorizationException catch (e) {
-      setState(() {
-        _appleError = e.code == AuthorizationErrorCode.canceled
-            ? null
-            : 'Apple sign-in failed. Please try again.';
-        _isAppleLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _appleError = 'Apple sign-in failed. Please try again.';
-        _isAppleLoading = false;
-      });
+  /// Exchanges the provider token with the backend. Navigation on success is
+  /// handled by the authProvider listener in build().
+  Future<void> _completeSocialSignIn(
+    String provider,
+    SocialSignInResult result, {
+    required void Function(String message) onError,
+  }) async {
+    switch (result) {
+      case SocialSignInCancelled():
+        return;
+      case SocialSignInFailure(:final message):
+        if (mounted) setState(() => onError(message));
+        return;
+      case SocialSignInSuccess(:final token, :final name):
+        await ref
+            .read(authProvider.notifier)
+            .socialLogin(provider: provider, token: token, name: name);
     }
   }
 
@@ -239,7 +197,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
             // Form body
             // ----------------------------------------------------------------
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+              // Keep the form a readable width on iPad and in landscape.
+              padding: EdgeInsets.symmetric(
+                horizontal: _formGutter(size.width),
+                vertical: 24,
+              ),
               child: FadeTransition(
                 opacity: _fadeAnimation,
                 child: Form(
@@ -258,15 +220,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.star_rounded,
-                              size: 16, color: _gold.withValues(alpha: 0.8)),
+                          Icon(
+                            Icons.star_rounded,
+                            size: 16,
+                            color: _gold.withValues(alpha: 0.8),
+                          ),
                           const SizedBox(width: 6),
-                          Text(
-                            'Access FREE Islamic knowledge',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              color: Colors.grey.shade600,
-                              fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: Text(
+                              'Access FREE Islamic knowledge',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],
@@ -333,7 +300,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             size: 20,
                           ),
                           onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword),
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) {
@@ -363,7 +331,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                             size: 20,
                           ),
                           onPressed: () => setState(
-                              () => _obscureConfirm = !_obscureConfirm),
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
                         ),
                         validator: (v) {
                           if (v == null || v.isEmpty) {
@@ -415,7 +384,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       // -- Google Sign In button -----------------------------
                       _GoogleButton(
                         isLoading: _isGoogleLoading,
-                        onPressed: (isLoading || _isGoogleLoading || _isAppleLoading)
+                        onPressed:
+                            (isLoading || _isGoogleLoading || _isAppleLoading)
                             ? null
                             : _signInWithGoogle,
                       ),
@@ -429,10 +399,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       ],
 
                       // -- Sign in with Apple button -------------------------
-                      if (Platform.isIOS || Platform.isMacOS)
+                      if (SocialSignInService.appleSupportedPlatform)
                         _AppleButton(
                           isLoading: _isAppleLoading,
-                          onPressed: (isLoading || _isGoogleLoading || _isAppleLoading)
+                          onPressed:
+                              (isLoading || _isGoogleLoading || _isAppleLoading)
                               ? null
                               : _signInWithApple,
                         ),
@@ -440,8 +411,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       const SizedBox(height: 24),
 
                       // -- Login link -----------------------------------------
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
                             'Already have an account? ',
@@ -469,17 +441,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
                       // -- Footer ornament ------------------------------------
                       Row(
                         children: [
-                          Expanded(
-                              child: Divider(color: Colors.grey.shade300)),
+                          Expanded(child: Divider(color: Colors.grey.shade300)),
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 12),
-                            child: Icon(Icons.auto_awesome,
-                                size: 16,
-                                color: _gold.withValues(alpha: 0.7)),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Icon(
+                              Icons.auto_awesome,
+                              size: 16,
+                              color: _gold.withValues(alpha: 0.7),
+                            ),
                           ),
-                          Expanded(
-                              child: Divider(color: Colors.grey.shade300)),
+                          Expanded(child: Divider(color: Colors.grey.shade300)),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -511,6 +482,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen>
 // =============================================================================
 
 /// Curved gradient header with decorative circles.
+/// Horizontal padding that centres the auth form at no more than
+/// [_maxFormWidth] wide, with at least 28pt gutters on phones.
+const double _maxFormWidth = 480;
+double _formGutter(double screenWidth) =>
+    math.max(28, (screenWidth - _maxFormWidth) / 2);
+
 class _GradientHeader extends StatelessWidget {
   const _GradientHeader({required this.height, required this.child});
 
@@ -536,26 +513,34 @@ class _GradientHeader extends StatelessWidget {
             Positioned(
               top: -30,
               right: -30,
-              child:
-                  _decorativeCircle(140, Colors.white.withValues(alpha: 0.06)),
+              child: _decorativeCircle(
+                140,
+                Colors.white.withValues(alpha: 0.06),
+              ),
             ),
             Positioned(
               top: 50,
               left: -40,
-              child:
-                  _decorativeCircle(100, Colors.white.withValues(alpha: 0.04)),
+              child: _decorativeCircle(
+                100,
+                Colors.white.withValues(alpha: 0.04),
+              ),
             ),
             Positioned(
               bottom: 40,
               right: 30,
-              child:
-                  _decorativeCircle(70, Colors.white.withValues(alpha: 0.05)),
+              child: _decorativeCircle(
+                70,
+                Colors.white.withValues(alpha: 0.05),
+              ),
             ),
             Positioned(
               bottom: 50,
               left: -15,
               child: _decorativeCircle(
-                  55, const Color(0xFFF59E0B).withValues(alpha: 0.10)),
+                55,
+                const Color(0xFFF59E0B).withValues(alpha: 0.10),
+              ),
             ),
             Center(child: child),
           ],
@@ -579,7 +564,11 @@ class _CurvedClipper extends CustomClipper<Path> {
     final path = Path()
       ..lineTo(0, size.height - 45)
       ..quadraticBezierTo(
-          size.width / 2, size.height + 18, size.width, size.height - 45)
+        size.width / 2,
+        size.height + 18,
+        size.width,
+        size.height - 45,
+      )
       ..lineTo(size.width, 0)
       ..close();
     return path;
@@ -633,18 +622,24 @@ class _StyledField extends StatelessWidget {
           keyboardType: keyboardType,
           validator: validator,
           textCapitalization: textCapitalization,
-          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: Colors.grey.shade900),
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 14,
+            color: Colors.grey.shade900,
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle:
-                GoogleFonts.plusJakartaSans(fontSize: 13, color: Colors.grey.shade400),
-            prefixIcon:
-                Icon(icon, size: 20, color: const Color(0xFF16A34A)),
+            hintStyle: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              color: Colors.grey.shade400,
+            ),
+            prefixIcon: Icon(icon, size: 20, color: const Color(0xFF16A34A)),
             suffixIcon: suffixIcon,
             filled: true,
             fillColor: Colors.grey.shade50,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(color: Colors.grey.shade200),
@@ -655,8 +650,10 @@ class _StyledField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  const BorderSide(color: Color(0xFF16A34A), width: 1.5),
+              borderSide: const BorderSide(
+                color: Color(0xFF16A34A),
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -664,8 +661,7 @@ class _StyledField extends StatelessWidget {
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  const BorderSide(color: Colors.redAccent, width: 1.5),
+              borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
             ),
           ),
         ),
@@ -751,8 +747,11 @@ class _ErrorCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline_rounded,
-              color: Colors.red.shade400, size: 20),
+          Icon(
+            Icons.error_outline_rounded,
+            color: Colors.red.shade400,
+            size: 20,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -804,12 +803,16 @@ class _AppleButton extends StatelessWidget {
                 children: [
                   const Icon(Icons.apple, color: Colors.white, size: 24),
                   const SizedBox(width: 10),
-                  Text(
-                    'Sign in with Apple',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
+                  Flexible(
+                    child: Text(
+                      'Sign in with Apple',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -854,19 +857,23 @@ class _GoogleButton extends StatelessWidget {
                   Image.asset(
                     'assets/images/google_logo.png',
                     height: 22,
-                    errorBuilder: (_, __, ___) => const Icon(
+                    errorBuilder: (_, _, _) => const Icon(
                       Icons.g_mobiledata_rounded,
                       size: 26,
                       color: Color(0xFF4285F4),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    'Continue with Google',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey.shade800,
+                  Flexible(
+                    child: Text(
+                      'Continue with Google',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey.shade800,
+                      ),
                     ),
                   ),
                 ],

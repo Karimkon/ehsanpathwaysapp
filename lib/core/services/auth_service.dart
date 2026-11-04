@@ -10,19 +10,24 @@ class AuthService {
   final FlutterSecureStorage _storage;
 
   AuthService({Dio? dio, FlutterSecureStorage? storage})
-      : _dio = dio ??
-            Dio(BaseOptions(
+    : _dio =
+          dio ??
+          Dio(
+            BaseOptions(
               baseUrl: AppConfig.apiBaseUrl,
-              connectTimeout:
-                  const Duration(milliseconds: AppConfig.connectTimeout),
-              receiveTimeout:
-                  const Duration(milliseconds: AppConfig.receiveTimeout),
+              connectTimeout: const Duration(
+                milliseconds: AppConfig.connectTimeout,
+              ),
+              receiveTimeout: const Duration(
+                milliseconds: AppConfig.receiveTimeout,
+              ),
               headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
               },
-            )),
-        _storage = storage ?? const FlutterSecureStorage();
+            ),
+          ),
+      _storage = storage ?? const FlutterSecureStorage();
 
   // ---------------------------------------------------------------------------
   // Token helpers
@@ -58,14 +63,17 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    final response = await _dio.post('/auth/login', data: {
-      'email': email,
-      'password': password,
-    });
+    final response = await _dio.post(
+      '/auth/login',
+      data: {'email': email, 'password': password},
+    );
     final data = _extractData(response);
     final token = data['token'] as String;
     await _saveToken(token);
-    return (user: UserModel.fromJson(data['user'] as Map<String, dynamic>), token: token);
+    return (
+      user: UserModel.fromJson(data['user'] as Map<String, dynamic>),
+      token: token,
+    );
   }
 
   /// POST /auth/register
@@ -75,16 +83,22 @@ class AuthService {
     required String password,
     required String passwordConfirmation,
   }) async {
-    final response = await _dio.post('/auth/register', data: {
-      'name': name,
-      'email': email,
-      'password': password,
-      'password_confirmation': passwordConfirmation,
-    });
+    final response = await _dio.post(
+      '/auth/register',
+      data: {
+        'name': name,
+        'email': email,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      },
+    );
     final data = _extractData(response);
     final token = data['token'] as String;
     await _saveToken(token);
-    return (user: UserModel.fromJson(data['user'] as Map<String, dynamic>), token: token);
+    return (
+      user: UserModel.fromJson(data['user'] as Map<String, dynamic>),
+      token: token,
+    );
   }
 
   /// POST /auth/google  or  POST /auth/apple
@@ -95,10 +109,7 @@ class AuthService {
   }) async {
     final Map<String, dynamic> body = provider == 'google'
         ? {'id_token': token}
-        : {
-            'identity_token': token,
-            if (name != null) 'name': name,
-          };
+        : {'identity_token': token, if (name != null) 'name': name};
 
     final response = await _dio.post('/auth/$provider', data: body);
     final data = _extractData(response);
@@ -123,12 +134,26 @@ class AuthService {
     await _clearToken();
   }
 
+  /// DELETE /user/account
+  ///
+  /// Permanently deletes the signed-in user's account (App Store Guideline
+  /// 5.1.1(v)). Works for email, Google and Apple accounts alike.
+  Future<void> deleteAccount() async {
+    final token = await getToken();
+    if (token == null) throw Exception('Not authenticated');
+    await _dio.delete(
+      '/user/account',
+      data: {'confirmation': 'DELETE'},
+      options: _authHeaders(token),
+    );
+    await _clearToken();
+  }
+
   /// GET /auth/user
   Future<UserModel> fetchCurrentUser() async {
     final token = await getToken();
     if (token == null) throw Exception('Not authenticated');
-    final response =
-        await _dio.get('/auth/user', options: _authHeaders(token));
+    final response = await _dio.get('/auth/user', options: _authHeaders(token));
     final body = response.data as Map<String, dynamic>;
     final data = body['data'] as Map<String, dynamic>;
     return UserModel.fromJson(data);
@@ -138,8 +163,10 @@ class AuthService {
   Future<UserStatsModel> fetchUserStats() async {
     final token = await getToken();
     if (token == null) return UserStatsModel.empty;
-    final response =
-        await _dio.get('/user/stats', options: _authHeaders(token));
+    final response = await _dio.get(
+      '/user/stats',
+      options: _authHeaders(token),
+    );
     return UserStatsModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

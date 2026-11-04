@@ -1,13 +1,11 @@
-import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
+import 'package:ehsan_pathways/core/services/social_sign_in_service.dart';
 import 'package:ehsan_pathways/features/auth/register_screen.dart';
 
 /// A polished login screen with an Islamic-inspired gradient header,
@@ -37,7 +35,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   // -- Colours ----------------------------------------------------------------
   static const _green500 = Color(0xFF16A34A);
-  static const _green700 = Color(0xFF15803D);
   static const _green900 = Color(0xFF14532D);
   static const _gold = Color(0xFFF59E0B);
 
@@ -65,7 +62,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    await ref.read(authProvider.notifier).login(
+    await ref
+        .read(authProvider.notifier)
+        .login(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
@@ -75,97 +74,49 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     setState(() {
       _isGoogleLoading = true;
       _googleError = null;
+      _appleError = null;
     });
-    try {
-      // serverClientId (Web OAuth 2.0 client ID from google-services.json, type 3)
-      // Required on Android to get an idToken
-      final googleSignIn = GoogleSignIn(
-        scopes: ['email', 'profile'],
-        serverClientId:
-            '246875707165-0sbf8f8thrs14b9h73fh2l4lm6g0ecip.apps.googleusercontent.com',
-      );
-      // Sign out first to always show the account picker
-      await googleSignIn.signOut();
-      final account = await googleSignIn.signIn();
-      if (account == null) {
-        // User cancelled
-        if (mounted) setState(() => _isGoogleLoading = false);
-        return;
-      }
-      final auth = await account.authentication;
-      final idToken = auth.idToken;
-      if (idToken == null) {
-        throw Exception('Failed to get Google ID token. Check Firebase configuration.');
-      }
-
-      await ref.read(authProvider.notifier).socialLogin(
-            provider: 'google',
-            token: idToken,
-          );
-      // Navigation is handled by ref.listen — just reset loading
-      if (mounted) setState(() => _isGoogleLoading = false);
-    } on PlatformException catch (e) {
-      if (mounted) {
-        setState(() {
-          _googleError = e.code == 'sign_in_canceled'
-              ? null
-              : 'Google sign-in failed. Please try again.';
-          _isGoogleLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _googleError = 'Google sign-in failed. Please try again.';
-          _isGoogleLoading = false;
-        });
-      }
-    }
+    final result = await SocialSignInService.google();
+    await _completeSocialSignIn(
+      'google',
+      result,
+      onError: (message) => _googleError = message,
+    );
+    if (mounted) setState(() => _isGoogleLoading = false);
   }
 
   Future<void> _signInWithApple() async {
     setState(() {
       _isAppleLoading = true;
       _appleError = null;
+      _googleError = null;
     });
-    try {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-      final identityToken = credential.identityToken;
-      if (identityToken == null) {
-        throw Exception('Apple Sign-In failed: No identity token received.');
-      }
-      final name = [credential.givenName, credential.familyName]
-          .whereType<String>()
-          .join(' ');
+    final result = await SocialSignInService.apple();
+    await _completeSocialSignIn(
+      'apple',
+      result,
+      onError: (message) => _appleError = message,
+    );
+    if (mounted) setState(() => _isAppleLoading = false);
+  }
 
-      await ref.read(authProvider.notifier).socialLogin(
-            provider: 'apple',
-            token: identityToken,
-            name: name.isNotEmpty ? name : null,
-          );
-      // Navigation is handled by ref.listen — just reset loading
-      if (mounted) setState(() => _isAppleLoading = false);
-    } on SignInWithAppleAuthorizationException catch (e) {
-      if (mounted) {
-        setState(() {
-          _appleError = e.code == AuthorizationErrorCode.canceled
-              ? null
-              : 'Apple sign-in failed. Please try again.';
-          _isAppleLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _appleError = 'Apple sign-in failed. Please try again.';
-          _isAppleLoading = false;
-        });
-      }
+  /// Exchanges the provider token with the backend. Navigation on success is
+  /// handled by the authProvider listener in build().
+  Future<void> _completeSocialSignIn(
+    String provider,
+    SocialSignInResult result, {
+    required void Function(String message) onError,
+  }) async {
+    switch (result) {
+      case SocialSignInCancelled():
+        return;
+      case SocialSignInFailure(:final message):
+        if (mounted) setState(() => onError(message));
+        return;
+      case SocialSignInSuccess(:final token, :final name):
+        await ref
+            .read(authProvider.notifier)
+            .socialLogin(provider: provider, token: token, name: name);
     }
   }
 
@@ -186,294 +137,321 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       body: Stack(
         children: [
           SingleChildScrollView(
-        child: Column(
-          children: [
-            // ----------------------------------------------------------------
-            // Gradient header with geometric pattern feel
-            // ----------------------------------------------------------------
-            _GradientHeader(
-              height: size.height * 0.38,
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 32),
-                    // Decorative icon ring
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white38, width: 2),
-                        color: Colors.white.withValues(alpha: 0.15),
-                      ),
-                      child: const Icon(
-                        Icons.menu_book_rounded,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Ehsan Pathways',
-                      style: GoogleFonts.lora(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Your Journey to Islamic Knowledge',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // ----------------------------------------------------------------
-            // Form body
-            // ----------------------------------------------------------------
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 28),
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Welcome Back',
-                        style: GoogleFonts.lora(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w700,
-                          color: _green900,
+            child: Column(
+              children: [
+                // ----------------------------------------------------------------
+                // Gradient header with geometric pattern feel
+                // ----------------------------------------------------------------
+                _GradientHeader(
+                  height: size.height * 0.38,
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 32),
+                        // Decorative icon ring
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white38, width: 2),
+                            color: Colors.white.withValues(alpha: 0.15),
+                          ),
+                          child: const Icon(
+                            Icons.menu_book_rounded,
+                            size: 40,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Sign in to continue your learning journey',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-
-                      // -- Error card -----------------------------------------
-                      if (authState.errorMessage != null) ...[
-                        _ErrorCard(message: authState.errorMessage!),
                         const SizedBox(height: 16),
-                      ],
-
-                      // -- Email field ----------------------------------------
-                      _StyledField(
-                        controller: _emailController,
-                        label: 'Email Address',
-                        hint: 'you@example.com',
-                        icon: Icons.email_outlined,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return 'Please enter your email';
-                          }
-                          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
-                            return 'Enter a valid email address';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 18),
-
-                      // -- Password field -------------------------------------
-                      _StyledField(
-                        controller: _passwordController,
-                        label: 'Password',
-                        hint: 'Enter your password',
-                        icon: Icons.lock_outline_rounded,
-                        obscureText: _obscurePassword,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            color: Colors.grey.shade500,
-                            size: 20,
-                          ),
-                          onPressed: () =>
-                              setState(() => _obscurePassword = !_obscurePassword),
-                        ),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          if (v.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
-                          return null;
-                        },
-                      ),
-
-                      // -- Forgot password ------------------------------------
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            // TODO: Navigate to forgot-password screen
-                          },
-                          child: Text(
-                            'Forgot Password?',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              color: _green500,
-                              fontWeight: FontWeight.w500,
-                            ),
+                        Text(
+                          'Ehsan Pathways',
+                          style: GoogleFonts.lora(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // -- Login button ---------------------------------------
-                      _GradientButton(
-                        label: 'Sign In',
-                        isLoading: isLoading,
-                        onPressed: isLoading ? null : _submit,
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // -- Social divider ------------------------------------
-                      Row(
-                        children: [
-                          Expanded(child: Divider(color: Colors.grey.shade300)),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(
-                              'or continue with',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                color: Colors.grey.shade500,
-                              ),
-                            ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Your Journey to Islamic Knowledge',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            color: Colors.white70,
+                            fontWeight: FontWeight.w400,
                           ),
-                          Expanded(child: Divider(color: Colors.grey.shade300)),
-                        ],
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      // -- Google error --------------------------------------
-                      if (_googleError != null) ...[
-                        _ErrorCard(message: _googleError!),
-                        const SizedBox(height: 12),
-                      ],
-
-                      // -- Google Sign In button -----------------------------
-                      _GoogleButton(
-                        isLoading: _isGoogleLoading,
-                        onPressed: (isLoading || _isGoogleLoading || _isAppleLoading)
-                            ? null
-                            : _signInWithGoogle,
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // -- Apple error ---------------------------------------
-                      if (_appleError != null) ...[
-                        _ErrorCard(message: _appleError!),
-                        const SizedBox(height: 12),
-                      ],
-
-                      // -- Sign in with Apple button -------------------------
-                      if (Platform.isIOS || Platform.isMacOS)
-                        _AppleButton(
-                          isLoading: _isAppleLoading,
-                          onPressed: (isLoading || _isGoogleLoading || _isAppleLoading)
-                              ? null
-                              : _signInWithApple,
                         ),
+                      ],
+                    ),
+                  ),
+                ),
 
-                      const SizedBox(height: 24),
-
-                      // -- Register link --------------------------------------
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                // ----------------------------------------------------------------
+                // Form body
+                // ----------------------------------------------------------------
+                Padding(
+                  // Keep the form a readable width on iPad and in landscape.
+                  padding: EdgeInsets.symmetric(
+                    horizontal: _formGutter(size.width),
+                    vertical: 28,
+                  ),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
-                            "Don't have an account? ",
+                            'Welcome Back',
+                            style: GoogleFonts.lora(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w700,
+                              color: _green900,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Sign in to continue your learning journey',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               color: Colors.grey.shade600,
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const RegisterScreen(),
+                          const SizedBox(height: 28),
+
+                          // -- Error card -----------------------------------------
+                          if (authState.errorMessage != null) ...[
+                            _ErrorCard(message: authState.errorMessage!),
+                            const SizedBox(height: 16),
+                          ],
+
+                          // -- Email field ----------------------------------------
+                          _StyledField(
+                            controller: _emailController,
+                            label: 'Email Address',
+                            hint: 'you@example.com',
+                            icon: Icons.email_outlined,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(v)) {
+                                return 'Enter a valid email address';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 18),
+
+                          // -- Password field -------------------------------------
+                          _StyledField(
+                            controller: _passwordController,
+                            label: 'Password',
+                            hint: 'Enter your password',
+                            icon: Icons.lock_outline_rounded,
+                            obscureText: _obscurePassword,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: Colors.grey.shade500,
+                                size: 20,
+                              ),
+                              onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
                               ),
                             ),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              if (v.length < 6) {
+                                return 'Password must be at least 6 characters';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          // -- Forgot password ------------------------------------
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                // TODO: Navigate to forgot-password screen
+                              },
+                              child: Text(
+                                'Forgot Password?',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  color: _green500,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          // -- Login button ---------------------------------------
+                          _GradientButton(
+                            label: 'Sign In',
+                            isLoading: isLoading,
+                            onPressed: isLoading ? null : _submit,
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // -- Social divider ------------------------------------
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Divider(color: Colors.grey.shade300),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Text(
+                                  'or continue with',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Divider(color: Colors.grey.shade300),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          // -- Google error --------------------------------------
+                          if (_googleError != null) ...[
+                            _ErrorCard(message: _googleError!),
+                            const SizedBox(height: 12),
+                          ],
+
+                          // -- Google Sign In button -----------------------------
+                          _GoogleButton(
+                            isLoading: _isGoogleLoading,
+                            onPressed:
+                                (isLoading ||
+                                    _isGoogleLoading ||
+                                    _isAppleLoading)
+                                ? null
+                                : _signInWithGoogle,
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // -- Apple error ---------------------------------------
+                          if (_appleError != null) ...[
+                            _ErrorCard(message: _appleError!),
+                            const SizedBox(height: 12),
+                          ],
+
+                          // -- Sign in with Apple button -------------------------
+                          if (SocialSignInService.appleSupportedPlatform)
+                            _AppleButton(
+                              isLoading: _isAppleLoading,
+                              onPressed:
+                                  (isLoading ||
+                                      _isGoogleLoading ||
+                                      _isAppleLoading)
+                                  ? null
+                                  : _signInWithApple,
+                            ),
+
+                          const SizedBox(height: 24),
+
+                          // -- Register link --------------------------------------
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account? ",
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => const RegisterScreen(),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Register',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: _green500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          // -- Divider ornament -----------------------------------
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Divider(color: Colors.grey.shade300),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Icon(
+                                  Icons.auto_awesome,
+                                  size: 16,
+                                  color: _gold.withValues(alpha: 0.7),
+                                ),
+                              ),
+                              Expanded(
+                                child: Divider(color: Colors.grey.shade300),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 12),
+                          Center(
                             child: Text(
-                              'Register',
+                              'All content is completely FREE',
                               style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: _green500,
+                                fontSize: 12,
+                                color: Colors.grey.shade500,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 12),
-
-                      // -- Divider ornament -----------------------------------
-                      Row(
-                        children: [
-                          Expanded(child: Divider(color: Colors.grey.shade300)),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Icon(Icons.auto_awesome,
-                                size: 16, color: _gold.withValues(alpha: 0.7)),
-                          ),
-                          Expanded(child: Divider(color: Colors.grey.shade300)),
-                        ],
-                      ),
-
-                      const SizedBox(height: 12),
-                      Center(
-                        child: Text(
-                          'All content is completely FREE',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
-                            color: Colors.grey.shade500,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
           // Full-screen loading overlay shown during any authentication call
           if (isLoading || _isGoogleLoading || _isAppleLoading)
             _AuthLoadingOverlay(
               message: _isGoogleLoading
                   ? 'Signing in with Google…'
                   : _isAppleLoading
-                      ? 'Signing in with Apple…'
-                      : 'Signing in…',
+                  ? 'Signing in with Apple…'
+                  : 'Signing in…',
             ),
         ],
       ),
@@ -486,6 +464,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 // =============================================================================
 
 /// Curved gradient header with decorative circles (geometric pattern feel).
+/// Horizontal padding that centres the auth form at no more than
+/// [_maxFormWidth] wide, with at least 28pt gutters on phones.
+const double _maxFormWidth = 480;
+double _formGutter(double screenWidth) =>
+    math.max(28, (screenWidth - _maxFormWidth) / 2);
+
 class _GradientHeader extends StatelessWidget {
   const _GradientHeader({required this.height, required this.child});
 
@@ -512,29 +496,43 @@ class _GradientHeader extends StatelessWidget {
             Positioned(
               top: -30,
               right: -30,
-              child: _decorativeCircle(140, Colors.white.withValues(alpha: 0.06)),
+              child: _decorativeCircle(
+                140,
+                Colors.white.withValues(alpha: 0.06),
+              ),
             ),
             Positioned(
               top: 60,
               left: -50,
-              child: _decorativeCircle(120, Colors.white.withValues(alpha: 0.04)),
+              child: _decorativeCircle(
+                120,
+                Colors.white.withValues(alpha: 0.04),
+              ),
             ),
             Positioned(
               bottom: 30,
               right: 40,
-              child: _decorativeCircle(80, Colors.white.withValues(alpha: 0.05)),
+              child: _decorativeCircle(
+                80,
+                Colors.white.withValues(alpha: 0.05),
+              ),
             ),
             Positioned(
               top: 20,
               left: 30,
-              child: _decorativeCircle(50, Colors.white.withValues(alpha: 0.03)),
+              child: _decorativeCircle(
+                50,
+                Colors.white.withValues(alpha: 0.03),
+              ),
             ),
             // Gold accent circle
             Positioned(
               bottom: 60,
               left: -20,
               child: _decorativeCircle(
-                  60, const Color(0xFFF59E0B).withValues(alpha: 0.12)),
+                60,
+                const Color(0xFFF59E0B).withValues(alpha: 0.12),
+              ),
             ),
             Center(child: child),
           ],
@@ -558,7 +556,11 @@ class _CurvedClipper extends CustomClipper<Path> {
     final path = Path()
       ..lineTo(0, size.height - 50)
       ..quadraticBezierTo(
-          size.width / 2, size.height + 20, size.width, size.height - 50)
+        size.width / 2,
+        size.height + 20,
+        size.width,
+        size.height - 50,
+      )
       ..lineTo(size.width, 0)
       ..close();
     return path;
@@ -609,18 +611,24 @@ class _StyledField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
-          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: Colors.grey.shade900),
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 14,
+            color: Colors.grey.shade900,
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: GoogleFonts.plusJakartaSans(
-                fontSize: 13, color: Colors.grey.shade400),
-            prefixIcon:
-                Icon(icon, size: 20, color: const Color(0xFF16A34A)),
+              fontSize: 13,
+              color: Colors.grey.shade400,
+            ),
+            prefixIcon: Icon(icon, size: 20, color: const Color(0xFF16A34A)),
             suffixIcon: suffixIcon,
             filled: true,
             fillColor: Colors.grey.shade50,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(color: Colors.grey.shade200),
@@ -631,8 +639,10 @@ class _StyledField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  const BorderSide(color: Color(0xFF16A34A), width: 1.5),
+              borderSide: const BorderSide(
+                color: Color(0xFF16A34A),
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -726,7 +736,11 @@ class _ErrorCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline_rounded, color: Colors.red.shade400, size: 20),
+          Icon(
+            Icons.error_outline_rounded,
+            color: Colors.red.shade400,
+            size: 20,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -778,12 +792,16 @@ class _AppleButton extends StatelessWidget {
                 children: [
                   const Icon(Icons.apple, color: Colors.white, size: 24),
                   const SizedBox(width: 10),
-                  Text(
-                    'Sign in with Apple',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
+                  Flexible(
+                    child: Text(
+                      'Sign in with Apple',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -828,19 +846,23 @@ class _GoogleButton extends StatelessWidget {
                   Image.asset(
                     'assets/images/google_logo.png',
                     height: 22,
-                    errorBuilder: (_, __, ___) => const Icon(
+                    errorBuilder: (_, _, _) => const Icon(
                       Icons.g_mobiledata_rounded,
                       size: 26,
                       color: Color(0xFF4285F4),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(
-                    'Continue with Google',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey.shade800,
+                  Flexible(
+                    child: Text(
+                      'Continue with Google',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey.shade800,
+                      ),
                     ),
                   ),
                 ],
@@ -884,8 +906,7 @@ class _AuthLoadingOverlay extends StatelessWidget {
                 height: 48,
                 child: CircularProgressIndicator(
                   strokeWidth: 3.5,
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(Color(0xFF16A34A)),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF16A34A)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -901,10 +922,7 @@ class _AuthLoadingOverlay extends StatelessWidget {
               const SizedBox(height: 6),
               const Text(
                 'Please wait…',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Color(0xFF6B7280),
-                ),
+                style: TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
               ),
             ],
           ),

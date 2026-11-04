@@ -44,8 +44,11 @@ class AuthState {
 class AuthNotifier extends Notifier<AuthState> {
   @override
   AuthState build() {
-    _tryAutoLogin();
-    return const AuthState();
+    // Run after build() returns: writing `state` while the provider is still
+    // building throws "Tried to read the state of an uninitialized provider",
+    // which silently broke auto-login on every launch.
+    Future.microtask(_tryAutoLogin);
+    return const AuthState(status: AuthStatus.loading);
   }
 
   AuthService get _service => ref.read(authServiceProvider);
@@ -65,10 +68,7 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<void> login({required String email, required String password}) async {
     state = state.copyWith(status: AuthStatus.loading, errorMessage: null);
     try {
       final result = await _service.login(email: email, password: password);
@@ -82,7 +82,7 @@ class AuthNotifier extends Notifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         status: AuthStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: _genericError,
       );
     }
   }
@@ -111,7 +111,7 @@ class AuthNotifier extends Notifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         status: AuthStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: _genericError,
       );
     }
   }
@@ -138,7 +138,7 @@ class AuthNotifier extends Notifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         status: AuthStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: _genericError,
       );
     }
   }
@@ -149,21 +149,51 @@ class AuthNotifier extends Notifier<AuthState> {
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 
-  void clearError() {
-    state = state.copyWith(status: AuthStatus.unauthenticated, errorMessage: null);
+  /// Deletes the account on the server, then signs out locally.
+  /// Returns an error message to show, or null on success.
+  Future<String?> deleteAccount() async {
+    try {
+      await _service.deleteAccount();
+    } on DioException catch (e) {
+      return _extractError(e);
+    } catch (_) {
+      return _genericError;
+    }
+    state = const AuthState(status: AuthStatus.unauthenticated);
+    return null;
   }
 
+  void clearError() {
+    state = state.copyWith(
+      status: AuthStatus.unauthenticated,
+      errorMessage: null,
+    );
+  }
+
+  static const _genericError = 'Something went wrong. Please try again.';
+
   String _extractError(DioException e) {
+    switch (e.type) {
+      case DioExceptionType.connectionError:
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        return 'No internet connection. Please check your connection and try again.';
+      default:
+        break;
+    }
     final data = e.response?.data;
     if (data is Map<String, dynamic>) {
-      if (data.containsKey('message')) return data['message'] as String;
-      if (data.containsKey('error')) return data['error'] as String;
+      final message = data['message'] ?? data['error'];
+      if (message is String && message.isNotEmpty) return message;
     }
-    return e.message ?? 'Something went wrong. Please try again.';
+    return _genericError;
   }
 }
 
-final authProvider = NotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
+final authProvider = NotifierProvider<AuthNotifier, AuthState>(
+  AuthNotifier.new,
+);
 
 // ---------------------------------------------------------------------------
 // User stats

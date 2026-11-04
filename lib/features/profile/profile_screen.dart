@@ -21,8 +21,11 @@ class ProfileScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
-      body: authState.status == AuthStatus.authenticated && authState.user != null
+      backgroundColor: isDark
+          ? const Color(0xFF121212)
+          : const Color(0xFFF8FAF8),
+      body:
+          authState.status == AuthStatus.authenticated && authState.user != null
           ? _AuthenticatedProfile(user: authState.user!, isDark: isDark)
           : _UnauthenticatedProfile(isDark: isDark),
     );
@@ -177,12 +180,24 @@ class _UnauthenticatedProfile extends StatelessWidget {
             // Ornament
             Row(
               children: [
-                Expanded(child: Divider(color: isDark ? Colors.white12 : Colors.grey.shade300)),
+                Expanded(
+                  child: Divider(
+                    color: isDark ? Colors.white12 : Colors.grey.shade300,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Icon(Icons.auto_awesome, size: 16, color: ProfileScreen._gold.withValues(alpha: 0.7)),
+                  child: Icon(
+                    Icons.auto_awesome,
+                    size: 16,
+                    color: ProfileScreen._gold.withValues(alpha: 0.7),
+                  ),
                 ),
-                Expanded(child: Divider(color: isDark ? Colors.white12 : Colors.grey.shade300)),
+                Expanded(
+                  child: Divider(
+                    color: isDark ? Colors.white12 : Colors.grey.shade300,
+                  ),
+                ),
               ],
             ),
 
@@ -227,7 +242,11 @@ class _AuthenticatedProfile extends ConsumerWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [ProfileScreen._green, Color(0xFF059669), ProfileScreen._greenDark],
+                colors: [
+                  ProfileScreen._green,
+                  Color(0xFF059669),
+                  ProfileScreen._greenDark,
+                ],
               ),
             ),
             child: SafeArea(
@@ -254,7 +273,11 @@ class _AuthenticatedProfile extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: IconButton(
-                            icon: const Icon(Icons.settings_rounded, color: Colors.white, size: 22),
+                            icon: const Icon(
+                              Icons.settings_rounded,
+                              color: Colors.white,
+                              size: 22,
+                            ),
                             onPressed: () {},
                           ),
                         ),
@@ -415,9 +438,8 @@ class _AuthenticatedProfile extends ConsumerWidget {
                       trailing: Switch.adaptive(
                         value: isDark,
                         activeTrackColor: ProfileScreen._green,
-                        onChanged: (val) => ref
-                            .read(themeModeProvider.notifier)
-                            .setDark(val),
+                        onChanged: (val) =>
+                            ref.read(themeModeProvider.notifier).setDark(val),
                       ),
                     ),
                     _divider(isDark),
@@ -461,6 +483,15 @@ class _AuthenticatedProfile extends ConsumerWidget {
                       isDark: isDark,
                       onTap: () => _showLogoutDialog(context, ref),
                     ),
+                    _divider(isDark),
+                    _SettingsTile(
+                      icon: Icons.delete_forever_rounded,
+                      iconColor: Colors.redAccent,
+                      title: 'Delete Account',
+                      titleColor: Colors.redAccent,
+                      isDark: isDark,
+                      onTap: () => _showDeleteAccountDialog(context, ref),
+                    ),
                   ],
                 ),
 
@@ -468,7 +499,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
 
                 Center(
                   child: Text(
-                    'Ehsan Pathways v1.0.0',
+                    'Ehsan Pathways v1.1.0',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       color: isDark ? Colors.white24 : Colors.grey.shade400,
@@ -486,10 +517,62 @@ class _AuthenticatedProfile extends ConsumerWidget {
   }
 
   Widget _divider(bool isDark) => Divider(
-        height: 1,
-        indent: 56,
-        color: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF3F4F6),
-      );
+    height: 1,
+    indent: 56,
+    color: isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : const Color(0xFFF3F4F6),
+  );
+
+  Future<void> _showDeleteAccountDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Delete Account?',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w800),
+        ),
+        content: Text(
+          'This permanently deletes your account, bookmarks, notes and '
+          'progress. This cannot be undone.',
+          style: GoogleFonts.plusJakartaSans(fontSize: 14),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w600,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              'Delete',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w700,
+                color: Colors.redAccent,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final error = await ref.read(authProvider.notifier).deleteAccount();
+    messenger.showSnackBar(
+      SnackBar(content: Text(error ?? 'Your account has been deleted.')),
+    );
+  }
 
   void _showLogoutDialog(BuildContext context, WidgetRef ref) {
     showDialog(
@@ -684,7 +767,8 @@ class _SettingsTile extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: titleColor ??
+                      color:
+                          titleColor ??
                           (isDark ? Colors.white : const Color(0xFF111827)),
                     ),
                   ),
