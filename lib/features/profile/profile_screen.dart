@@ -7,13 +7,14 @@ import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/core/providers/theme_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/scholar_avatar.dart';
 import 'package:ehsan_pathways/core/models/user_stats_model.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
-  static const _green = Color(0xFF16A34A);
-  static const _greenDark = Color(0xFF15803D);
-  static const _gold = Color(0xFFF59E0B);
+  static const _green = AppColors.emerald700;
+  static const _greenDark = AppColors.emerald800;
+  static const _gold = AppColors.gold;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,8 +23,8 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF121212)
-          : const Color(0xFFF8FAF8),
+          ? AppColors.slate
+          : AppColors.cream,
       body:
           authState.status == AuthStatus.authenticated && authState.user != null
           ? _AuthenticatedProfile(user: authState.user!, isDark: isDark)
@@ -89,7 +90,7 @@ class _UnauthenticatedProfile extends StatelessWidget {
               style: GoogleFonts.lora(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
               ),
             ),
 
@@ -102,8 +103,8 @@ class _UnauthenticatedProfile extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: isDark
-                    ? const Color(0xFF9CA3AF)
-                    : const Color(0xFF6B7280),
+                    ? AppColors.onDarkMuted
+                    : AppColors.muted,
                 height: 1.6,
               ),
             ),
@@ -244,7 +245,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                 end: Alignment.bottomRight,
                 colors: [
                   ProfileScreen._green,
-                  Color(0xFF059669),
+                  AppColors.emerald600,
                   ProfileScreen._greenDark,
                 ],
               ),
@@ -348,7 +349,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? Colors.white : const Color(0xFF111827),
+                    color: isDark ? Colors.white : AppColors.ink,
                   ),
                 ),
 
@@ -361,7 +362,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                       child: _QuickAccessTile(
                         icon: Icons.bookmark_rounded,
                         label: 'Bookmarks',
-                        color: const Color(0xFF3B82F6),
+                        color: AppColors.sapphire,
                         isDark: isDark,
                         onTap: () => context.push('/bookmarks'),
                       ),
@@ -371,7 +372,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                       child: _QuickAccessTile(
                         icon: Icons.note_alt_rounded,
                         label: 'Notes',
-                        color: const Color(0xFF10B981),
+                        color: AppColors.emerald500,
                         isDark: isDark,
                         onTap: () => context.push('/notes'),
                       ),
@@ -385,7 +386,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                       child: _QuickAccessTile(
                         icon: Icons.route_rounded,
                         label: 'Pathways',
-                        color: const Color(0xFF8B5CF6),
+                        color: AppColors.amethyst,
                         isDark: isDark,
                         onTap: () => context.push('/pathways'),
                       ),
@@ -421,7 +422,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? Colors.white : const Color(0xFF111827),
+                    color: isDark ? Colors.white : AppColors.ink,
                   ),
                 ),
 
@@ -432,7 +433,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                   children: [
                     _SettingsTile(
                       icon: Icons.dark_mode_rounded,
-                      iconColor: const Color(0xFF8B5CF6),
+                      iconColor: AppColors.amethyst,
                       title: 'Dark Mode',
                       isDark: isDark,
                       trailing: Switch.adaptive(
@@ -445,7 +446,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                     _divider(isDark),
                     _SettingsTile(
                       icon: Icons.language_rounded,
-                      iconColor: const Color(0xFF3B82F6),
+                      iconColor: AppColors.sapphire,
                       title: 'Language',
                       subtitle: 'English',
                       isDark: isDark,
@@ -469,7 +470,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                   children: [
                     _SettingsTile(
                       icon: Icons.info_outline_rounded,
-                      iconColor: const Color(0xFF6B7280),
+                      iconColor: AppColors.muted,
                       title: 'About',
                       isDark: isDark,
                       onTap: () {},
@@ -477,18 +478,18 @@ class _AuthenticatedProfile extends ConsumerWidget {
                     _divider(isDark),
                     _SettingsTile(
                       icon: Icons.logout_rounded,
-                      iconColor: Colors.redAccent,
+                      iconColor: AppColors.danger,
                       title: 'Sign Out',
-                      titleColor: Colors.redAccent,
+                      titleColor: AppColors.danger,
                       isDark: isDark,
                       onTap: () => _showLogoutDialog(context, ref),
                     ),
                     _divider(isDark),
                     _SettingsTile(
                       icon: Icons.delete_forever_rounded,
-                      iconColor: Colors.redAccent,
+                      iconColor: AppColors.danger,
                       title: 'Delete Account',
-                      titleColor: Colors.redAccent,
+                      titleColor: AppColors.danger,
                       isDark: isDark,
                       onTap: () => _showDeleteAccountDialog(context, ref),
                     ),
@@ -521,7 +522,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
     indent: 56,
     color: isDark
         ? Colors.white.withValues(alpha: 0.06)
-        : const Color(0xFFF3F4F6),
+        : AppColors.creamDeep,
   );
 
   Future<void> _showDeleteAccountDialog(
@@ -558,7 +559,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
               'Delete',
               style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.w700,
-                color: Colors.redAccent,
+                color: AppColors.danger,
               ),
             ),
           ),
@@ -607,7 +608,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
               'Sign Out',
               style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.w700,
-                color: Colors.redAccent,
+                color: AppColors.danger,
               ),
             ),
           ),
@@ -631,7 +632,7 @@ class _SettingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.slateCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -671,7 +672,7 @@ class _QuickAccessTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      color: isDark ? AppColors.slateCard : Colors.white,
       borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       elevation: isDark ? 0 : 1,
@@ -698,7 +699,7 @@ class _QuickAccessTile extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF111827),
+                    color: isDark ? Colors.white : AppColors.ink,
                   ),
                 ),
               ),
@@ -769,7 +770,7 @@ class _SettingsTile extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color:
                           titleColor ??
-                          (isDark ? Colors.white : const Color(0xFF111827)),
+                          (isDark ? Colors.white : AppColors.ink),
                     ),
                   ),
                   if (subtitle != null)
@@ -780,8 +781,8 @@ class _SettingsTile extends StatelessWidget {
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: isDark
-                              ? const Color(0xFF9CA3AF)
-                              : const Color(0xFF6B7280),
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted,
                         ),
                       ),
                     ),

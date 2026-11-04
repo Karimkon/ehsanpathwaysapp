@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 /// Shown on screens that require authentication when the user is not signed in.
 class LoginPrompt extends StatelessWidget {
@@ -12,7 +13,7 @@ class LoginPrompt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const green = Color(0xFF16A34A);
+    const green = AppColors.emerald700;
 
     return Center(
       child: Padding(
@@ -40,7 +41,7 @@ class LoginPrompt extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
                 height: 1.3,
               ),
             ),
@@ -50,7 +51,7 @@ class LoginPrompt extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
-                color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+                color: isDark ? AppColors.onDarkMuted : AppColors.muted,
                 height: 1.5,
               ),
             ),
@@ -130,7 +131,7 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const Color primaryGreen = Color(0xFF16A34A);
+    const Color primaryGreen = AppColors.emerald700;
     final Color accent = iconColor ?? primaryGreen;
 
     return Center(
@@ -183,7 +184,7 @@ class EmptyState extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: compact ? 17 : 20,
                 fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
                 letterSpacing: -0.3,
                 height: 1.3,
               ),
@@ -199,8 +200,8 @@ class EmptyState extends StatelessWidget {
                   fontSize: compact ? 13 : 14,
                   fontWeight: FontWeight.w500,
                   color: isDark
-                      ? const Color(0xFF9CA3AF)
-                      : const Color(0xFF6B7280),
+                      ? AppColors.onDarkMuted
+                      : AppColors.muted,
                   height: 1.5,
                 ),
               ),

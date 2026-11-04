@@ -103,14 +103,14 @@ class _LiveStreamsScreenState extends ConsumerState<LiveStreamsScreen> {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: CustomScrollView(
         slivers: [
           // ── App bar ──────────────────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 140,
             pinned: true,
-            backgroundColor: const Color(0xFF14532D),
+            backgroundColor: AppColors.emerald900,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
@@ -118,9 +118,9 @@ class _LiveStreamsScreenState extends ConsumerState<LiveStreamsScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF14532D),
-                      Color(0xFF15803D),
-                      Color(0xFF16A34A),
+                      AppColors.emerald900,
+                      AppColors.emerald800,
+                      AppColors.emerald700,
                     ],
                   ),
                 ),
@@ -210,7 +210,7 @@ class _LiveStreamsScreenState extends ConsumerState<LiveStreamsScreen> {
                           title: 'No live streams currently',
                           subtitle:
                               'Check back soon for live Islamic content.',
-                          iconColor: const Color(0xFFDC2626),
+                          iconColor: AppColors.danger,
                         ),
                       ],
                     ),
@@ -225,7 +225,7 @@ class _LiveStreamsScreenState extends ConsumerState<LiveStreamsScreen> {
                     _SectionHeader(
                       label: 'LIVE NOW',
                       icon: Icons.circle,
-                      iconColor: const Color(0xFFDC2626),
+                      iconColor: AppColors.danger,
                       pulse: true,
                       isDark: isDark,
                     ),
@@ -382,11 +382,11 @@ class _StreamCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: isLive
               ? Border.all(
-                  color: const Color(0xFFDC2626).withValues(alpha: 0.4),
+                  color: AppColors.danger.withValues(alpha: 0.4),
                   width: 1.5,
                 )
               : null,
@@ -412,14 +412,14 @@ class _StreamCard extends StatelessWidget {
                   height: 44,
                   decoration: BoxDecoration(
                     color: isLive
-                        ? const Color(0xFFDC2626).withValues(alpha: 0.1)
+                        ? AppColors.danger.withValues(alpha: 0.1)
                         : AppTheme.primaryGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     isLive ? Icons.live_tv_rounded : Icons.schedule_rounded,
                     color: isLive
-                        ? const Color(0xFFDC2626)
+                        ? AppColors.danger
                         : AppTheme.primaryGreen,
                     size: 22,
                   ),
@@ -438,7 +438,7 @@ class _StreamCard extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                           color: isDark
                               ? Colors.white
-                              : const Color(0xFF111827),
+                              : AppColors.ink,
                           height: 1.35,
                         ),
                       ),
@@ -468,8 +468,8 @@ class _StreamCard extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   color: isDark
-                      ? const Color(0xFF9CA3AF)
-                      : const Color(0xFF6B7280),
+                      ? AppColors.onDarkMuted
+                      : AppColors.muted,
                   height: 1.5,
                 ),
               ),
@@ -512,7 +512,7 @@ class _StreamCard extends StatelessWidget {
                   FilledButton.icon(
                     onPressed: onWatch,
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFFDC2626),
+                      backgroundColor: AppColors.danger,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 8),
@@ -557,7 +557,7 @@ class _StreamShimmer extends StatelessWidget {
         child: Container(
           height: 120,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
           ),
           padding: const EdgeInsets.all(16),

@@ -1,4 +1,6 @@
 import 'package:adhan/adhan.dart';
+import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
@@ -15,7 +17,11 @@ class PrayerScheduleData {
   final double latitude;
   final double longitude;
 
+  /// Asr by the Hanafi school.
+  final bool hanafi;
+
   const PrayerScheduleData({
+    this.hanafi = false,
     required this.entries,
     required this.times,
     required this.method,
@@ -76,8 +82,9 @@ class PrayerScheduleData {
 /// location dialog. When no location is saved it throws
 /// [PrayerLocationException]; the UI then offers an explicit "Enable" action
 /// that calls [resolvePrayerLocation].
-final prayerScheduleProvider =
-    FutureProvider.autoDispose<PrayerScheduleData>((ref) async {
+final prayerScheduleProvider = FutureProvider.autoDispose<PrayerScheduleData>((
+  ref,
+) async {
   final settings = await PrayerTimesService.loadSettings();
 
   final method = PrayerCalculationMethod.values.firstWhere(
@@ -99,6 +106,7 @@ final prayerScheduleProvider =
     latitude: lat,
     longitude: lng,
     method: method,
+    hanafi: settings['madhab'] == 'hanafi',
   );
   if (times == null) {
     throw const PrayerCalculationException();
@@ -116,41 +124,54 @@ final prayerScheduleProvider =
     locationLabel: label,
     latitude: lat,
     longitude: lng,
+    hanafi: settings['madhab'] == 'hanafi',
   );
 });
+
+/// Outcome of asking for the device location.
+enum LocationResult { ok, servicesOff, denied, deniedForever, failed }
 
 /// Explicitly requests GPS (prompting for permission if needed) and persists
 /// the resolved location so [prayerScheduleProvider] can compute times.
 ///
-/// Returns `true` on success. Call this only in response to a direct user
-/// action (e.g. tapping "Enable" on the prayer screen), then invalidate
-/// [prayerScheduleProvider] to refresh.
-Future<bool> resolvePrayerLocation() async {
-  final position = await PrayerTimesService.getCurrentPosition();
-  if (position == null) return false;
+/// Call this only in response to a direct user action (e.g. tapping "Use my
+/// location"), then invalidate [prayerScheduleProvider]. Never throws and
+/// never waits more than 20 seconds.
+Future<LocationResult> resolvePrayerLocation() async {
+  try {
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      return LocationResult.servicesOff;
+    }
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return LocationResult.deniedForever;
+    }
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.unableToDetermine) {
+      return LocationResult.denied;
+    }
 
-  final settings = await PrayerTimesService.loadSettings();
-  final method = PrayerCalculationMethod.values.firstWhere(
-    (m) => m.name == settings['method'],
-    orElse: () => PrayerCalculationMethod.muslimWorldLeague,
-  );
+    final position = await PrayerTimesService.getCurrentPosition().timeout(
+      const Duration(seconds: 20),
+    );
+    if (position == null) return LocationResult.failed;
 
-  await PrayerTimesService.saveSettings(
-    enabled: settings['enabled'] as bool? ?? false,
-    method: method,
-    prayerToggles: {
-      Prayer.fajr: settings['notify_fajr'] as bool? ?? true,
-      Prayer.dhuhr: settings['notify_dhuhr'] as bool? ?? true,
-      Prayer.asr: settings['notify_asr'] as bool? ?? true,
-      Prayer.maghrib: settings['notify_maghrib'] as bool? ?? true,
-      Prayer.isha: settings['notify_isha'] as bool? ?? true,
-    },
-    lat: position.latitude,
-    lng: position.longitude,
-    city: PrayerTimesService.coordinatesLabel(
-        position.latitude, position.longitude),
-  );
-  return true;
+    await PrayerTimesService.saveLocation(
+      lat: position.latitude,
+      lng: position.longitude,
+      city: PrayerTimesService.coordinatesLabel(
+        position.latitude,
+        position.longitude,
+      ),
+    );
+    return LocationResult.ok;
+  } catch (e) {
+    debugPrint('Location lookup failed: $e');
+    return LocationResult.failed;
+  }
 }
 
 /// Thrown when the device location cannot be determined (permission denied

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 /// Pre-defined colour variants for [BadgeChip].
 enum BadgeVariant {
@@ -55,30 +56,30 @@ class BadgeChip extends StatelessWidget {
   // -----------------------------------------------------------------------
 
   static const Map<BadgeVariant, Color> _foregroundColors = {
-    BadgeVariant.green: Color(0xFF16A34A),
-    BadgeVariant.blue: Color(0xFF2563EB),
-    BadgeVariant.purple: Color(0xFF7C3AED),
-    BadgeVariant.red: Color(0xFFDC2626),
-    BadgeVariant.amber: Color(0xFFD97706),
-    BadgeVariant.gray: Color(0xFF6B7280),
+    BadgeVariant.green: AppColors.emerald700,
+    BadgeVariant.blue: AppColors.sapphire,
+    BadgeVariant.purple: AppColors.amethyst,
+    BadgeVariant.red: AppColors.danger,
+    BadgeVariant.amber: AppColors.goldDeep,
+    BadgeVariant.gray: AppColors.muted,
   };
 
   static const Map<BadgeVariant, Color> _backgroundColors = {
-    BadgeVariant.green: Color(0xFFDCFCE7),
-    BadgeVariant.blue: Color(0xFFDBEAFE),
-    BadgeVariant.purple: Color(0xFFEDE9FE),
-    BadgeVariant.red: Color(0xFFFEE2E2),
-    BadgeVariant.amber: Color(0xFFFEF3C7),
-    BadgeVariant.gray: Color(0xFFF3F4F6),
+    BadgeVariant.green: AppColors.emerald100,
+    BadgeVariant.blue: AppColors.sapphireTint,
+    BadgeVariant.purple: AppColors.amethystTint,
+    BadgeVariant.red: AppColors.dangerTint,
+    BadgeVariant.amber: AppColors.goldTint,
+    BadgeVariant.gray: AppColors.creamDeep,
   };
 
   static const Map<BadgeVariant, Color> _darkBackgroundColors = {
-    BadgeVariant.green: Color(0xFF052E16),
-    BadgeVariant.blue: Color(0xFF172554),
-    BadgeVariant.purple: Color(0xFF2E1065),
-    BadgeVariant.red: Color(0xFF450A0A),
-    BadgeVariant.amber: Color(0xFF451A03),
-    BadgeVariant.gray: Color(0xFF1F2937),
+    BadgeVariant.green: AppColors.emerald950,
+    BadgeVariant.blue: AppColors.sapphireDeep,
+    BadgeVariant.purple: AppColors.amethystDeep,
+    BadgeVariant.red: AppColors.dangerDeep,
+    BadgeVariant.amber: AppColors.goldDarkest,
+    BadgeVariant.gray: AppColors.slateCard,
   };
 
   @override

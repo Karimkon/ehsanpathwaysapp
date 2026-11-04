@@ -5,9 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:ehsan_pathways/features/pathways/pathway_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
-const Color _green = Color(0xFF16A34A);
-const Color _gold = Color(0xFFF59E0B);
+const Color _green = AppColors.emerald700;
+const Color _gold = AppColors.gold;
 
 class PathwayDetailScreen extends ConsumerWidget {
   const PathwayDetailScreen({super.key, required this.slug});
@@ -21,7 +22,7 @@ class PathwayDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: detailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => EmptyState(
@@ -46,11 +47,11 @@ class _PathwayDetailBody extends StatelessWidget {
   Color get _levelColor {
     switch (detail.pathway.difficultyLevel?.toLowerCase()) {
       case 'beginner':
-        return const Color(0xFF10B981);
+        return AppColors.emerald500;
       case 'intermediate':
-        return const Color(0xFF3B82F6);
+        return AppColors.sapphire;
       case 'advanced':
-        return const Color(0xFF8B5CF6);
+        return AppColors.amethyst;
       default:
         return _green;
     }
@@ -66,7 +67,7 @@ class _PathwayDetailBody extends StatelessWidget {
         SliverAppBar(
           expandedHeight: 220,
           pinned: true,
-          backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
+          backgroundColor: isDark ? AppColors.slate : Colors.white,
           leading: IconButton(
             icon: Container(
               width: 36,
@@ -89,7 +90,7 @@ class _PathwayDetailBody extends StatelessWidget {
                   colors: [
                     _levelColor.withValues(alpha: 0.9),
                     _levelColor.withValues(alpha: 0.6),
-                    const Color(0xFF052E16),
+                    AppColors.emerald950,
                   ],
                 ),
               ),
@@ -161,7 +162,7 @@ class _PathwayDetailBody extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  color: isDark ? AppColors.slateCard : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
@@ -186,7 +187,7 @@ class _PathwayDetailBody extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: isDark
                                 ? Colors.white
-                                : const Color(0xFF111827),
+                                : AppColors.ink,
                           ),
                         ),
                         const Spacer(),
@@ -207,7 +208,7 @@ class _PathwayDetailBody extends StatelessWidget {
                         value: detail.progressPercentage / 100,
                         backgroundColor: isDark
                             ? Colors.white.withValues(alpha: 0.08)
-                            : const Color(0xFFE5E7EB),
+                            : AppColors.sand,
                         valueColor:
                             const AlwaysStoppedAnimation<Color>(_green),
                         minHeight: 8,
@@ -219,8 +220,8 @@ class _PathwayDetailBody extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,
                         color: isDark
-                            ? const Color(0xFF6B7280)
-                            : const Color(0xFF9CA3AF),
+                            ? AppColors.onDarkSubtle
+                            : AppColors.subtle,
                       ),
                     ),
                   ],
@@ -243,7 +244,7 @@ class _PathwayDetailBody extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color:
-                          isDark ? Colors.white : const Color(0xFF111827),
+                          isDark ? Colors.white : AppColors.ink,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -252,8 +253,8 @@ class _PathwayDetailBody extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark
-                          ? const Color(0xFFD1D5DB)
-                          : const Color(0xFF4B5563),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                       height: 1.65,
                     ),
                   ),
@@ -272,7 +273,7 @@ class _PathwayDetailBody extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                 ),
               ),
             ),
@@ -392,8 +393,8 @@ class _StageItem extends StatelessWidget {
                         : isCurrent
                             ? levelColor
                             : isDark
-                                ? const Color(0xFF2A2A2A)
-                                : const Color(0xFFE5E7EB),
+                                ? AppColors.slateRaised
+                                : AppColors.sand,
                     border: isCurrent
                         ? Border.all(color: levelColor, width: 2)
                         : null,
@@ -411,7 +412,7 @@ class _StageItem extends StatelessWidget {
                                   ? Colors.white
                                   : isDark
                                       ? Colors.white38
-                                      : const Color(0xFF9CA3AF),
+                                      : AppColors.subtle,
                             ),
                           ),
                   ),
@@ -425,7 +426,7 @@ class _StageItem extends StatelessWidget {
                           ? _green.withValues(alpha: 0.3)
                           : isDark
                               ? Colors.white.withValues(alpha: 0.06)
-                              : const Color(0xFFE5E7EB),
+                              : AppColors.sand,
                     ),
                   ),
               ],
@@ -442,7 +443,7 @@ class _StageItem extends StatelessWidget {
                 color: isCurrent
                     ? levelColor.withValues(alpha: isDark ? 0.1 : 0.05)
                     : isDark
-                        ? const Color(0xFF1E1E1E)
+                        ? AppColors.slateCard
                         : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: isCurrent
@@ -473,7 +474,7 @@ class _StageItem extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: isDark
                                 ? Colors.white
-                                : const Color(0xFF111827),
+                                : AppColors.ink,
                             decoration: isCompleted
                                 ? TextDecoration.lineThrough
                                 : null,
@@ -509,8 +510,8 @@ class _StageItem extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: isDark
-                            ? const Color(0xFF9CA3AF)
-                            : const Color(0xFF6B7280),
+                            ? AppColors.onDarkMuted
+                            : AppColors.muted,
                         height: 1.4,
                       ),
                     ),

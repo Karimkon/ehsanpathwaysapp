@@ -50,7 +50,7 @@ class KhutbahDetailScreen extends ConsumerWidget {
                 child: Container(
                   height: 80,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    color: isDark ? AppColors.slateCard : Colors.white,
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
@@ -150,7 +150,7 @@ class _KhutbahDetailBody extends StatelessWidget {
         ],
       ),
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -161,7 +161,7 @@ class _KhutbahDetailBody extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFF15803D), Color(0xFF16A34A)],
+                colors: [AppColors.emerald800, AppColors.emerald700],
               ),
             ),
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
@@ -245,7 +245,7 @@ class _KhutbahDetailBody extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  color: isDark ? AppColors.slateCard : Colors.white,
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
@@ -285,7 +285,7 @@ class _KhutbahDetailBody extends StatelessWidget {
                                 fontWeight: FontWeight.w700,
                                 color: isDark
                                     ? Colors.white
-                                    : const Color(0xFF111827),
+                                    : AppColors.ink,
                               ),
                             ),
                           if (city.isNotEmpty)
@@ -294,8 +294,8 @@ class _KhutbahDetailBody extends StatelessWidget {
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
                                 color: isDark
-                                    ? const Color(0xFF9CA3AF)
-                                    : const Color(0xFF6B7280),
+                                    ? AppColors.onDarkMuted
+                                    : AppColors.muted,
                               ),
                             ),
                         ],
@@ -315,7 +315,7 @@ class _KhutbahDetailBody extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: () => context.push('/videos/$videoUuid'),
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFF59E0B),
+                  backgroundColor: AppColors.gold,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -348,8 +348,8 @@ class _KhutbahDetailBody extends StatelessWidget {
                     fontSize: 14,
                     height: 1.7,
                     color: isDark
-                        ? const Color(0xFFD1D5DB)
-                        : const Color(0xFF374151),
+                        ? AppColors.onDarkMuted
+                        : AppColors.ink2,
                   ),
                 ),
               ),
@@ -388,8 +388,8 @@ class _KhutbahDetailBody extends StatelessWidget {
                                 fontSize: 14,
                                 height: 1.6,
                                 color: isDark
-                                    ? const Color(0xFFD1D5DB)
-                                    : const Color(0xFF374151),
+                                    ? AppColors.onDarkMuted
+                                    : AppColors.ink2,
                               ),
                             ),
                           ),
@@ -443,7 +443,7 @@ class _SectionCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.slateCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -463,7 +463,7 @@ class _SectionCard extends StatelessWidget {
             style: GoogleFonts.lora(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : const Color(0xFF111827),
+              color: isDark ? Colors.white : AppColors.ink,
             ),
           ),
           const SizedBox(height: 10),
@@ -519,7 +519,7 @@ class _ScholarCard extends StatelessWidget {
             style: GoogleFonts.lora(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : const Color(0xFF111827),
+              color: isDark ? Colors.white : AppColors.ink,
             ),
           ),
           const SizedBox(height: 12),
@@ -557,7 +557,7 @@ class _ScholarCard extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : const Color(0xFF111827),
+                        color: isDark ? Colors.white : AppColors.ink,
                       ),
                     ),
                     if (title.isNotEmpty)
@@ -584,8 +584,8 @@ class _ScholarCard extends StatelessWidget {
                 fontSize: 13,
                 height: 1.6,
                 color: isDark
-                    ? const Color(0xFF9CA3AF)
-                    : const Color(0xFF6B7280),
+                    ? AppColors.onDarkMuted
+                    : AppColors.muted,
               ),
             ),
           ],

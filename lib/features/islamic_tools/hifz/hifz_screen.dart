@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/features/islamic_tools/islamic_tools_provider.dart';
@@ -36,24 +37,23 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
     final state = ref.watch(hifzProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF9),
       body: NestedScrollView(
         headerSliverBuilder: (context, _) => [
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: AppTheme.primaryGreen,
+            backgroundColor: AppColors.emerald900,
             foregroundColor: Colors.white,
-            title: const Text('Hifz Tracker',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            title: const Text('Hifz Tracker'),
             flexibleSpace: FlexibleSpaceBar(
               background: _ProgressHeader(state: state),
             ),
             bottom: TabBar(
               controller: _tabController,
-              indicatorColor: Colors.white,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white60,
+              indicatorColor: AppColors.gold,
+              labelColor: AppColors.goldLight,
+              unselectedLabelColor: Colors.white70,
+              dividerColor: Colors.transparent,
               tabs: const [
                 Tab(text: 'List View'),
                 Tab(text: 'By Juz'),
@@ -65,7 +65,7 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
           children: [
             // Filter + search bar
             Container(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
               padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
               child: Column(
                 children: [
@@ -89,13 +89,13 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE5E7EB))),
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: AppColors.sand),
+                      ),
                       enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: Color(0xFFE5E7EB))),
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: AppColors.sand),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -108,7 +108,7 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
                           label: 'All',
                           count: state.surahs.length,
                           selected: _filter == 'all',
-                          color: const Color(0xFF374151),
+                          color: AppColors.ink2,
                           onTap: () => setState(() => _filter = 'all'),
                         ),
                         const SizedBox(width: 8),
@@ -132,9 +132,8 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
                           label: 'Not Started',
                           count: state.notStartedCount,
                           selected: _filter == 'not_started',
-                          color: const Color(0xFF6B7280),
-                          onTap: () =>
-                              setState(() => _filter = 'not_started'),
+                          color: AppColors.muted,
+                          onTap: () => setState(() => _filter = 'not_started'),
                         ),
                       ],
                     ),
@@ -170,8 +169,8 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showResetDialog(context),
-        backgroundColor: Colors.red.shade50,
-        foregroundColor: Colors.red,
+        backgroundColor: AppColors.dangerTint,
+        foregroundColor: AppColors.danger,
         elevation: 0,
         icon: const Icon(Icons.refresh_rounded, size: 18),
         label: const Text('Reset', style: TextStyle(fontSize: 13)),
@@ -185,11 +184,13 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
       builder: (ctx) => AlertDialog(
         title: const Text('Reset all progress?'),
         content: const Text(
-            'This will clear all your Hifz progress. This cannot be undone.'),
+          'This will clear all your Hifz progress. This cannot be undone.',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () {
               ref.read(hifzProvider.notifier).resetAll();
@@ -198,7 +199,7 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
                 const SnackBar(content: Text('Progress has been reset')),
               );
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             child: const Text('Reset'),
           ),
         ],
@@ -215,78 +216,157 @@ class _ProgressHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppTheme.primaryGreen, const Color(0xFF14532D)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+    final pct = (state.verseFraction * 100);
+    return DecoratedBox(
+      decoration: const BoxDecoration(gradient: AppGradients.emerald),
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 56, 20, 48),
-          child: Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+          padding: const EdgeInsets.fromLTRB(20, 60, 20, 56),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 640),
+              child: Row(
                 children: [
-                  const Text('Memorised',
-                      style: TextStyle(color: Colors.white70, fontSize: 12)),
-                  Text(
-                    '${state.memorisedCount}',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 42,
-                        fontWeight: FontWeight.bold),
+                  _ProgressRing(
+                    memorised: state.verseFraction,
+                    inProgress: state.inProgressFraction,
+                    label: pct >= 10
+                        ? '${pct.round()}%'
+                        : '${pct.toStringAsFixed(1)}%',
                   ),
-                  const Text('of 114 surahs',
-                      style: TextStyle(color: Colors.white70, fontSize: 12)),
-                ],
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${state.percentage.round()}% complete',
-                          style: const TextStyle(
-                              color: Colors.white70, fontSize: 12),
+                          'OF THE QUR\'AN MEMORISED',
+                          style: AppTheme.eyebrow(AppColors.goldLight),
                         ),
+                        const SizedBox(height: 6),
                         Text(
+                          '${state.memorisedVerses} of ${state.totalVerses} verses',
+                          style: AppTheme.ui(
+                            size: 16,
+                            weight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '${state.memorisedCount} surahs memorised · '
                           '${state.inProgressCount} in progress',
-                          style: const TextStyle(
-                              color: Colors.white70, fontSize: 12),
+                          style: AppTheme.ui(
+                            size: 12.5,
+                            weight: FontWeight.w500,
+                            color: Colors.white.withValues(alpha: 0.82),
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: LinearProgressIndicator(
-                        value: state.percentage / 100,
-                        backgroundColor: Colors.white30,
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(Colors.white),
-                        minHeight: 8,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+/// Two-arc ring: gold for memorised, a paler arc for in progress.
+class _ProgressRing extends StatelessWidget {
+  const _ProgressRing({
+    required this.memorised,
+    required this.inProgress,
+    required this.label,
+  });
+
+  final double memorised;
+  final double inProgress;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: '$label of the Quran memorised',
+      child: SizedBox(
+        width: 92,
+        height: 92,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: AppMotion.of(context, const Duration(milliseconds: 900)),
+          curve: AppMotion.curve,
+          builder: (context, t, _) => CustomPaint(
+            painter: _RingPainter(memorised * t, inProgress * t),
+            child: Center(
+              child: Text(
+                label,
+                style: AppTheme.ui(
+                  size: 18,
+                  weight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RingPainter extends CustomPainter {
+  _RingPainter(this.memorised, this.inProgress);
+  final double memorised;
+  final double inProgress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const stroke = 9.0;
+    final rect = Offset.zero & size;
+    final arcRect = rect.deflate(stroke / 2);
+    const start = -1.5708; // 12 o'clock
+    const full = 6.28318;
+    Paint arc(Color c) => Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke
+      ..strokeCap = StrokeCap.round
+      ..color = c;
+
+    canvas.drawArc(
+      arcRect,
+      0,
+      full,
+      false,
+      arc(Colors.white.withValues(alpha: 0.14)),
+    );
+    if (inProgress > 0) {
+      canvas.drawArc(
+        arcRect,
+        start + full * memorised,
+        full * inProgress,
+        false,
+        arc(AppColors.goldLight.withValues(alpha: 0.45)),
+      );
+    }
+    if (memorised > 0) {
+      canvas.drawArc(
+        arcRect,
+        start,
+        full * memorised,
+        false,
+        arc(AppColors.gold)..shader = AppGradients.gold.createShader(rect),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_RingPainter old) =>
+      old.memorised != memorised || old.inProgress != inProgress;
 }
 
 // ─── Filter chip ─────────────────────────────────────────────────────────────
@@ -344,16 +424,16 @@ class _StatusDropdown extends StatelessWidget {
     Color textColor;
     switch (status) {
       case HifzStatus.memorised:
-        bgColor = const Color(0xFFDCFCE7);
-        textColor = const Color(0xFF15803D);
+        bgColor = AppColors.emerald100;
+        textColor = AppColors.emerald800;
         break;
       case HifzStatus.inProgress:
-        bgColor = const Color(0xFFFEF3C7);
-        textColor = const Color(0xFFB45309);
+        bgColor = AppColors.goldTint;
+        textColor = AppColors.goldDeep;
         break;
       case HifzStatus.notStarted:
-        bgColor = const Color(0xFFF3F4F6);
-        textColor = const Color(0xFF6B7280);
+        bgColor = AppColors.creamDeep;
+        textColor = AppColors.muted;
         break;
     }
 
@@ -368,24 +448,33 @@ class _StatusDropdown extends StatelessWidget {
           value: status,
           isDense: true,
           style: TextStyle(
-              fontSize: 11, fontWeight: FontWeight.w600, color: textColor),
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
           dropdownColor: Colors.white,
           icon: Icon(Icons.arrow_drop_down, color: textColor, size: 16),
           items: const [
             DropdownMenuItem(
               value: HifzStatus.notStarted,
-              child: Text('Not Started',
-                  style: TextStyle(fontSize: 11, color: Color(0xFF6B7280))),
+              child: Text(
+                'Not Started',
+                style: TextStyle(fontSize: 11, color: AppColors.muted),
+              ),
             ),
             DropdownMenuItem(
               value: HifzStatus.inProgress,
-              child: Text('In Progress',
-                  style: TextStyle(fontSize: 11, color: Color(0xFFB45309))),
+              child: Text(
+                'In Progress',
+                style: TextStyle(fontSize: 11, color: AppColors.goldDeep),
+              ),
             ),
             DropdownMenuItem(
               value: HifzStatus.memorised,
-              child: Text('Memorised ✓',
-                  style: TextStyle(fontSize: 11, color: Color(0xFF15803D))),
+              child: Text(
+                'Memorised ✓',
+                style: TextStyle(fontSize: 11, color: AppColors.emerald800),
+              ),
             ),
           ],
           onChanged: (v) {
@@ -414,12 +503,14 @@ class _ListView extends StatelessWidget {
 
   List<HifzSurah> get _filtered {
     return state.surahs.where((s) {
-      final matchFilter = filter == 'all' ||
+      final matchFilter =
+          filter == 'all' ||
           (filter == 'memorised' && s.status == HifzStatus.memorised) ||
           (filter == 'in_progress' && s.status == HifzStatus.inProgress) ||
           (filter == 'not_started' && s.status == HifzStatus.notStarted);
 
-      final matchQuery = query.isEmpty ||
+      final matchQuery =
+          query.isEmpty ||
           s.name.toLowerCase().contains(query) ||
           s.arabic.contains(query) ||
           s.no.toString() == query;
@@ -433,8 +524,10 @@ class _ListView extends StatelessWidget {
     final surahs = _filtered;
     if (surahs.isEmpty) {
       return const Center(
-        child: Text('No surahs match the filter',
-            style: TextStyle(color: Color(0xFF9CA3AF))),
+        child: Text(
+          'No surahs match the filter',
+          style: TextStyle(color: AppColors.subtle),
+        ),
       );
     }
     return ListView.separated(
@@ -443,59 +536,72 @@ class _ListView extends StatelessWidget {
       separatorBuilder: (_, __) => const Divider(height: 1, indent: 72),
       itemBuilder: (context, i) {
         final s = surahs[i];
-        return Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              // Number
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryGreen.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(9),
-                ),
-                child: Center(
-                  child: Text(
-                    '${s.no}',
-                    style: TextStyle(
+        // Tap a surah to practise it with verses hidden.
+        return InkWell(
+          onTap: () => context.push('/islamic-tools/quran/${s.no}?mode=hifz'),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                // Number
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryGreen.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Center(
+                    child: Text(
+                      '${s.no}',
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryGreen),
+                        color: AppTheme.primaryGreen,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              // Name
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(s.name,
+                const SizedBox(width: 12),
+                // Name
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        s.name,
                         style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600)),
-                    Text('Juz ${s.juz} · ${s.verses}v',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        'Juz ${s.juz} · ${s.verses}v',
                         style: const TextStyle(
-                            fontSize: 11, color: Color(0xFF9CA3AF))),
-                  ],
+                          fontSize: 11,
+                          color: AppColors.subtle,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              // Arabic
-              Text(
-                s.arabic,
-                style: TextStyle(
+                // Arabic
+                Text(
+                  s.arabic,
+                  style: TextStyle(
                     fontSize: 16,
-                    fontFamily: 'Amiri',
-                    color: AppTheme.primaryGreen),
-              ),
-              const SizedBox(width: 10),
-              // Status dropdown
-              _StatusDropdown(
-                status: s.status,
-                onChanged: (v) => onStatusChanged(s.no, v),
-              ),
-            ],
+                    fontFamily: AppTheme.arabicFamily,
+                    color: AppTheme.primaryGreen,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                // Status dropdown
+                _StatusDropdown(
+                  status: s.status,
+                  onChanged: (v) => onStatusChanged(s.no, v),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -533,17 +639,17 @@ class _JuzView extends StatelessWidget {
       itemBuilder: (context, index) {
         final juzNo = juzList[index];
         final surahs = groups[juzNo]!;
-        final memorised =
-            surahs.where((s) => s.status == HifzStatus.memorised).length;
-        final pct =
-            surahs.isEmpty ? 0.0 : memorised / surahs.length;
+        final memorised = surahs
+            .where((s) => s.status == HifzStatus.memorised)
+            .length;
+        final pct = surahs.isEmpty ? 0.0 : memorised / surahs.length;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: AppColors.sand),
           ),
           child: ExpansionTile(
             shape: const Border(),
@@ -553,9 +659,10 @@ class _JuzView extends StatelessWidget {
                 Text(
                   'Juz $juzNo',
                   style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryGreen,
-                      fontSize: 15),
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.primaryGreen,
+                    fontSize: 15,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -563,9 +670,10 @@ class _JuzView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: pct,
-                      backgroundColor: const Color(0xFFE5E7EB),
+                      backgroundColor: AppColors.sand,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                          AppTheme.primaryGreen),
+                        AppTheme.primaryGreen,
+                      ),
                       minHeight: 6,
                     ),
                   ),
@@ -574,37 +682,46 @@ class _JuzView extends StatelessWidget {
                 Text(
                   '${(pct * 100).round()}%',
                   style: TextStyle(
-                      fontSize: 12,
-                      color: AppTheme.primaryGreen,
-                      fontWeight: FontWeight.w600),
+                    fontSize: 12,
+                    color: AppTheme.primaryGreen,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
             children: surahs.map((s) {
               return Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 8),
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 child: Row(
                   children: [
                     Text(
                       '${s.no}.',
                       style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF9CA3AF),
-                          fontWeight: FontWeight.bold),
+                        fontSize: 12,
+                        color: AppColors.subtle,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(s.name,
-                          style: const TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w500)),
+                      child: Text(
+                        s.name,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                     Text(
                       s.arabic,
                       style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Amiri',
-                          color: AppTheme.primaryGreen),
+                        fontSize: 15,
+                        fontFamily: AppTheme.arabicFamily,
+                        color: AppTheme.primaryGreen,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     _StatusDropdown(

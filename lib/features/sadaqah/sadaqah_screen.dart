@@ -59,14 +59,14 @@ class _SadaqahScreenState extends ConsumerState<SadaqahScreen>
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: NestedScrollView(
         headerSliverBuilder: (context, _) => [
           // ── Header ────────────────────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 180,
             pinned: true,
-            backgroundColor: const Color(0xFF78350F),
+            backgroundColor: AppColors.goldDarkest,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
@@ -74,9 +74,9 @@ class _SadaqahScreenState extends ConsumerState<SadaqahScreen>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF78350F),
-                      Color(0xFFB45309),
-                      Color(0xFFF59E0B),
+                      AppColors.goldDarkest,
+                      AppColors.goldDeep,
+                      AppColors.gold,
                     ],
                   ),
                 ),
@@ -185,7 +185,7 @@ class _GiveTab extends ConsumerWidget {
             child: Container(
               height: 120,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                color: isDark ? AppColors.slateCard : Colors.white,
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
@@ -198,7 +198,7 @@ class _GiveTab extends ConsumerWidget {
         subtitle: 'Please check your connection and try again.',
         actionLabel: 'Retry',
         onAction: () => ref.invalidate(sadaqahPurposesProvider),
-        iconColor: const Color(0xFFF59E0B),
+        iconColor: AppColors.gold,
       ),
       data: (purposes) {
         if (purposes.isEmpty) {
@@ -206,7 +206,7 @@ class _GiveTab extends ConsumerWidget {
             icon: Icons.volunteer_activism_rounded,
             title: 'No purposes available',
             subtitle: 'Donation purposes are being set up.',
-            iconColor: const Color(0xFFF59E0B),
+            iconColor: AppColors.gold,
           );
         }
         return ListView(
@@ -216,17 +216,17 @@ class _GiveTab extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFFF59E0B).withValues(alpha: isDark ? 0.15 : 0.08),
+                color: AppColors.gold.withValues(alpha: isDark ? 0.15 : 0.08),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color:
-                      const Color(0xFFF59E0B).withValues(alpha: 0.25),
+                      AppColors.gold.withValues(alpha: 0.25),
                 ),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.info_outline_rounded,
-                      color: Color(0xFFF59E0B), size: 20),
+                      color: AppColors.gold, size: 20),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -234,8 +234,8 @@ class _GiveTab extends ConsumerWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: isDark
-                            ? const Color(0xFFFCD34D)
-                            : const Color(0xFF78350F),
+                            ? AppColors.goldLight
+                            : AppColors.goldDarkest,
                         height: 1.5,
                       ),
                     ),
@@ -249,7 +249,7 @@ class _GiveTab extends ConsumerWidget {
               style: GoogleFonts.lora(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
               ),
             ),
             const SizedBox(height: 12),
@@ -317,7 +317,7 @@ class _PurposeCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -339,12 +339,12 @@ class _PurposeCard extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                    color: AppColors.gold.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
                     Icons.volunteer_activism_rounded,
-                    color: Color(0xFFF59E0B),
+                    color: AppColors.gold,
                     size: 20,
                   ),
                 ),
@@ -355,7 +355,7 @@ class _PurposeCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF111827),
+                      color: isDark ? Colors.white : AppColors.ink,
                     ),
                   ),
                 ),
@@ -370,7 +370,7 @@ class _PurposeCard extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   color:
-                      isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+                      isDark ? AppColors.onDarkMuted : AppColors.muted,
                   height: 1.5,
                 ),
               ),
@@ -385,7 +385,7 @@ class _PurposeCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFFF59E0B),
+                      color: AppColors.gold,
                     ),
                   ),
                   Text(
@@ -393,8 +393,8 @@ class _PurposeCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                     ),
                   ),
                 ],
@@ -406,9 +406,9 @@ class _PurposeCard extends StatelessWidget {
                   value: progress,
                   minHeight: 6,
                   backgroundColor: isDark
-                      ? const Color(0xFF2A2A2A)
-                      : const Color(0xFFF3F4F6),
-                  color: const Color(0xFFF59E0B),
+                      ? AppColors.slateRaised
+                      : AppColors.creamDeep,
+                  color: AppColors.gold,
                 ),
               ),
             ],
@@ -418,7 +418,7 @@ class _PurposeCard extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onDonate,
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFF59E0B),
+                  backgroundColor: AppColors.gold,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -516,7 +516,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Donation failed: ${e.toString()}'),
-            backgroundColor: const Color(0xFFDC2626),
+            backgroundColor: AppColors.danger,
           ),
         );
       }
@@ -540,12 +540,12 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
               height: 72,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                color: AppColors.gold.withValues(alpha: 0.15),
               ),
               child: const Icon(
                 Icons.volunteer_activism_rounded,
                 size: 36,
-                color: Color(0xFFF59E0B),
+                color: AppColors.gold,
               ),
             ),
             const SizedBox(height: 16),
@@ -554,7 +554,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
               style: GoogleFonts.lora(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
-                color: widget.isDark ? Colors.white : const Color(0xFF111827),
+                color: widget.isDark ? Colors.white : AppColors.ink,
               ),
             ),
             const SizedBox(height: 8),
@@ -564,8 +564,8 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: widget.isDark
-                    ? const Color(0xFF9CA3AF)
-                    : const Color(0xFF6B7280),
+                    ? AppColors.onDarkMuted
+                    : AppColors.muted,
                 height: 1.5,
               ),
             ),
@@ -573,7 +573,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
             FilledButton(
               onPressed: () => Navigator.pop(context),
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFFF59E0B),
+                backgroundColor: AppColors.gold,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                     horizontal: 32, vertical: 12),
@@ -599,7 +599,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
   Widget build(BuildContext context) {
     final purposeName = widget.purpose['name'] as String? ?? '';
     final sheetColor =
-        widget.isDark ? const Color(0xFF1A1A1A) : Colors.white;
+        widget.isDark ? AppColors.slateCard : Colors.white;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.85,
@@ -618,8 +618,8 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
               height: 4,
               decoration: BoxDecoration(
                 color: widget.isDark
-                    ? const Color(0xFF3A3A3A)
-                    : const Color(0xFFE5E7EB),
+                    ? AppColors.slateLine
+                    : AppColors.sand,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -635,7 +635,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                       fontWeight: FontWeight.w700,
                       color: widget.isDark
                           ? Colors.white
-                          : const Color(0xFF111827),
+                          : AppColors.ink,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -647,8 +647,8 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: widget.isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -670,17 +670,17 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                               horizontal: 18, vertical: 10),
                           decoration: BoxDecoration(
                             color: selected
-                                ? const Color(0xFFF59E0B)
+                                ? AppColors.gold
                                 : (widget.isDark
-                                    ? const Color(0xFF2A2A2A)
-                                    : const Color(0xFFF9FAFB)),
+                                    ? AppColors.slateRaised
+                                    : AppColors.cream),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: selected
-                                  ? const Color(0xFFF59E0B)
+                                  ? AppColors.gold
                                   : (widget.isDark
-                                      ? const Color(0xFF3A3A3A)
-                                      : const Color(0xFFE5E7EB)),
+                                      ? AppColors.slateLine
+                                      : AppColors.sand),
                             ),
                           ),
                           child: Text(
@@ -692,7 +692,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                                   ? Colors.white
                                   : (widget.isDark
                                       ? Colors.white
-                                      : const Color(0xFF111827)),
+                                      : AppColors.ink),
                             ),
                           ),
                         ),
@@ -716,41 +716,41 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                       fontSize: 14,
                       color: widget.isDark
                           ? Colors.white
-                          : const Color(0xFF111827),
+                          : AppColors.ink,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Custom amount',
                       hintStyle: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         color: widget.isDark
-                            ? const Color(0xFF6B7280)
-                            : const Color(0xFF9CA3AF),
+                            ? AppColors.onDarkSubtle
+                            : AppColors.subtle,
                       ),
                       prefixText: '\$ ',
                       filled: true,
                       fillColor: widget.isDark
-                          ? const Color(0xFF2A2A2A)
-                          : const Color(0xFFF9FAFB),
+                          ? AppColors.slateRaised
+                          : AppColors.cream,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
                           color: widget.isDark
-                              ? const Color(0xFF3A3A3A)
-                              : const Color(0xFFE5E7EB),
+                              ? AppColors.slateLine
+                              : AppColors.sand,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
                           color: widget.isDark
-                              ? const Color(0xFF3A3A3A)
-                              : const Color(0xFFE5E7EB),
+                              ? AppColors.slateLine
+                              : AppColors.sand,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color(0xFFF59E0B),
+                          color: AppColors.gold,
                           width: 1.5,
                         ),
                       ),
@@ -765,8 +765,8 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: widget.isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -784,22 +784,22 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: widget.isDark
-                          ? const Color(0xFF2A2A2A)
-                          : const Color(0xFFF9FAFB),
+                          ? AppColors.slateRaised
+                          : AppColors.cream,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
                           color: widget.isDark
-                              ? const Color(0xFF3A3A3A)
-                              : const Color(0xFFE5E7EB),
+                              ? AppColors.slateLine
+                              : AppColors.sand,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
                           color: widget.isDark
-                              ? const Color(0xFF3A3A3A)
-                              : const Color(0xFFE5E7EB),
+                              ? AppColors.slateLine
+                              : AppColors.sand,
                         ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
@@ -815,8 +815,8 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: widget.isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -845,18 +845,18 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                               horizontal: 14, vertical: 10),
                           decoration: BoxDecoration(
                             color: selected
-                                ? const Color(0xFFF59E0B)
+                                ? AppColors.gold
                                     .withValues(alpha: 0.15)
                                 : (widget.isDark
-                                    ? const Color(0xFF2A2A2A)
-                                    : const Color(0xFFF9FAFB)),
+                                    ? AppColors.slateRaised
+                                    : AppColors.cream),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: selected
-                                  ? const Color(0xFFF59E0B)
+                                  ? AppColors.gold
                                   : (widget.isDark
-                                      ? const Color(0xFF3A3A3A)
-                                      : const Color(0xFFE5E7EB)),
+                                      ? AppColors.slateLine
+                                      : AppColors.sand),
                               width: selected ? 1.5 : 1,
                             ),
                           ),
@@ -867,10 +867,10 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                                 icon,
                                 size: 16,
                                 color: selected
-                                    ? const Color(0xFFF59E0B)
+                                    ? AppColors.gold
                                     : (widget.isDark
-                                        ? const Color(0xFF9CA3AF)
-                                        : const Color(0xFF6B7280)),
+                                        ? AppColors.onDarkMuted
+                                        : AppColors.muted),
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -881,10 +881,10 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                                       ? FontWeight.w700
                                       : FontWeight.w500,
                                   color: selected
-                                      ? const Color(0xFFF59E0B)
+                                      ? AppColors.gold
                                       : (widget.isDark
-                                          ? const Color(0xFF9CA3AF)
-                                          : const Color(0xFF6B7280)),
+                                          ? AppColors.onDarkMuted
+                                          : AppColors.muted),
                                 ),
                               ),
                             ],
@@ -903,41 +903,41 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                         fontSize: 14,
                         color: widget.isDark
                             ? Colors.white
-                            : const Color(0xFF111827),
+                            : AppColors.ink,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Your name (optional)',
                         hintStyle: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           color: widget.isDark
-                              ? const Color(0xFF6B7280)
-                              : const Color(0xFF9CA3AF),
+                              ? AppColors.onDarkSubtle
+                              : AppColors.subtle,
                         ),
                         prefixIcon: const Icon(Icons.person_outline_rounded),
                         filled: true,
                         fillColor: widget.isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFF9FAFB),
+                            ? AppColors.slateRaised
+                            : AppColors.cream,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
                             color: widget.isDark
-                                ? const Color(0xFF3A3A3A)
-                                : const Color(0xFFE5E7EB),
+                                ? AppColors.slateLine
+                                : AppColors.sand,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
                             color: widget.isDark
-                                ? const Color(0xFF3A3A3A)
-                                : const Color(0xFFE5E7EB),
+                                ? AppColors.slateLine
+                                : AppColors.sand,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: const BorderSide(
-                            color: Color(0xFFF59E0B),
+                            color: AppColors.gold,
                             width: 1.5,
                           ),
                         ),
@@ -953,7 +953,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                         value: _isAnonymous,
                         onChanged: (v) =>
                             setState(() => _isAnonymous = v),
-                        activeColor: const Color(0xFFF59E0B),
+                        activeColor: AppColors.gold,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -963,7 +963,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                           fontWeight: FontWeight.w500,
                           color: widget.isDark
                               ? Colors.white
-                              : const Color(0xFF374151),
+                              : AppColors.ink2,
                         ),
                       ),
                     ],
@@ -976,9 +976,9 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
                     child: FilledButton.icon(
                       onPressed: _isSubmitting ? null : _submit,
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFF59E0B),
+                        backgroundColor: AppColors.gold,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: const Color(0xFFF59E0B)
+                        disabledBackgroundColor: AppColors.gold
                             .withValues(alpha: 0.5),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -1039,7 +1039,7 @@ class _TransparencyTab extends ConsumerWidget {
             child: Container(
               height: 100,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                color: isDark ? AppColors.slateCard : Colors.white,
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
@@ -1052,7 +1052,7 @@ class _TransparencyTab extends ConsumerWidget {
         subtitle: 'Please check your connection and try again.',
         actionLabel: 'Retry',
         onAction: () => ref.invalidate(sadaqahReportsProvider),
-        iconColor: const Color(0xFFF59E0B),
+        iconColor: AppColors.gold,
       ),
       data: (reports) {
         if (reports.isEmpty) {
@@ -1060,7 +1060,7 @@ class _TransparencyTab extends ConsumerWidget {
             icon: Icons.pie_chart_outline_rounded,
             title: 'No reports yet',
             subtitle: 'Spending reports will appear here.',
-            iconColor: const Color(0xFFF59E0B),
+            iconColor: AppColors.gold,
           );
         }
         return ListView(
@@ -1087,7 +1087,7 @@ class _TransparencyTab extends ConsumerWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: isDark
-                            ? const Color(0xFF86EFAC)
+                            ? AppColors.emerald300
                             : AppTheme.primaryGreenDark,
                         height: 1.5,
                       ),
@@ -1101,7 +1101,7 @@ class _TransparencyTab extends ConsumerWidget {
               style: GoogleFonts.lora(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
               ),
             ),
             const SizedBox(height: 12),
@@ -1141,7 +1141,7 @@ class _ReportCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -1165,7 +1165,7 @@ class _ReportCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF111827),
+                    color: isDark ? Colors.white : AppColors.ink,
                   ),
                 ),
                 BadgeChip(
@@ -1193,7 +1193,7 @@ class _ReportCard extends StatelessWidget {
                   child: _AmountTile(
                     label: 'Spent',
                     amount: '$currency ${totalSpent.toStringAsFixed(2)}',
-                    color: const Color(0xFFF59E0B),
+                    color: AppColors.gold,
                     isDark: isDark,
                   ),
                 ),
@@ -1214,8 +1214,8 @@ class _ReportCard extends StatelessWidget {
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 11,
                               color: isDark
-                                  ? const Color(0xFF9CA3AF)
-                                  : const Color(0xFF6B7280),
+                                  ? AppColors.onDarkMuted
+                                  : AppColors.muted,
                             ),
                           ),
                           Text(
@@ -1235,8 +1235,8 @@ class _ReportCard extends StatelessWidget {
                             height: 8,
                             decoration: BoxDecoration(
                               color: isDark
-                                  ? const Color(0xFF2A2A2A)
-                                  : const Color(0xFFF3F4F6),
+                                  ? AppColors.slateRaised
+                                  : AppColors.creamDeep,
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
@@ -1248,7 +1248,7 @@ class _ReportCard extends StatelessWidget {
                                 gradient: const LinearGradient(
                                   colors: [
                                     AppTheme.primaryGreen,
-                                    Color(0xFFF59E0B),
+                                    AppColors.gold,
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(4),
@@ -1297,7 +1297,7 @@ class _AmountTile extends StatelessWidget {
             label,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
-              color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+              color: isDark ? AppColors.onDarkMuted : AppColors.muted,
             ),
           ),
           const SizedBox(height: 2),

@@ -95,8 +95,8 @@ class _ArticlesScreenState extends ConsumerState<ArticlesScreen> {
                 hintStyle: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   color: isDark
-                      ? const Color(0xFF9CA3AF)
-                      : const Color(0xFF9CA3AF),
+                      ? AppColors.onDarkMuted
+                      : AppColors.subtle,
                 ),
                 prefixIcon: const Icon(Icons.search_rounded, size: 22),
                 suffixIcon: _searchController.text.isNotEmpty
@@ -110,7 +110,7 @@ class _ArticlesScreenState extends ConsumerState<ArticlesScreen> {
                     : null,
                 filled: true,
                 fillColor: isDark
-                    ? const Color(0xFF1E1E1E)
+                    ? AppColors.slateCard
                     : Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -233,7 +233,7 @@ class _ArticleListItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
@@ -259,17 +259,17 @@ class _ArticleListItem extends StatelessWidget {
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Shimmer.fromColors(
                           baseColor: isDark
-                              ? const Color(0xFF2A2A2A)
-                              : const Color(0xFFE5E7EB),
+                              ? AppColors.slateRaised
+                              : AppColors.sand,
                           highlightColor: isDark
-                              ? const Color(0xFF3A3A3A)
-                              : const Color(0xFFF3F4F6),
+                              ? AppColors.slateLine
+                              : AppColors.creamDeep,
                           child: Container(color: Colors.white),
                         ),
                         errorWidget: (_, __, ___) => Container(
                           color: isDark
-                              ? const Color(0xFF2A2A2A)
-                              : const Color(0xFFF3F4F6),
+                              ? AppColors.slateRaised
+                              : AppColors.creamDeep,
                           child: const Icon(
                             Icons.article_outlined,
                             size: 32,
@@ -279,8 +279,8 @@ class _ArticleListItem extends StatelessWidget {
                       )
                     : Container(
                         color: isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFF3F4F6),
+                            ? AppColors.slateRaised
+                            : AppColors.creamDeep,
                         child: Center(
                           child: Icon(
                             Icons.article_outlined,
@@ -312,7 +312,7 @@ class _ArticleListItem extends StatelessWidget {
                           height: 1.35,
                           color: isDark
                               ? Colors.white
-                              : const Color(0xFF111827),
+                              : AppColors.ink,
                         ),
                       ),
 
@@ -328,8 +328,8 @@ class _ArticleListItem extends StatelessWidget {
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: isDark
-                                ? const Color(0xFF9CA3AF)
-                                : const Color(0xFF6B7280),
+                                ? AppColors.onDarkMuted
+                                : AppColors.muted,
                           ),
                         ),
 

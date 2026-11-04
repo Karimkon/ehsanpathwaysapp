@@ -6,15 +6,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ehsan_pathways/core/providers/notification_provider.dart';
 import 'package:ehsan_pathways/core/services/notification_service.dart';
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 class NotificationSettingsScreen extends ConsumerWidget {
   const NotificationSettingsScreen({super.key});
 
   static const routeName = '/notifications';
 
-  static const _green = Color(0xFF16A34A);
-  static const _green900 = Color(0xFF14532D);
-  static const _gold = Color(0xFFF59E0B);
+  static const _green = AppColors.emerald700;
+  static const _green900 = AppColors.emerald900;
+  static const _gold = AppColors.gold;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +25,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       appBar: AppBar(
         backgroundColor: _green,
         foregroundColor: Colors.white,
@@ -75,21 +76,21 @@ class NotificationSettingsScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.red.shade50,
+                        color: AppColors.dangerTint,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.red.shade200),
+                        border: Border.all(color: AppColors.dangerOnDark),
                       ),
                       child: Row(
                         children: [
                           Icon(Icons.error_outline,
-                              color: Colors.red.shade400, size: 16),
+                              color: AppColors.dangerOnDark, size: 16),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               settings.error!,
                               style: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
-                                  color: Colors.red.shade700),
+                                  color: AppColors.danger),
                             ),
                           ),
                         ],
@@ -200,7 +201,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                 subtitle: 'Reminder to continue your Islamic knowledge journey',
                 value: settings.learningReminderEnabled,
                 icon: Icons.notifications_active_rounded,
-                iconColor: const Color(0xFF7C3AED),
+                iconColor: AppColors.amethyst,
                 isDark: isDark,
                 onChanged: (v) => notifier.toggleLearningReminder(v),
               ),
@@ -209,7 +210,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.schedule_rounded,
-                      color: Color(0xFF7C3AED), size: 22),
+                      color: AppColors.amethyst, size: 22),
                   title: Text(
                     'Reminder Time',
                     style: GoogleFonts.plusJakartaSans(
@@ -261,7 +262,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
                 subtitle: 'Be notified when new videos, articles & podcasts are published',
                 value: settings.newContentEnabled,
                 icon: Icons.new_releases_rounded,
-                iconColor: const Color(0xFF0EA5E9),
+                iconColor: AppColors.sapphire,
                 isDark: isDark,
                 onChanged: (v) => notifier.toggleNewContent(v),
               ),
@@ -405,7 +406,7 @@ class _SettingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.slateCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: isDark
             ? []
@@ -463,7 +464,7 @@ class _SwitchTile extends StatelessWidget {
         style: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: isDark ? Colors.white : const Color(0xFF14532D),
+          color: isDark ? Colors.white : AppColors.emerald900,
         ),
       ),
       subtitle: Text(
@@ -493,18 +494,18 @@ class _LocationTile extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.blue.shade50,
+          color: AppColors.sapphireTint,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(Icons.location_on_rounded,
-            color: Colors.blue.shade600, size: 20),
+            color: AppColors.sapphire, size: 20),
       ),
       title: Text(
         settings.hasLocation ? 'Location Detected' : 'Detect My Location',
         style: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: isDark ? Colors.white : const Color(0xFF14532D),
+          color: isDark ? Colors.white : AppColors.emerald900,
         ),
       ),
       subtitle: Text(
@@ -514,7 +515,7 @@ class _LocationTile extends StatelessWidget {
         style: GoogleFonts.plusJakartaSans(
           fontSize: 12,
           color: settings.hasLocation
-              ? Colors.blue.shade600
+              ? AppColors.sapphire
               : Colors.grey.shade500,
         ),
       ),
@@ -588,10 +589,10 @@ class _PrayerTile extends StatelessWidget {
       dense: true,
       leading: Text(
         entry.arabicName,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 18,
-          fontFamily: 'Amiri',
-          color: Color(0xFF16A34A),
+          fontFamily: AppTheme.arabicFamily,
+          color: AppColors.emerald700,
         ),
       ),
       title: Text(
@@ -599,7 +600,7 @@ class _PrayerTile extends StatelessWidget {
         style: GoogleFonts.plusJakartaSans(
           fontSize: 13,
           fontWeight: FontWeight.w500,
-          color: isDark ? Colors.white : const Color(0xFF14532D),
+          color: isDark ? Colors.white : AppColors.emerald900,
         ),
       ),
       subtitle: Text(
@@ -630,7 +631,7 @@ class _TodayPrayerCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF16A34A), Color(0xFF15803D)],
+          colors: [AppColors.emerald700, AppColors.emerald800],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

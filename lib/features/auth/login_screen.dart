@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/core/services/social_sign_in_service.dart';
 import 'package:ehsan_pathways/features/auth/register_screen.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 /// A polished login screen with an Islamic-inspired gradient header,
 /// clean input fields, and full Riverpod auth integration.
@@ -34,9 +35,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   late final Animation<double> _fadeAnimation;
 
   // -- Colours ----------------------------------------------------------------
-  static const _green500 = Color(0xFF16A34A);
-  static const _green900 = Color(0xFF14532D);
-  static const _gold = Color(0xFFF59E0B);
+  static const _green500 = AppColors.emerald700;
+  static const _green900 = AppColors.emerald900;
+  static const _gold = AppColors.gold;
 
   @override
   void initState() {
@@ -485,7 +486,7 @@ class _GradientHeader extends StatelessWidget {
         height: height,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF16A34A), Color(0xFF059669), Color(0xFF14532D)],
+            colors: [AppColors.emerald700, AppColors.emerald600, AppColors.emerald900],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -531,7 +532,7 @@ class _GradientHeader extends StatelessWidget {
               left: -20,
               child: _decorativeCircle(
                 60,
-                const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                AppColors.gold.withValues(alpha: 0.12),
               ),
             ),
             Center(child: child),
@@ -621,7 +622,7 @@ class _StyledField extends StatelessWidget {
               fontSize: 13,
               color: Colors.grey.shade400,
             ),
-            prefixIcon: Icon(icon, size: 20, color: const Color(0xFF16A34A)),
+            prefixIcon: Icon(icon, size: 20, color: AppColors.emerald700),
             suffixIcon: suffixIcon,
             filled: true,
             fillColor: Colors.grey.shade50,
@@ -640,17 +641,17 @@ class _StyledField extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(
-                color: Color(0xFF16A34A),
+                color: AppColors.emerald700,
                 width: 1.5,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Colors.redAccent),
+              borderSide: const BorderSide(color: AppColors.danger),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+              borderSide: const BorderSide(color: AppColors.danger, width: 1.5),
             ),
           ),
         ),
@@ -678,11 +679,11 @@ class _GradientButton extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(
-          colors: [Color(0xFF16A34A), Color(0xFF15803D)],
+          colors: [AppColors.emerald700, AppColors.emerald800],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF16A34A).withValues(alpha: 0.35),
+            color: AppColors.emerald700.withValues(alpha: 0.35),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -730,15 +731,15 @@ class _ErrorCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.red.shade50,
+        color: AppColors.dangerTint,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.shade200),
+        border: Border.all(color: AppColors.dangerOnDark),
       ),
       child: Row(
         children: [
           Icon(
             Icons.error_outline_rounded,
-            color: Colors.red.shade400,
+            color: AppColors.dangerOnDark,
             size: 20,
           ),
           const SizedBox(width: 10),
@@ -747,7 +748,7 @@ class _ErrorCard extends StatelessWidget {
               message,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
-                color: Colors.red.shade700,
+                color: AppColors.danger,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -906,7 +907,7 @@ class _AuthLoadingOverlay extends StatelessWidget {
                 height: 48,
                 child: CircularProgressIndicator(
                   strokeWidth: 3.5,
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF16A34A)),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.emerald700),
                 ),
               ),
               const SizedBox(height: 20),
@@ -916,13 +917,13 @@ class _AuthLoadingOverlay extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF14532D),
+                  color: AppColors.emerald900,
                 ),
               ),
               const SizedBox(height: 6),
               const Text(
                 'Please wait…',
-                style: TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
+                style: TextStyle(fontSize: 12, color: AppColors.muted),
               ),
             ],
           ),

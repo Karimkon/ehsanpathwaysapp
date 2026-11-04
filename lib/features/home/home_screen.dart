@@ -22,9 +22,9 @@ import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 // Constants
 // ---------------------------------------------------------------------------
 
-const Color _primaryGreen = Color(0xFF16A34A);
-const Color _primaryGreenDark = Color(0xFF15803D);
-const Color _accentGold = Color(0xFFF59E0B);
+const Color _primaryGreen = AppColors.emerald700;
+const Color _primaryGreenDark = AppColors.emerald800;
+const Color _accentGold = AppColors.gold;
 
 // ---------------------------------------------------------------------------
 // HomeScreen
@@ -70,7 +70,7 @@ class _HomeContent extends ConsumerWidget {
 
     return RefreshIndicator(
       color: _primaryGreen,
-      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      backgroundColor: isDark ? AppColors.slateCard : Colors.white,
       displacement: 60,
       onRefresh: () async {
         ref.invalidate(homeDataProvider);
@@ -199,7 +199,7 @@ class _SliverAppBar extends StatelessWidget {
     return SliverAppBar(
       floating: true,
       snap: true,
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+      backgroundColor: isDark ? AppColors.slate : AppColors.cream,
       surfaceTintColor: Colors.transparent,
       toolbarHeight: 64,
       title: Row(
@@ -237,7 +237,7 @@ class _SliverAppBar extends StatelessWidget {
             style: GoogleFonts.lora(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : const Color(0xFF111827),
+              color: isDark ? Colors.white : AppColors.ink,
               letterSpacing: -0.3,
             ),
           ),
@@ -351,7 +351,7 @@ class _GreetingBanner extends StatelessWidget {
                     style: GoogleFonts.lora(
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF111827),
+                      color: isDark ? Colors.white : AppColors.ink,
                       height: 1.2,
                     ),
                   ),
@@ -372,8 +372,8 @@ class _GreetingBanner extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                       height: 1.5,
                     ),
                   ),
@@ -453,8 +453,8 @@ class _FeaturedVideoHero extends StatelessWidget {
                   fit: BoxFit.cover,
                   placeholder: (_, __) => Container(
                     color: isDark
-                        ? const Color(0xFF2A2A2A)
-                        : const Color(0xFFE5E7EB),
+                        ? AppColors.slateRaised
+                        : AppColors.sand,
                   ),
                   errorWidget: (_, __, ___) => Container(
                     decoration: const BoxDecoration(
@@ -507,7 +507,7 @@ class _FeaturedVideoHero extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [_accentGold, Color(0xFFFBBF24)],
+                      colors: [_accentGold, AppColors.goldLight],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
@@ -777,7 +777,7 @@ class _CategoryChip extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
+                color: isDark ? AppColors.onDarkMuted : AppColors.ink2,
                 height: 1.2,
               ),
             ),
@@ -963,7 +963,7 @@ class _ScholarsRow extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
+                    color: isDark ? AppColors.onDarkMuted : AppColors.ink2,
                     height: 1.2,
                   ),
                 ),
@@ -975,8 +975,8 @@ class _ScholarsRow extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: isDark
-                          ? const Color(0xFF6B7280)
-                          : const Color(0xFF9CA3AF),
+                          ? AppColors.onDarkSubtle
+                          : AppColors.subtle,
                     ),
                   ),
                 ],
@@ -1078,7 +1078,7 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [_primaryGreenDark, Color(0xFF052E16)],
+                  colors: [_primaryGreenDark, AppColors.emerald950],
                 ),
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [
@@ -1517,12 +1517,12 @@ class _DailyHadithCard extends ConsumerWidget {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF14532D).withValues(alpha: 0.6),
-                    const Color(0xFF052E16).withValues(alpha: 0.4),
+                    AppColors.emerald900.withValues(alpha: 0.6),
+                    AppColors.emerald950.withValues(alpha: 0.4),
                   ]
                 : [
-                    const Color(0xFF052E16),
-                    const Color(0xFF14532D),
+                    AppColors.emerald950,
+                    AppColors.emerald900,
                   ],
           ),
           borderRadius: BorderRadius.circular(20),
@@ -1594,7 +1594,7 @@ class _DailyHadithCard extends ConsumerWidget {
               style: GoogleFonts.amiri(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFFFCD34D),
+                color: AppColors.goldLight,
                 height: 1.8,
               ),
             ),
@@ -1697,7 +1697,7 @@ class _DailyDuaCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isDark
@@ -1747,7 +1747,7 @@ class _DailyDuaCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.06)
-                        : const Color(0xFFF9FAFB),
+                        : AppColors.cream,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -1756,8 +1756,8 @@ class _DailyDuaCard extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                     ),
                   ),
                 ),
@@ -1774,8 +1774,8 @@ class _DailyDuaCard extends StatelessWidget {
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: isDark
-                    ? const Color(0xFFFCD34D)
-                    : const Color(0xFF92400E),
+                    ? AppColors.goldLight
+                    : AppColors.goldDarkest,
                 height: 1.7,
               ),
             ),
@@ -1789,8 +1789,8 @@ class _DailyDuaCard extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.italic,
                 color: isDark
-                    ? const Color(0xFFD1D5DB)
-                    : const Color(0xFF4B5563),
+                    ? AppColors.onDarkMuted
+                    : AppColors.muted,
                 height: 1.5,
               ),
             ),
@@ -1803,8 +1803,8 @@ class _DailyDuaCard extends StatelessWidget {
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: isDark
-                    ? const Color(0xFF6B7280)
-                    : const Color(0xFF9CA3AF),
+                    ? AppColors.onDarkSubtle
+                    : AppColors.subtle,
               ),
             ),
           ],
@@ -1839,8 +1839,8 @@ class _IslamicQuoteSection extends StatelessWidget {
                     _accentGold.withValues(alpha: 0.06),
                   ]
                 : [
-                    const Color(0xFFF0FDF4),
-                    const Color(0xFFFEFCE8),
+                    AppColors.emerald50,
+                    AppColors.goldTint,
                   ],
           ),
           borderRadius: BorderRadius.circular(20),
@@ -1866,8 +1866,8 @@ class _IslamicQuoteSection extends StatelessWidget {
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: isDark
-                    ? const Color(0xFFFCD34D)
-                    : const Color(0xFF92400E),
+                    ? AppColors.goldLight
+                    : AppColors.goldDarkest,
                 height: 1.6,
               ),
             ),
@@ -1881,7 +1881,7 @@ class _IslamicQuoteSection extends StatelessWidget {
                 fontStyle: FontStyle.italic,
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.7)
-                    : const Color(0xFF4B5563),
+                    : AppColors.muted,
                 height: 1.5,
               ),
             ),
@@ -1893,7 +1893,7 @@ class _IslamicQuoteSection extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.4)
-                    : const Color(0xFF9CA3AF),
+                    : AppColors.subtle,
               ),
             ),
             const SizedBox(height: 20),
@@ -1905,7 +1905,7 @@ class _IslamicQuoteSection extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.3)
-                    : const Color(0xFFD1D5DB),
+                    : AppColors.sandDeep,
               ),
             ),
           ],
@@ -1924,12 +1924,12 @@ class _DiscoverGrid extends StatelessWidget {
   final bool isDark;
 
   static const _items = [
-    _DiscoverItem(label: 'Arabic', sublabel: 'Learn the language', icon: Icons.translate_rounded, route: '/arabic', color: Color(0xFF7C3AED)),
-    _DiscoverItem(label: 'Khutbahs', sublabel: 'Friday sermons', icon: Icons.record_voice_over_rounded, route: '/khutbahs', color: Color(0xFF16A34A)),
-    _DiscoverItem(label: 'Hajj & Umrah', sublabel: 'Complete guides', icon: Icons.home_work_rounded, route: '/hajj-umrah', color: Color(0xFFF59E0B)),
-    _DiscoverItem(label: 'Live', sublabel: 'Watch live streams', icon: Icons.live_tv_rounded, route: '/live', color: Color(0xFFEF4444)),
-    _DiscoverItem(label: 'Sadaqah', sublabel: 'Give in charity', icon: Icons.volunteer_activism_rounded, route: '/sadaqah', color: Color(0xFF0EA5E9)),
-    _DiscoverItem(label: 'Pathways', sublabel: 'Structured learning', icon: Icons.route_rounded, route: '/pathways', color: Color(0xFFEC4899)),
+    _DiscoverItem(label: 'Arabic', sublabel: 'Learn the language', icon: Icons.translate_rounded, route: '/arabic', color: AppColors.amethyst),
+    _DiscoverItem(label: 'Khutbahs', sublabel: 'Friday sermons', icon: Icons.record_voice_over_rounded, route: '/khutbahs', color: AppColors.emerald700),
+    _DiscoverItem(label: 'Hajj & Umrah', sublabel: 'Complete guides', icon: Icons.home_work_rounded, route: '/hajj-umrah', color: AppColors.gold),
+    _DiscoverItem(label: 'Live', sublabel: 'Watch live streams', icon: Icons.live_tv_rounded, route: '/live', color: AppColors.danger),
+    _DiscoverItem(label: 'Sadaqah', sublabel: 'Give in charity', icon: Icons.volunteer_activism_rounded, route: '/sadaqah', color: AppColors.sapphire),
+    _DiscoverItem(label: 'Pathways', sublabel: 'Structured learning', icon: Icons.route_rounded, route: '/pathways', color: AppColors.ruby),
   ];
 
   @override
@@ -1969,7 +1969,7 @@ class _DiscoverTile extends StatelessWidget {
       onTap: () => context.push(item.route),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
         ),
@@ -1982,7 +1982,7 @@ class _DiscoverTile extends StatelessWidget {
               child: Icon(item.icon, color: item.color, size: 24),
             ),
             const SizedBox(height: 8),
-            Text(item.label, style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white : const Color(0xFF111827))),
+            Text(item.label, style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white : AppColors.ink)),
             Text(item.sublabel, style: GoogleFonts.plusJakartaSans(fontSize: 10, color: Colors.grey.shade500), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
           ],
         ),

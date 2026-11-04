@@ -9,12 +9,13 @@ import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/features/history/history_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 // ─── Colours ──────────────────────────────────────────────────────────────────
-const _green = Color(0xFF16A34A);
-const _greenDeep = Color(0xFF052E16);
-const _greenMid = Color(0xFF14532D);
-const _gold = Color(0xFFF59E0B);
+const _green = AppColors.emerald700;
+const _greenDeep = AppColors.emerald950;
+const _greenMid = AppColors.emerald900;
+const _gold = AppColors.gold;
 
 // =============================================================================
 // HistoryScreen
@@ -45,12 +46,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     if (auth.status != AuthStatus.authenticated) {
       return Scaffold(
         backgroundColor:
-            isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+            isDark ? AppColors.slate : AppColors.cream,
         appBar: AppBar(
           title: Text('Watch History',
               style: GoogleFonts.plusJakartaSans(fontSize: 20, fontWeight: FontWeight.w700)),
           backgroundColor:
-              isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+              isDark ? AppColors.slate : AppColors.cream,
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
@@ -65,7 +66,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: CustomScrollView(
         slivers: [
           // ── Gradient header ──────────────────────────────────────────
@@ -96,7 +97,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? Colors.white : const Color(0xFF111827),
+                    color: isDark ? Colors.white : AppColors.ink,
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -281,7 +282,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.error_outline_rounded,
-                size: 48, color: Colors.red.shade300),
+                size: 48, color: AppColors.dangerOnDark),
             const SizedBox(height: 16),
             Text(
               'Could not load history',
@@ -328,7 +329,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               style: GoogleFonts.lora(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
               ),
             ),
             const SizedBox(height: 10),
@@ -394,7 +395,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             },
             child: Text('Clear All',
                 style: GoogleFonts.plusJakartaSans(
-                    color: Colors.red, fontWeight: FontWeight.w700)),
+                    color: AppColors.danger, fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -436,7 +437,7 @@ class _ContinueWatchingSection extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                   letterSpacing: -0.3,
                 ),
               ),
@@ -580,7 +581,7 @@ class _ContinueCard extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
                 height: 1.4,
               ),
             ),
@@ -628,7 +629,7 @@ class _HistoryListItem extends ConsumerWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 24),
-        color: Colors.red.shade700,
+        color: AppColors.danger,
         child: const Icon(Icons.delete_rounded,
             color: Colors.white, size: 26),
       ),
@@ -717,7 +718,7 @@ class _HistoryListItem extends ConsumerWidget {
                         fontWeight: FontWeight.w600,
                         color: isDark
                             ? Colors.white
-                            : const Color(0xFF111827),
+                            : AppColors.ink,
                         height: 1.4,
                       ),
                     ),
@@ -902,7 +903,7 @@ class _ThumbPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE5E7EB),
+      color: isDark ? AppColors.slateRaised : AppColors.sand,
       child: Icon(
         Icons.play_circle_outline_rounded,
         size: 28,

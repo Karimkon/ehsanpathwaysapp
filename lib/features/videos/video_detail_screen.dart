@@ -20,10 +20,11 @@ import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
 import 'package:ehsan_pathways/shared/widgets/scholar_avatar.dart';
 import 'package:ehsan_pathways/shared/widgets/section_header.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 // ─── Colours ──────────────────────────────────────────────────────────────────
-const _primaryGreen = Color(0xFF16A34A);
-const _gold = Color(0xFFF59E0B);
+const _primaryGreen = AppColors.emerald700;
+const _gold = AppColors.gold;
 
 /// Video detail screen — YouTube-inspired but with Islamic aesthetics.
 ///
@@ -218,7 +219,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
   Scaffold _buildLoadingScaffold(bool isDark) {
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -271,7 +272,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
   Scaffold _buildErrorScaffold(bool isDark, Object error) {
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -283,7 +284,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
         subtitle: 'Please check your connection and try again.',
         actionLabel: 'Retry',
         onAction: () => ref.invalidate(videoDetailProvider(widget.uuid)),
-        iconColor: Colors.red.shade400,
+        iconColor: AppColors.dangerOnDark,
       ),
     );
   }
@@ -293,7 +294,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
   Scaffold _buildScaffold(Video video, bool isDark) {
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       extendBodyBehindAppBar: true,
       appBar: _buildGradientAppBar(video.title, isDark),
       body: SingleChildScrollView(
@@ -313,7 +314,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
                 style: GoogleFonts.lora(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                   height: 1.3,
                 ),
               ),
@@ -373,7 +374,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
           gradient: LinearGradient(
             colors: [
               _primaryGreen.withValues(alpha: _appBarOpacity),
-              const Color(0xFF059669).withValues(alpha: _appBarOpacity),
+              AppColors.emerald600.withValues(alpha: _appBarOpacity),
             ],
           ),
           boxShadow: _appBarOpacity > 0.5
@@ -422,8 +423,8 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
         height: 220 + MediaQuery.paddingOf(context).top,
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFF1A1A1A)
-              : const Color(0xFFE5E7EB),
+              ? AppColors.slateCard
+              : AppColors.sand,
         ),
         child: Center(
           child: Column(
@@ -574,7 +575,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
                           fontWeight: FontWeight.w700,
                           color: isDark
                               ? Colors.white
-                              : const Color(0xFF111827))),
+                              : AppColors.ink)),
                   const SizedBox(height: 3),
                   Text('View scholar profile',
                       style: GoogleFonts.plusJakartaSans(
@@ -604,7 +605,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
               style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                   letterSpacing: -0.2)),
           const SizedBox(height: 10),
           AnimatedCrossFade(
@@ -652,7 +653,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
         fontSize: 14,
         fontWeight: FontWeight.w400,
         height: 1.6,
-        color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF4B5563),
+        color: isDark ? AppColors.onDarkMuted : AppColors.muted,
       );
 
   // ── Tags ───────────────────────────────────────────────────────────────────
@@ -667,7 +668,7 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
               style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                   letterSpacing: -0.2)),
           const SizedBox(height: 10),
           Wrap(
@@ -765,7 +766,7 @@ class _ActionButton extends StatelessWidget {
             : Colors.black.withValues(alpha: 0.05));
     final fg = isActive
         ? activeColor
-        : (isDark ? Colors.white70 : const Color(0xFF374151));
+        : (isDark ? Colors.white70 : AppColors.ink2);
 
     return GestureDetector(
       onTap: onTap,
@@ -855,7 +856,7 @@ class _BookmarkActionButtonState
             : Colors.black.withValues(alpha: 0.05));
     final fg = _isBookmarked
         ? _gold
-        : (widget.isDark ? Colors.white70 : const Color(0xFF374151));
+        : (widget.isDark ? Colors.white70 : AppColors.ink2);
 
     return GestureDetector(
       onTap: _toggle,
@@ -950,7 +951,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
             ok ? 'Note saved!' : 'Failed to save note',
             style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
           ),
-          backgroundColor: ok ? _primaryGreen : Colors.red,
+          backgroundColor: ok ? _primaryGreen : AppColors.danger,
           behavior: SnackBarBehavior.floating,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -974,7 +975,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.slateCard : Colors.white,
         borderRadius: BorderRadius.circular(24),
       ),
       padding: EdgeInsets.fromLTRB(20, 20, 20, 20 + bottomPad),
@@ -1004,7 +1005,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
                   style: GoogleFonts.plusJakartaSans(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: isDark ? Colors.white : const Color(0xFF111827))),
+                      color: isDark ? Colors.white : AppColors.ink)),
             ],
           ),
 
@@ -1034,7 +1035,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
               filled: true,
               fillColor: isDark
                   ? Colors.white.withValues(alpha: 0.05)
-                  : const Color(0xFFF9FAFB),
+                  : AppColors.cream,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide.none,
@@ -1043,7 +1044,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
             ),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
-              color: isDark ? Colors.white : const Color(0xFF111827),
+              color: isDark ? Colors.white : AppColors.ink,
             ),
           ),
 
@@ -1084,7 +1085,7 @@ class _NoteBottomSheetState extends ConsumerState<_NoteBottomSheet> {
                         fontWeight: FontWeight.w500,
                         color: isDark
                             ? Colors.white70
-                            : const Color(0xFF6B7280),
+                            : AppColors.muted,
                       ),
                     ),
                   ],
@@ -1140,7 +1141,7 @@ class _MoreOptionsSheet extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.slateCard : Colors.white,
         borderRadius: BorderRadius.circular(24),
       ),
       padding: const EdgeInsets.all(20),
@@ -1194,7 +1195,7 @@ class _MoreOptionsSheet extends StatelessWidget {
             icon: Icons.report_outlined,
             label: 'Report an issue',
             isDark: isDark,
-            color: Colors.orange.shade400,
+            color: AppColors.gold,
             onTap: () => Navigator.pop(context),
           ),
           const SizedBox(height: 8),
@@ -1221,7 +1222,7 @@ class _MoreOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = color ?? (isDark ? Colors.white : const Color(0xFF374151));
+    final c = color ?? (isDark ? Colors.white : AppColors.ink2);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -1282,7 +1283,7 @@ class _BackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color =
-        overrideColor ?? (isDark ? Colors.white : const Color(0xFF111827));
+        overrideColor ?? (isDark ? Colors.white : AppColors.ink);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Material(
@@ -1315,7 +1316,7 @@ class _MetaItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c =
-        isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280);
+        isDark ? AppColors.onDarkMuted : AppColors.muted;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

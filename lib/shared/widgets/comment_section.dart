@@ -301,7 +301,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             child: const Text('Delete'),
           ),
         ],
@@ -340,7 +340,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                 ),
               ),
             ],
@@ -414,7 +414,7 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     color:
-                        isDark ? Colors.white : const Color(0xFF111827),
+                        isDark ? Colors.white : AppColors.ink,
                   ),
                   decoration: InputDecoration(
                     hintText: _replyToName != null
@@ -423,27 +423,27 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                     hintStyle: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark
-                          ? const Color(0xFF6B7280)
-                          : const Color(0xFF9CA3AF),
+                          ? AppColors.onDarkSubtle
+                          : AppColors.subtle,
                     ),
                     filled: true,
                     fillColor: isDark
-                        ? const Color(0xFF2A2A2A)
-                        : const Color(0xFFF9FAFB),
+                        ? AppColors.slateRaised
+                        : AppColors.cream,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide(
                         color: isDark
-                            ? const Color(0xFF3A3A3A)
-                            : const Color(0xFFE5E7EB),
+                            ? AppColors.slateLine
+                            : AppColors.sand,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide(
                         color: isDark
-                            ? const Color(0xFF3A3A3A)
-                            : const Color(0xFFE5E7EB),
+                            ? AppColors.slateLine
+                            : AppColors.sand,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -521,8 +521,8 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                     Icons.chat_bubble_outline_rounded,
                     size: 40,
                     color: isDark
-                        ? const Color(0xFF4B5563)
-                        : const Color(0xFFD1D5DB),
+                        ? AppColors.onDarkSubtle
+                        : AppColors.sandDeep,
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -531,8 +531,8 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: isDark
-                          ? const Color(0xFF6B7280)
-                          : const Color(0xFF9CA3AF),
+                          ? AppColors.onDarkSubtle
+                          : AppColors.subtle,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -541,8 +541,8 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       color: isDark
-                          ? const Color(0xFF4B5563)
-                          : const Color(0xFFD1D5DB),
+                          ? AppColors.onDarkSubtle
+                          : AppColors.sandDeep,
                     ),
                   ),
                 ],
@@ -672,12 +672,12 @@ class _CommentTile extends StatelessWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: Colors.red.withValues(alpha: 0.15),
+          color: AppColors.danger.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Icon(
           Icons.delete_outline_rounded,
-          color: Colors.red,
+          color: AppColors.danger,
         ),
       ),
       confirmDismiss: (_) async {
@@ -705,8 +705,8 @@ class _CommentTile extends StatelessWidget {
                   color: isOwn
                       ? AppTheme.primaryGreen.withValues(alpha: 0.2)
                       : (isDark
-                          ? const Color(0xFF2A2A2A)
-                          : const Color(0xFFE5E7EB)),
+                          ? AppColors.slateRaised
+                          : AppColors.sand),
                 ),
                 child: Center(
                   child: Text(
@@ -716,7 +716,7 @@ class _CommentTile extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: isOwn
                           ? AppTheme.primaryGreen
-                          : (isDark ? Colors.white : const Color(0xFF374151)),
+                          : (isDark ? Colors.white : AppColors.ink2),
                     ),
                   ),
                 ),
@@ -735,7 +735,7 @@ class _CommentTile extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: isDark
                                 ? Colors.white
-                                : const Color(0xFF111827),
+                                : AppColors.ink,
                           ),
                         ),
                         if (isOwn) ...[
@@ -764,8 +764,8 @@ class _CommentTile extends StatelessWidget {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 11,
                             color: isDark
-                                ? const Color(0xFF6B7280)
-                                : const Color(0xFF9CA3AF),
+                                ? AppColors.onDarkSubtle
+                                : AppColors.subtle,
                           ),
                         ),
                       ],
@@ -777,8 +777,8 @@ class _CommentTile extends StatelessWidget {
                         fontSize: 13,
                         height: 1.5,
                         color: isDark
-                            ? const Color(0xFFD1D5DB)
-                            : const Color(0xFF374151),
+                            ? AppColors.onDarkMuted
+                            : AppColors.ink2,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -794,8 +794,8 @@ class _CommentTile extends StatelessWidget {
                                   Icons.reply_rounded,
                                   size: 14,
                                   color: isDark
-                                      ? const Color(0xFF6B7280)
-                                      : const Color(0xFF9CA3AF),
+                                      ? AppColors.onDarkSubtle
+                                      : AppColors.subtle,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
@@ -804,8 +804,8 @@ class _CommentTile extends StatelessWidget {
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color: isDark
-                                        ? const Color(0xFF6B7280)
-                                        : const Color(0xFF9CA3AF),
+                                        ? AppColors.onDarkSubtle
+                                        : AppColors.subtle,
                                   ),
                                 ),
                               ],
@@ -821,7 +821,7 @@ class _CommentTile extends StatelessWidget {
                                 Icon(
                                   Icons.delete_outline_rounded,
                                   size: 14,
-                                  color: Colors.red.withValues(alpha: 0.7),
+                                  color: AppColors.danger.withValues(alpha: 0.7),
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
@@ -829,7 +829,7 @@ class _CommentTile extends StatelessWidget {
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.red.withValues(alpha: 0.7),
+                                    color: AppColors.danger.withValues(alpha: 0.7),
                                   ),
                                 ),
                               ],
@@ -863,10 +863,10 @@ class _SignInPrompt extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF9FAFB),
+        color: isDark ? AppColors.slateCard : AppColors.cream,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE5E7EB),
+          color: isDark ? AppColors.slateRaised : AppColors.sand,
         ),
       ),
       child: Row(
@@ -875,7 +875,7 @@ class _SignInPrompt extends StatelessWidget {
             Icons.login_rounded,
             size: 20,
             color:
-                isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                isDark ? AppColors.onDarkSubtle : AppColors.subtle,
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -884,8 +884,8 @@ class _SignInPrompt extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: isDark
-                    ? const Color(0xFF9CA3AF)
-                    : const Color(0xFF6B7280),
+                    ? AppColors.onDarkMuted
+                    : AppColors.muted,
               ),
             ),
           ),

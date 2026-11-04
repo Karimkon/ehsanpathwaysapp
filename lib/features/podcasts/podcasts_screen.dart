@@ -11,15 +11,16 @@ import 'package:ehsan_pathways/features/podcasts/podcast_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 // ---------------------------------------------------------------------------
 // Colour constants -- purple-tinted accent for the podcast section
 // ---------------------------------------------------------------------------
 
-const Color _podcastPurple = Color(0xFF8B5CF6);
-const Color _podcastPurpleLight = Color(0xFFA78BFA);
-const Color _podcastPurpleDark = Color(0xFF7C3AED);
-const Color _primaryGreen = Color(0xFF16A34A);
+const Color _podcastPurple = AppColors.amethyst;
+const Color _podcastPurpleLight = AppColors.amethystLight;
+const Color _podcastPurpleDark = AppColors.amethyst;
+const Color _primaryGreen = AppColors.emerald700;
 
 // ---------------------------------------------------------------------------
 // Podcasts Screen
@@ -106,7 +107,7 @@ class _PodcastsScreenState extends ConsumerState<PodcastsScreen> {
               style: GoogleFonts.lora(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
               ),
             ),
           ],
@@ -123,7 +124,7 @@ class _PodcastsScreenState extends ConsumerState<PodcastsScreen> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
               ),
               decoration: InputDecoration(
                 hintText: 'Search podcasts...',
@@ -131,8 +132,8 @@ class _PodcastsScreenState extends ConsumerState<PodcastsScreen> {
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isDark
-                      ? const Color(0xFF6B7280)
-                      : const Color(0xFF9CA3AF),
+                      ? AppColors.onDarkSubtle
+                      : AppColors.subtle,
                 ),
                 prefixIcon: Icon(
                   Icons.search_rounded,
@@ -150,7 +151,7 @@ class _PodcastsScreenState extends ConsumerState<PodcastsScreen> {
                     : null,
                 filled: true,
                 fillColor: isDark
-                    ? const Color(0xFF1E1E1E)
+                    ? AppColors.slateCard
                     : Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -327,7 +328,7 @@ class _PodcastListItemState extends State<_PodcastListItem>
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: _podcastPurple.withValues(alpha: isDark ? 0.1 : 0.06),
@@ -387,7 +388,7 @@ class _PodcastListItemState extends State<_PodcastListItem>
                         height: 1.35,
                         color: isDark
                             ? Colors.white
-                            : const Color(0xFF111827),
+                            : AppColors.ink,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -402,8 +403,8 @@ class _PodcastListItemState extends State<_PodcastListItem>
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: isDark
-                              ? const Color(0xFF9CA3AF)
-                              : const Color(0xFF6B7280),
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted,
                         ),
                       ),
                     const SizedBox(height: 6),
@@ -432,8 +433,8 @@ class _PodcastListItemState extends State<_PodcastListItem>
                             height: 3,
                             decoration: BoxDecoration(
                               color: isDark
-                                  ? const Color(0xFF6B7280)
-                                  : const Color(0xFF9CA3AF),
+                                  ? AppColors.onDarkSubtle
+                                  : AppColors.subtle,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -444,8 +445,8 @@ class _PodcastListItemState extends State<_PodcastListItem>
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: isDark
-                                  ? const Color(0xFF9CA3AF)
-                                  : const Color(0xFF6B7280),
+                                  ? AppColors.onDarkMuted
+                                  : AppColors.muted,
                             ),
                           ),
                         ],
@@ -509,7 +510,7 @@ class _CoverImage extends StatelessWidget {
       height: 80,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
+        color: isDark ? AppColors.slateRaised : AppColors.creamDeep,
       ),
       clipBehavior: Clip.antiAlias,
       child: imageUrl != null && imageUrl!.isNotEmpty
@@ -520,9 +521,9 @@ class _CoverImage extends StatelessWidget {
               height: 80,
               placeholder: (_, __) => Shimmer.fromColors(
                 baseColor:
-                    isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE5E7EB),
+                    isDark ? AppColors.slateRaised : AppColors.sand,
                 highlightColor:
-                    isDark ? const Color(0xFF3A3A3A) : const Color(0xFFF3F4F6),
+                    isDark ? AppColors.slateLine : AppColors.creamDeep,
                 child: Container(color: Colors.white),
               ),
               errorWidget: (_, __, ___) => _placeholder(),

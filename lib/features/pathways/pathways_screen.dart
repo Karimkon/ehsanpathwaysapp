@@ -7,9 +7,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ehsan_pathways/features/pathways/pathway_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
-const Color _green = Color(0xFF16A34A);
-const Color _gold = Color(0xFFF59E0B);
+const Color _green = AppColors.emerald700;
+const Color _gold = AppColors.gold;
 
 class PathwaysScreen extends ConsumerWidget {
   const PathwaysScreen({super.key});
@@ -21,7 +22,7 @@ class PathwaysScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: CustomScrollView(
         slivers: [
           // -- Header --
@@ -29,7 +30,7 @@ class PathwaysScreen extends ConsumerWidget {
             expandedHeight: 180,
             pinned: true,
             backgroundColor:
-                isDark ? const Color(0xFF121212) : Colors.white,
+                isDark ? AppColors.slate : Colors.white,
             leading: IconButton(
               icon: Container(
                 width: 36,
@@ -50,9 +51,9 @@ class PathwaysScreen extends ConsumerWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF052E16),
-                      Color(0xFF14532D),
-                      Color(0xFF16A34A),
+                      AppColors.emerald950,
+                      AppColors.emerald900,
+                      AppColors.emerald700,
                     ],
                   ),
                 ),
@@ -175,11 +176,11 @@ class _PathwayCard extends StatelessWidget {
   Color get _levelColor {
     switch (pathway.difficultyLevel?.toLowerCase()) {
       case 'beginner':
-        return const Color(0xFF10B981);
+        return AppColors.emerald500;
       case 'intermediate':
-        return const Color(0xFF3B82F6);
+        return AppColors.sapphire;
       case 'advanced':
-        return const Color(0xFF8B5CF6);
+        return AppColors.amethyst;
       default:
         return _green;
     }
@@ -188,7 +189,7 @@ class _PathwayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      color: isDark ? AppColors.slateCard : Colors.white,
       borderRadius: BorderRadius.circular(18),
       clipBehavior: Clip.antiAlias,
       elevation: isDark ? 0 : 2,
@@ -320,7 +321,7 @@ class _PathwayCard extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
                       color:
-                          isDark ? Colors.white : const Color(0xFF111827),
+                          isDark ? Colors.white : AppColors.ink,
                       height: 1.3,
                     ),
                   ),
@@ -334,8 +335,8 @@ class _PathwayCard extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: isDark
-                            ? const Color(0xFF9CA3AF)
-                            : const Color(0xFF6B7280),
+                            ? AppColors.onDarkMuted
+                            : AppColors.muted,
                         height: 1.5,
                       ),
                     ),
@@ -347,8 +348,8 @@ class _PathwayCard extends StatelessWidget {
                         Icon(Icons.schedule_rounded,
                             size: 14,
                             color: isDark
-                                ? const Color(0xFF6B7280)
-                                : const Color(0xFF9CA3AF)),
+                                ? AppColors.onDarkSubtle
+                                : AppColors.subtle),
                         const SizedBox(width: 4),
                         Text(
                           '~${pathway.estimatedHours}h estimated',
@@ -356,8 +357,8 @@ class _PathwayCard extends StatelessWidget {
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: isDark
-                                ? const Color(0xFF6B7280)
-                                : const Color(0xFF9CA3AF),
+                                ? AppColors.onDarkSubtle
+                                : AppColors.subtle,
                           ),
                         ),
                       ],

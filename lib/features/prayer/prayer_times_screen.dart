@@ -7,12 +7,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
+import 'package:ehsan_pathways/features/prayer/prayer_cities.dart';
 import 'package:ehsan_pathways/features/prayer/prayer_provider.dart';
-import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
+import 'package:ehsan_pathways/shared/widgets/reading_width.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
-const _green = Color(0xFF16A34A);
-const _greenDark = Color(0xFF15803D);
-const _gold = Color(0xFFF59E0B);
+const _green = AppColors.emerald700;
+const _greenDark = AppColors.emerald800;
+const _gold = AppColors.gold;
 
 /// Full prayer-times screen: today's schedule for the user's location, a live
 /// "next prayer" countdown, calculation-method selection, and quick access to
@@ -69,33 +72,93 @@ class _PrayerTimesScreenState extends ConsumerState<PrayerTimesScreen> {
     ref.invalidate(prayerScheduleProvider);
   }
 
+  Future<void> _useMyLocation() async {
+    final result = await resolvePrayerLocation();
+    if (!mounted) return;
+    ref.invalidate(prayerScheduleProvider);
+    final message = switch (result) {
+      LocationResult.ok => null,
+      LocationResult.servicesOff =>
+        'Location Services are turned off. Choose your city instead, or turn them on in Settings.',
+      LocationResult.denied =>
+        'Location access was not allowed. You can choose your city instead.',
+      LocationResult.deniedForever =>
+        'Location access is off for Ehsan Pathways. Choose your city, or allow access in Settings.',
+      LocationResult.failed =>
+        'Your location could not be found. Choose your city instead.',
+    };
+    if (message == null) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action:
+            result == LocationResult.deniedForever ||
+                result == LocationResult.servicesOff
+            ? SnackBarAction(
+                label: 'Settings',
+                onPressed: () => result == LocationResult.servicesOff
+                    ? Geolocator.openLocationSettings()
+                    : Geolocator.openAppSettings(),
+              )
+            : SnackBarAction(label: 'Choose city', onPressed: _pickCity),
+      ),
+    );
+  }
+
+  Future<void> _pickCity() async {
+    final city = await showModalBottomSheet<PrayerCity>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => const _CityPicker(),
+    );
+    if (city == null) return;
+    await PrayerTimesService.saveLocation(
+      lat: city.lat,
+      lng: city.lng,
+      city: city.label,
+    );
+    // Adopt the region's customary method and Asr school.
+    final settings = await PrayerTimesService.loadSettings();
+    await PrayerTimesService.saveSettings(
+      enabled: settings['enabled'] as bool? ?? false,
+      method: city.method,
+      prayerToggles: {
+        Prayer.fajr: settings['notify_fajr'] as bool? ?? true,
+        Prayer.dhuhr: settings['notify_dhuhr'] as bool? ?? true,
+        Prayer.asr: settings['notify_asr'] as bool? ?? true,
+        Prayer.maghrib: settings['notify_maghrib'] as bool? ?? true,
+        Prayer.isha: settings['notify_isha'] as bool? ?? true,
+      },
+    );
+    await PrayerTimesService.saveMadhab(city.hanafi ? 'hanafi' : 'shafi');
+    ref.invalidate(prayerScheduleProvider);
+  }
+
+  Future<void> _setHanafi(bool hanafi) async {
+    await PrayerTimesService.saveMadhab(hanafi ? 'hanafi' : 'shafi');
+    ref.invalidate(prayerScheduleProvider);
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final async = ref.watch(prayerScheduleProvider);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF9),
       body: async.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: _green),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => _ErrorView(
           isLocation: err is PrayerLocationException,
-          onRetry: () async {
-            // Explicit user action → OK to request GPS permission now.
-            await resolvePrayerLocation();
-            ref.invalidate(prayerScheduleProvider);
-          },
+          onUseLocation: _useMyLocation,
+          onPickCity: _pickCity,
         ),
         data: (data) => _Content(
           data: data,
           isDark: isDark,
           onPickMethod: () => _pickMethod(data),
-          onRefreshLocation: () async {
-            await resolvePrayerLocation();
-            ref.invalidate(prayerScheduleProvider);
-          },
+          onRefreshLocation: _useMyLocation,
+          onPickCity: _pickCity,
+          onSetHanafi: _setHanafi,
         ),
       ),
     );
@@ -112,12 +175,16 @@ class _Content extends StatelessWidget {
     required this.isDark,
     required this.onPickMethod,
     required this.onRefreshLocation,
+    required this.onPickCity,
+    required this.onSetHanafi,
   });
 
   final PrayerScheduleData data;
   final bool isDark;
   final VoidCallback onPickMethod;
   final Future<void> Function() onRefreshLocation;
+  final VoidCallback onPickCity;
+  final ValueChanged<bool> onSetHanafi;
 
   @override
   Widget build(BuildContext context) {
@@ -126,11 +193,11 @@ class _Content extends StatelessWidget {
         SliverAppBar(
           pinned: true,
           expandedHeight: 260,
-          backgroundColor: _greenDark,
+          backgroundColor: AppColors.emerald900,
           foregroundColor: Colors.white,
           actions: [
             IconButton(
-              tooltip: 'Refresh location',
+              tooltip: 'Use my location',
               icon: const Icon(Icons.my_location_rounded),
               onPressed: onRefreshLocation,
             ),
@@ -150,44 +217,75 @@ class _Content extends StatelessWidget {
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: readingInsets(context, horizontal: 16, top: 16, bottom: 8),
           sliver: SliverToBoxAdapter(
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.location_on_rounded, size: 16, color: _green),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    data.locationLabel,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white70 : const Color(0xFF4B5563),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_rounded,
+                      size: 18,
+                      color: isDark ? AppColors.gold : AppColors.emerald700,
                     ),
-                  ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        data.locationLabel,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTheme.ui(
+                          size: 14,
+                          weight: FontWeight.w700,
+                          color: isDark ? AppColors.onDark : AppColors.ink,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: onPickCity,
+                      child: const Text('Change'),
+                    ),
+                  ],
                 ),
                 Text(
-                  DateFormat('EEE, d MMM').format(DateTime.now()),
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white38 : const Color(0xFF9CA3AF),
+                  '${DateFormat('EEEE, d MMMM').format(DateTime.now())} · '
+                  '${data.method.displayName}',
+                  style: AppTheme.ui(
+                    size: 12.5,
+                    weight: FontWeight.w500,
+                    color: isDark ? AppColors.onDarkMuted : AppColors.muted,
                   ),
+                ),
+                const SizedBox(height: 12),
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(
+                      value: false,
+                      label: Text("Asr: Shafi'i / Standard"),
+                    ),
+                    ButtonSegment(value: true, label: Text('Asr: Hanafi')),
+                  ],
+                  selected: {data.hanafi},
+                  showSelectedIcon: false,
+                  onSelectionChanged: (v) => onSetHanafi(v.first),
                 ),
               ],
             ),
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+          padding: readingInsets(context, horizontal: 16, top: 8, bottom: 32),
           sliver: SliverList.separated(
             itemCount: data.entries.length,
             separatorBuilder: (_, __) => const SizedBox(height: 10),
             itemBuilder: (context, i) {
               final entry = data.entries[i];
-              final isNext = entry.prayer == data.nextPrayer &&
+              final isNext =
+                  entry.prayer == data.nextPrayer &&
                   entry.prayer != Prayer.sunrise;
-              final isCurrent = entry.prayer == data.currentPrayer &&
+              final isCurrent =
+                  entry.prayer == data.currentPrayer &&
                   entry.prayer != Prayer.sunrise;
               return _PrayerRow(
                 entry: entry,
@@ -228,13 +326,7 @@ class _NextPrayerHeader extends StatelessWidget {
     final remaining = data.nextPrayerTime.difference(DateTime.now());
 
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [_greenDark, Color(0xFF052E16)],
-        ),
-      ),
+      decoration: const BoxDecoration(gradient: AppGradients.emerald),
       child: SafeArea(
         bottom: false,
         child: Padding(
@@ -270,8 +362,10 @@ class _NextPrayerHeader extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
@@ -279,8 +373,11 @@ class _NextPrayerHeader extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.access_time_rounded,
-                        size: 15, color: _gold),
+                    const Icon(
+                      Icons.access_time_rounded,
+                      size: 15,
+                      color: _gold,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       '${PrayerTimesService.formatTime(next.time)}  •  in ${_formatRemaining(remaining)}',
@@ -340,7 +437,7 @@ class _PrayerRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final highlight = isNext;
-    final baseColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final baseColor = isDark ? AppColors.slateCard : Colors.white;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -354,8 +451,8 @@ class _PrayerRow extends StatelessWidget {
           color: highlight
               ? Colors.transparent
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : const Color(0xFFE5E7EB)),
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : AppColors.sand),
         ),
       ),
       child: Row(
@@ -369,8 +466,11 @@ class _PrayerRow extends StatelessWidget {
                   : _green.withValues(alpha: isDark ? 0.15 : 0.09),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(_icon,
-                size: 20, color: highlight ? Colors.white : _green),
+            child: Icon(
+              _icon,
+              size: 20,
+              color: highlight ? Colors.white : _green,
+            ),
           ),
           const SizedBox(width: 14),
           Column(
@@ -385,14 +485,16 @@ class _PrayerRow extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       color: highlight
                           ? Colors.white
-                          : (isDark ? Colors.white : const Color(0xFF111827)),
+                          : (isDark ? Colors.white : AppColors.ink),
                     ),
                   ),
                   if (isCurrent && !isNext) ...[
                     const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 7, vertical: 2),
+                        horizontal: 7,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: _gold.withValues(alpha: 0.18),
                         borderRadius: BorderRadius.circular(6),
@@ -416,7 +518,7 @@ class _PrayerRow extends StatelessWidget {
                   fontSize: 14,
                   color: highlight
                       ? Colors.white.withValues(alpha: 0.8)
-                      : (isDark ? Colors.white54 : const Color(0xFF9CA3AF)),
+                      : (isDark ? Colors.white54 : AppColors.subtle),
                 ),
               ),
             ],
@@ -429,7 +531,7 @@ class _PrayerRow extends StatelessWidget {
               fontWeight: FontWeight.w700,
               color: highlight
                   ? Colors.white
-                  : (isDark ? Colors.white : const Color(0xFF111827)),
+                  : (isDark ? Colors.white : AppColors.ink),
             ),
           ),
         ],
@@ -452,7 +554,7 @@ class _MethodPicker extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.slateCard : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
@@ -475,7 +577,7 @@ class _MethodPicker extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                 ),
               ),
             ),
@@ -497,7 +599,7 @@ class _MethodPicker extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : const Color(0xFF111827),
+                        color: isDark ? Colors.white : AppColors.ink,
                       ),
                     ),
                     subtitle: Text(
@@ -524,13 +626,19 @@ class _MethodPicker extends StatelessWidget {
 // ===========================================================================
 
 class _ErrorView extends StatelessWidget {
-  const _ErrorView({required this.isLocation, required this.onRetry});
+  const _ErrorView({
+    required this.isLocation,
+    required this.onUseLocation,
+    required this.onPickCity,
+  });
 
   final bool isLocation;
-  final VoidCallback onRetry;
+  final VoidCallback onUseLocation;
+  final VoidCallback onPickCity;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
       child: Column(
         children: [
@@ -540,22 +648,168 @@ class _ErrorView extends StatelessWidget {
           ),
           Expanded(
             child: Center(
-              child: EmptyState(
-                icon: isLocation
-                    ? Icons.location_off_rounded
-                    : Icons.error_outline_rounded,
-                title: isLocation
-                    ? 'Location needed'
-                    : 'Unable to load prayer times',
-                subtitle: isLocation
-                    ? 'Enable location access so we can calculate accurate prayer times for your area.'
-                    : 'Something went wrong while calculating prayer times. Please try again.',
-                actionLabel: isLocation ? 'Enable & Retry' : 'Retry',
-                onAction: onRetry,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(28),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        width: 84,
+                        height: 84,
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.only(bottom: 20),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: AppGradients.emerald,
+                        ),
+                        child: const Icon(
+                          Icons.mosque_rounded,
+                          size: 40,
+                          color: AppColors.goldLight,
+                        ),
+                      ).centered(),
+                      Text(
+                        isLocation
+                            ? 'Where are you praying?'
+                            : 'Unable to calculate prayer times',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        isLocation
+                            ? 'Prayer times are calculated on your device. Share your location for the most accurate times, or choose your city. Both work offline.'
+                            : 'Please choose your city or try your location again.',
+                        textAlign: TextAlign.center,
+                        style: AppTheme.ui(
+                          size: 14,
+                          weight: FontWeight.w500,
+                          height: 1.5,
+                          color: isDark
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      FilledButton.icon(
+                        onPressed: onUseLocation,
+                        icon: const Icon(Icons.my_location_rounded),
+                        label: const Text('Use my location'),
+                      ),
+                      const SizedBox(height: 10),
+                      OutlinedButton.icon(
+                        onPressed: onPickCity,
+                        icon: const Icon(Icons.location_city_rounded),
+                        label: const Text('Choose a city'),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+extension on Widget {
+  Widget centered() => Center(child: this);
+}
+
+// ===========================================================================
+// City picker
+// ===========================================================================
+
+class _CityPicker extends StatefulWidget {
+  const _CityPicker();
+
+  @override
+  State<_CityPicker> createState() => _CityPickerState();
+}
+
+class _CityPickerState extends State<_CityPicker> {
+  String _query = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final q = _query.trim().toLowerCase();
+    final cities = q.isEmpty
+        ? kPrayerCities
+        : kPrayerCities
+              .where(
+                (c) =>
+                    c.name.toLowerCase().contains(q) ||
+                    c.country.toLowerCase().contains(q),
+              )
+              .toList();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return SafeArea(
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.8,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Choose your city',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    autofocus: false,
+                    onChanged: (v) => setState(() => _query = v),
+                    textInputAction: TextInputAction.search,
+                    decoration: const InputDecoration(
+                      hintText: 'Search city or country',
+                      prefixIcon: Icon(Icons.search_rounded),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: cities.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(
+                          'No match. Choose the nearest city listed, or use your location.',
+                          textAlign: TextAlign.center,
+                          style: AppTheme.ui(
+                            size: 14,
+                            color: isDark
+                                ? AppColors.onDarkMuted
+                                : AppColors.muted,
+                          ),
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: cities.length,
+                      itemBuilder: (context, i) {
+                        final c = cities[i];
+                        return ListTile(
+                          leading: const Icon(Icons.place_outlined),
+                          title: Text(c.name),
+                          subtitle: Text(
+                            '${c.country} · ${c.method.displayName}',
+                          ),
+                          onTap: () => Navigator.pop(context, c),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

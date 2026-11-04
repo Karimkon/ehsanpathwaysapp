@@ -15,9 +15,9 @@ class HadithCollectionScreen extends ConsumerWidget {
     final hadithsAsync = ref.watch(hadithCollectionProvider(collectionId));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF9),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1D4ED8),
+        backgroundColor: AppColors.sapphire,
         foregroundColor: Colors.white,
         title: Text(
           _titleFor(collectionId),
@@ -62,8 +62,8 @@ class HadithCollectionScreen extends ConsumerWidget {
 
   Widget _buildShimmer() {
     return Shimmer.fromColors(
-      baseColor: const Color(0xFFE5E7EB),
-      highlightColor: const Color(0xFFF9FAFB),
+      baseColor: AppColors.sand,
+      highlightColor: AppColors.cream,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: 6,
@@ -87,12 +87,12 @@ class HadithCollectionScreen extends ConsumerWidget {
           const Icon(
             Icons.wifi_off_rounded,
             size: 48,
-            color: Color(0xFFD1D5DB),
+            color: AppColors.sandDeep,
           ),
           const SizedBox(height: 12),
           const Text(
             'Failed to load hadiths',
-            style: TextStyle(color: Color(0xFF6B7280)),
+            style: TextStyle(color: AppColors.muted),
           ),
           const SizedBox(height: 12),
           TextButton(onPressed: retry, child: const Text('Retry')),
@@ -121,7 +121,7 @@ class _HadithCardState extends State<_HadithCard> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: AppColors.sand),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +137,7 @@ class _HadithCardState extends State<_HadithCard> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1D4ED8).withOpacity(0.1),
+                    color: AppColors.sapphire.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -145,7 +145,7 @@ class _HadithCardState extends State<_HadithCard> {
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1D4ED8),
+                      color: AppColors.sapphire,
                     ),
                   ),
                 ),
@@ -156,7 +156,7 @@ class _HadithCardState extends State<_HadithCard> {
                       h.topic,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF6B7280),
+                        color: AppColors.muted,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -175,7 +175,7 @@ class _HadithCardState extends State<_HadithCard> {
                   },
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  color: const Color(0xFF9CA3AF),
+                  color: AppColors.subtle,
                 ),
               ],
             ),
@@ -186,11 +186,11 @@ class _HadithCardState extends State<_HadithCard> {
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Text(
                 h.arabic,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 19,
                   height: 1.9,
-                  fontFamily: 'Amiri',
-                  color: Color(0xFF111827),
+                  fontFamily: AppTheme.arabicFamily,
+                  color: AppColors.ink,
                 ),
                 textAlign: TextAlign.right,
                 textDirection: TextDirection.rtl,
@@ -209,7 +209,7 @@ class _HadithCardState extends State<_HadithCard> {
                 style: const TextStyle(
                   fontSize: 14,
                   height: 1.7,
-                  color: Color(0xFF374151),
+                  color: AppColors.ink2,
                 ),
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
@@ -219,7 +219,7 @@ class _HadithCardState extends State<_HadithCard> {
                 style: const TextStyle(
                   fontSize: 14,
                   height: 1.7,
-                  color: Color(0xFF374151),
+                  color: AppColors.ink2,
                 ),
               ),
               crossFadeState: _expanded
@@ -237,7 +237,7 @@ class _HadithCardState extends State<_HadithCard> {
                   _expanded ? 'Show less' : 'Read more',
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF1D4ED8),
+                    color: AppColors.sapphire,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -255,7 +255,7 @@ class _HadithCardState extends State<_HadithCard> {
                         const Icon(
                           Icons.person_outline_rounded,
                           size: 12,
-                          color: Color(0xFF9CA3AF),
+                          color: AppColors.subtle,
                         ),
                         const SizedBox(width: 4),
                         Expanded(
@@ -263,7 +263,7 @@ class _HadithCardState extends State<_HadithCard> {
                             h.narrator,
                             style: const TextStyle(
                               fontSize: 11,
-                              color: Color(0xFF9CA3AF),
+                              color: AppColors.subtle,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -276,7 +276,7 @@ class _HadithCardState extends State<_HadithCard> {
                     h.ref,
                     style: const TextStyle(
                       fontSize: 11,
-                      color: Color(0xFF9CA3AF),
+                      color: AppColors.subtle,
                     ),
                   ),
               ],

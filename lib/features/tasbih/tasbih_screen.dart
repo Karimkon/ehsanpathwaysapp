@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
-const _green = Color(0xFF16A34A);
-const _greenDark = Color(0xFF15803D);
-const _gold = Color(0xFFF59E0B);
+const _green = AppColors.emerald700;
+const _greenDark = AppColors.emerald800;
+const _gold = AppColors.gold;
 
 /// A single dhikr phrase the user can count.
 class _Dhikr {
@@ -100,7 +101,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
     final progress = _count / _current.target;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF8FAF9),
+      backgroundColor: isDark ? AppColors.slateDeep : AppColors.cream,
       appBar: AppBar(
         title: const Text('Tasbih',
             style: TextStyle(fontWeight: FontWeight.w700)),
@@ -135,7 +136,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
                       decoration: BoxDecoration(
                         color: selected
                             ? _green
-                            : (isDark ? const Color(0xFF1A1A1A) : Colors.white),
+                            : (isDark ? AppColors.slateCard : Colors.white),
                         borderRadius: BorderRadius.circular(22),
                         border: Border.all(
                           color: selected
@@ -150,7 +151,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
                           fontWeight: FontWeight.w600,
                           color: selected
                               ? Colors.white
-                              : (isDark ? Colors.white70 : const Color(0xFF374151)),
+                              : (isDark ? Colors.white70 : AppColors.ink2),
                         ),
                       ),
                     ),
@@ -175,7 +176,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 fontStyle: FontStyle.italic,
-                color: isDark ? Colors.white54 : const Color(0xFF6B7280),
+                color: isDark ? Colors.white54 : AppColors.muted,
               ),
             ),
             const Spacer(),
@@ -246,7 +247,7 @@ class _TasbihScreenState extends State<TasbihScreen> {
               'Tap anywhere on the circle to count',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
-                color: isDark ? Colors.white38 : const Color(0xFF9CA3AF),
+                color: isDark ? Colors.white38 : AppColors.subtle,
               ),
             ),
             const Spacer(),
@@ -289,7 +290,7 @@ class _StatTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: Colors.grey.withValues(alpha: 0.15)),
         ),
@@ -309,7 +310,7 @@ class _StatTile extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white54 : const Color(0xFF6B7280),
+                color: isDark ? Colors.white54 : AppColors.muted,
               ),
             ),
           ],

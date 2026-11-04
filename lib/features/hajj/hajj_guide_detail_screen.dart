@@ -37,7 +37,7 @@ class HajjGuideDetailScreen extends ConsumerWidget {
 
     return guideAsync.when(
       loading: () => Scaffold(
-        appBar: AppBar(backgroundColor: const Color(0xFF14532D)),
+        appBar: AppBar(backgroundColor: AppColors.emerald900),
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: List.generate(
@@ -48,7 +48,7 @@ class HajjGuideDetailScreen extends ConsumerWidget {
                 child: Container(
                   height: 80,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    color: isDark ? AppColors.slateCard : Colors.white,
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
@@ -95,18 +95,18 @@ class _GuideDetailBody extends StatelessWidget {
     final sections = guide['sections'] as List<dynamic>? ?? [];
     final isHajj = guideType.toLowerCase() == 'hajj';
     final accentColor =
-        isHajj ? AppTheme.primaryGreen : const Color(0xFFF59E0B);
+        isHajj ? AppTheme.primaryGreen : AppColors.gold;
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: CustomScrollView(
         slivers: [
           // ── Header ──────────────────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: const Color(0xFF14532D),
+            backgroundColor: AppColors.emerald900,
             iconTheme: const IconThemeData(color: Colors.white),
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
@@ -115,8 +115,8 @@ class _GuideDetailBody extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: isHajj
-                        ? const [Color(0xFF14532D), Color(0xFF16A34A)]
-                        : const [Color(0xFF78350F), Color(0xFFF59E0B)],
+                        ? const [AppColors.emerald900, AppColors.emerald700]
+                        : const [AppColors.goldDarkest, AppColors.gold],
                   ),
                 ),
                 child: SafeArea(
@@ -229,7 +229,7 @@ class _SectionExpansionTileState extends State<_SectionExpansionTile> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       child: Container(
         decoration: BoxDecoration(
-          color: widget.isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: widget.isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
@@ -280,7 +280,7 @@ class _SectionExpansionTileState extends State<_SectionExpansionTile> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: widget.isDark ? Colors.white : const Color(0xFF111827),
+                color: widget.isDark ? Colors.white : AppColors.ink,
               ),
             ),
             trailing: AnimatedRotation(
@@ -289,8 +289,8 @@ class _SectionExpansionTileState extends State<_SectionExpansionTile> {
               child: Icon(
                 Icons.keyboard_arrow_down_rounded,
                 color: widget.isDark
-                    ? const Color(0xFF9CA3AF)
-                    : const Color(0xFF6B7280),
+                    ? AppColors.onDarkMuted
+                    : AppColors.muted,
               ),
             ),
             children: [
@@ -303,8 +303,8 @@ class _SectionExpansionTileState extends State<_SectionExpansionTile> {
                     children: [
                       Divider(
                         color: widget.isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFF3F4F6),
+                            ? AppColors.slateRaised
+                            : AppColors.creamDeep,
                       ),
                       const SizedBox(height: 4),
                       _SectionContent(
@@ -373,8 +373,8 @@ class _SectionContent extends StatelessWidget {
                       fontSize: 13,
                       height: 1.6,
                       color: isDark
-                          ? const Color(0xFFD1D5DB)
-                          : const Color(0xFF374151),
+                          ? AppColors.onDarkMuted
+                          : AppColors.ink2,
                     ),
                   ),
                 ),
@@ -425,8 +425,8 @@ class _SectionContent extends StatelessWidget {
                       fontSize: 13,
                       height: 1.6,
                       color: isDark
-                          ? const Color(0xFFD1D5DB)
-                          : const Color(0xFF374151),
+                          ? AppColors.onDarkMuted
+                          : AppColors.ink2,
                     ),
                   ),
                 ),
@@ -445,7 +445,7 @@ class _SectionContent extends StatelessWidget {
               fontSize: 13,
               height: 1.7,
               color:
-                  isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
+                  isDark ? AppColors.onDarkMuted : AppColors.ink2,
             ),
           ),
         );

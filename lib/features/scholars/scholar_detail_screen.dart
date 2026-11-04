@@ -82,7 +82,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
             pinned: true,
             leading: _CircularBackButton(isDark: isDark),
             backgroundColor:
-                isDark ? const Color(0xFF121212) : Colors.white,
+                isDark ? AppColors.slate : Colors.white,
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
@@ -174,7 +174,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                 vertical: 14,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                color: isDark ? AppColors.slateCard : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
@@ -192,7 +192,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                     icon: Icons.play_circle_rounded,
                     label: 'Videos',
                     count: scholar.videoCount,
-                    color: const Color(0xFF3B82F6),
+                    color: AppColors.sapphire,
                     isDark: isDark,
                   ),
                   _divider(isDark),
@@ -200,7 +200,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                     icon: Icons.article_rounded,
                     label: 'Articles',
                     count: scholar.articleCount,
-                    color: const Color(0xFF10B981),
+                    color: AppColors.emerald500,
                     isDark: isDark,
                   ),
                   _divider(isDark),
@@ -208,7 +208,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                     icon: Icons.headphones_rounded,
                     label: 'Podcasts',
                     count: scholar.podcastCount,
-                    color: const Color(0xFF8B5CF6),
+                    color: AppColors.amethyst,
                     isDark: isDark,
                   ),
                 ],
@@ -233,7 +233,7 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                         fontWeight: FontWeight.w800,
                         color: isDark
                             ? Colors.white
-                            : const Color(0xFF111827),
+                            : AppColors.ink,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -243,8 +243,8 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: isDark
-                            ? const Color(0xFFD1D5DB)
-                            : const Color(0xFF4B5563),
+                            ? AppColors.onDarkMuted
+                            : AppColors.muted,
                         height: 1.65,
                       ),
                     ),
@@ -317,9 +317,9 @@ class _ScholarDetailBodyState extends ConsumerState<_ScholarDetailBody>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF16A34A),
-            Color(0xFF059669),
-            Color(0xFF14532D),
+            AppColors.emerald700,
+            AppColors.emerald600,
+            AppColors.emerald900,
           ],
         ),
       ),
@@ -375,7 +375,7 @@ class _StatItem extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: isDark ? Colors.white : const Color(0xFF111827),
+            color: isDark ? Colors.white : AppColors.ink,
           ),
         ),
         const SizedBox(height: 2),
@@ -385,8 +385,8 @@ class _StatItem extends StatelessWidget {
             fontSize: 11,
             fontWeight: FontWeight.w500,
             color: isDark
-                ? const Color(0xFF9CA3AF)
-                : const Color(0xFF6B7280),
+                ? AppColors.onDarkMuted
+                : AppColors.muted,
           ),
         ),
       ],
@@ -445,12 +445,12 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: isDark ? const Color(0xFF121212) : AppTheme.surfaceLight,
+      color: isDark ? AppColors.slate : AppTheme.surfaceLight,
       child: TabBar(
         controller: tabController,
         labelColor: AppTheme.primaryGreen,
         unselectedLabelColor:
-            isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+            isDark ? AppColors.onDarkMuted : AppColors.muted,
         indicatorColor: AppTheme.primaryGreen,
         indicatorWeight: 3,
         labelStyle: GoogleFonts.plusJakartaSans(

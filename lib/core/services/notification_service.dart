@@ -8,6 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:adhan/adhan.dart';
 
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 /// Manages all local notifications: prayer times, reminders, content alerts.
 class NotificationService {
@@ -85,7 +86,7 @@ class NotificationService {
         playSound: true,
         enableVibration: true,
         enableLights: true,
-        ledColor: Color(0xFF16A34A),
+        ledColor: AppColors.emerald700,
       ),
     );
 
@@ -242,7 +243,7 @@ class NotificationService {
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
-          color: const Color(0xFF16A34A),
+          color: AppColors.emerald700,
           ticker: '$name prayer time',
           styleInformation: BigTextStyleInformation(
             'It is now time for $name ($arabic). '
@@ -299,7 +300,7 @@ class NotificationService {
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
           icon: '@mipmap/ic_launcher',
-          color: Color(0xFF16A34A),
+          color: AppColors.emerald700,
         ),
         iOS: DarwinNotificationDetails(
           presentAlert: true,
@@ -345,7 +346,7 @@ class NotificationService {
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
-          color: Color(0xFFF59E0B),
+          color: AppColors.gold,
         ),
         iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true),
       ),
@@ -379,7 +380,7 @@ class NotificationService {
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
           icon: '@mipmap/ic_launcher',
-          color: Color(0xFF16A34A),
+          color: AppColors.emerald700,
         ),
         iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true),
       ),

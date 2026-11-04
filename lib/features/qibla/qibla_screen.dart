@@ -7,10 +7,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
-const _green = Color(0xFF16A34A);
-const _greenDark = Color(0xFF15803D);
-const _gold = Color(0xFFF59E0B);
+const _green = AppColors.emerald700;
+const _greenDark = AppColors.emerald800;
+const _gold = AppColors.gold;
 
 /// Coordinates of the Kaaba in Makkah.
 const double _kaabaLat = 21.4225;
@@ -97,7 +98,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0D0D0D) : const Color(0xFFF8FAF9),
+      backgroundColor: isDark ? AppColors.slateDeep : AppColors.cream,
       appBar: AppBar(
         title: const Text('Qibla Direction',
             style: TextStyle(fontWeight: FontWeight.w700)),
@@ -145,7 +146,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white60 : const Color(0xFF6B7280),
+                  color: isDark ? Colors.white60 : AppColors.muted,
                 ),
               ),
               const SizedBox(height: 8),
@@ -190,7 +191,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color:
-                                isDark ? Colors.white70 : const Color(0xFF92400E),
+                                isDark ? Colors.white70 : AppColors.goldDarkest,
                           ),
                         ),
                       ),
@@ -242,7 +243,7 @@ class _CompassDial extends StatelessWidget {
             height: 300,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+              color: isDark ? AppColors.slateCard : Colors.white,
               border: Border.all(
                 color: _green.withValues(alpha: 0.25),
                 width: 2,
@@ -266,7 +267,7 @@ class _CompassDial extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   _cardinal('N', Alignment.topCenter,
-                      color: Colors.redAccent, isDark: isDark),
+                      color: AppColors.danger, isDark: isDark),
                   _cardinal('E', Alignment.centerRight, isDark: isDark),
                   _cardinal('S', Alignment.bottomCenter, isDark: isDark),
                   _cardinal('W', Alignment.centerLeft, isDark: isDark),
@@ -330,7 +331,7 @@ class _CompassDial extends StatelessWidget {
             fontSize: 18,
             fontWeight: FontWeight.w800,
             color: color ??
-                (isDark ? Colors.white60 : const Color(0xFF6B7280)),
+                (isDark ? Colors.white60 : AppColors.muted),
           ),
         ),
       ),
@@ -367,7 +368,7 @@ class _AlignmentHint extends StatelessWidget {
       decoration: BoxDecoration(
         color: aligned
             ? _green.withValues(alpha: 0.15)
-            : (isDark ? const Color(0xFF1A1A1A) : Colors.white),
+            : (isDark ? AppColors.slateCard : Colors.white),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: aligned ? _green : Colors.grey.withValues(alpha: 0.3),
@@ -394,7 +395,7 @@ class _AlignmentHint extends StatelessWidget {
               fontWeight: FontWeight.w700,
               color: aligned
                   ? _green
-                  : (isDark ? Colors.white : const Color(0xFF111827)),
+                  : (isDark ? Colors.white : AppColors.ink),
             ),
           ),
         ],

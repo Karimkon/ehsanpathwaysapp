@@ -49,7 +49,7 @@ class ArabicCourseDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: courseAsync.when(
         loading: () => const _CourseDetailShimmer(),
         error: (e, _) => Scaffold(
@@ -124,7 +124,7 @@ class _CourseDetailBody extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF15803D), Color(0xFF16A34A)],
+                  colors: [AppColors.emerald800, AppColors.emerald700],
                 ),
               ),
               child: SafeArea(
@@ -187,8 +187,8 @@ class _CourseDetailBody extends StatelessWidget {
                           : completedLessons.length / lessons.length,
                       minHeight: 6,
                       backgroundColor: isDark
-                          ? const Color(0xFF2A2A2A)
-                          : const Color(0xFFE5E7EB),
+                          ? AppColors.slateRaised
+                          : AppColors.sand,
                       color: AppTheme.primaryGreen,
                     ),
                   ),
@@ -216,7 +216,7 @@ class _CourseDetailBody extends StatelessWidget {
               style: GoogleFonts.lora(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
               ),
             ),
           ),
@@ -335,7 +335,7 @@ class _LessonTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: isComplete
               ? Border.all(
@@ -365,8 +365,8 @@ class _LessonTile extends StatelessWidget {
               color: isComplete
                   ? AppTheme.primaryGreen
                   : (isDark
-                      ? const Color(0xFF2A2A2A)
-                      : const Color(0xFFF3F4F6)),
+                      ? AppColors.slateRaised
+                      : AppColors.creamDeep),
             ),
             child: Center(
               child: isComplete
@@ -379,7 +379,7 @@ class _LessonTile extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         color: isDark
                             ? Colors.white
-                            : const Color(0xFF374151),
+                            : AppColors.ink2,
                       ),
                     ),
             ),
@@ -389,7 +389,7 @@ class _LessonTile extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : const Color(0xFF111827),
+              color: isDark ? Colors.white : AppColors.ink,
               decoration:
                   isComplete ? TextDecoration.lineThrough : TextDecoration.none,
               decorationColor: AppTheme.primaryGreen,
@@ -407,8 +407,8 @@ class _LessonTile extends StatelessWidget {
                     color: isComplete
                         ? AppTheme.primaryGreen.withValues(alpha: 0.1)
                         : (isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFF3F4F6)),
+                            ? AppColors.slateRaised
+                            : AppColors.creamDeep),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -419,8 +419,8 @@ class _LessonTile extends StatelessWidget {
                       color: isComplete
                           ? AppTheme.primaryGreen
                           : (isDark
-                              ? const Color(0xFF9CA3AF)
-                              : const Color(0xFF6B7280)),
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted),
                     ),
                   ),
                 ),
@@ -430,8 +430,8 @@ class _LessonTile extends StatelessWidget {
                 Icons.chevron_right_rounded,
                 size: 20,
                 color: isDark
-                    ? const Color(0xFF6B7280)
-                    : const Color(0xFF9CA3AF),
+                    ? AppColors.onDarkSubtle
+                    : AppColors.subtle,
               ),
             ],
           ),
@@ -467,7 +467,7 @@ class _LessonBottomSheet extends ConsumerWidget {
     final lessonAsync = widgetRef.watch(
       arabicLessonProvider((courseSlug: courseSlug, lessonId: lessonId)),
     );
-    final sheetColor = isDark ? const Color(0xFF1A1A1A) : Colors.white;
+    final sheetColor = isDark ? AppColors.slateCard : Colors.white;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -488,8 +488,8 @@ class _LessonBottomSheet extends ConsumerWidget {
               height: 4,
               decoration: BoxDecoration(
                 color: isDark
-                    ? const Color(0xFF3A3A3A)
-                    : const Color(0xFFE5E7EB),
+                    ? AppColors.slateLine
+                    : AppColors.sand,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -528,7 +528,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                         fontWeight: FontWeight.w700,
                         color: isDark
                             ? Colors.white
-                            : const Color(0xFF111827),
+                            : AppColors.ink,
                       ),
                     ),
                   ),
@@ -538,8 +538,8 @@ class _LessonBottomSheet extends ConsumerWidget {
             const SizedBox(height: 4),
             Divider(
                 color: isDark
-                    ? const Color(0xFF2A2A2A)
-                    : const Color(0xFFF3F4F6)),
+                    ? AppColors.slateRaised
+                    : AppColors.creamDeep),
 
             // Content
             Expanded(
@@ -556,8 +556,8 @@ class _LessonBottomSheet extends ConsumerWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                     ),
                   ),
                 ),
@@ -583,7 +583,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                             fontWeight: FontWeight.w700,
                             color: isDark
                                 ? Colors.white
-                                : const Color(0xFF111827),
+                                : AppColors.ink,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -660,7 +660,7 @@ class _LessonContentText extends StatelessWidget {
               style: GoogleFonts.lora(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : const Color(0xFF111827),
+                color: isDark ? Colors.white : AppColors.ink,
               ),
             ),
           );
@@ -702,8 +702,8 @@ class _LessonContentText extends StatelessWidget {
                       fontSize: 14,
                       height: 1.6,
                       color: isDark
-                          ? const Color(0xFFD1D5DB)
-                          : const Color(0xFF374151),
+                          ? AppColors.onDarkMuted
+                          : AppColors.ink2,
                     ),
                   ),
                 ),
@@ -720,7 +720,7 @@ class _LessonContentText extends StatelessWidget {
               fontSize: 14,
               height: 1.7,
               color:
-                  isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
+                  isDark ? AppColors.onDarkMuted : AppColors.ink2,
             ),
           ),
         );
@@ -758,13 +758,13 @@ class _ExerciseCardState extends State<_ExerciseCard> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: widget.isDark
-            ? const Color(0xFF2A2A2A)
-            : const Color(0xFFF9FAFB),
+            ? AppColors.slateRaised
+            : AppColors.cream,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: widget.isDark
-              ? const Color(0xFF3A3A3A)
-              : const Color(0xFFE5E7EB),
+              ? AppColors.slateLine
+              : AppColors.sand,
         ),
       ),
       child: Column(
@@ -785,7 +785,7 @@ class _ExerciseCardState extends State<_ExerciseCard> {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: widget.isDark ? Colors.white : const Color(0xFF111827),
+              color: widget.isDark ? Colors.white : AppColors.ink,
             ),
           ),
           const SizedBox(height: 8),
@@ -798,8 +798,8 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                 color: _showAnswer
                     ? AppTheme.primaryGreen.withValues(alpha: 0.1)
                     : (widget.isDark
-                        ? const Color(0xFF3A3A3A)
-                        : const Color(0xFFE5E7EB)),
+                        ? AppColors.slateLine
+                        : AppColors.sand),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -811,8 +811,8 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                     color: _showAnswer
                         ? AppTheme.primaryGreen
                         : (widget.isDark
-                            ? const Color(0xFF9CA3AF)
-                            : const Color(0xFF6B7280)),
+                            ? AppColors.onDarkMuted
+                            : AppColors.muted),
                   ),
                   const SizedBox(width: 6),
                   Text(
@@ -823,8 +823,8 @@ class _ExerciseCardState extends State<_ExerciseCard> {
                       color: _showAnswer
                           ? AppTheme.primaryGreen
                           : (widget.isDark
-                              ? const Color(0xFF9CA3AF)
-                              : const Color(0xFF6B7280)),
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted),
                     ),
                   ),
                 ],
@@ -856,8 +856,8 @@ class _ExerciseCardState extends State<_ExerciseCard> {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 color: widget.isDark
-                    ? const Color(0xFF9CA3AF)
-                    : const Color(0xFF6B7280),
+                    ? AppColors.onDarkMuted
+                    : AppColors.muted,
                 height: 1.5,
               ),
             ),
@@ -888,7 +888,7 @@ class _CourseDetailShimmer extends StatelessWidget {
             background: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF15803D), Color(0xFF16A34A)],
+                  colors: [AppColors.emerald800, AppColors.emerald700],
                 ),
               ),
             ),
@@ -902,7 +902,7 @@ class _CourseDetailShimmer extends StatelessWidget {
                 child: Container(
                   height: 72,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    color: isDark ? AppColors.slateCard : Colors.white,
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),

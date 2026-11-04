@@ -9,6 +9,7 @@ import 'package:ehsan_pathways/features/videos/video_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/content_card.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 /// The main videos listing screen.
 ///
@@ -33,7 +34,7 @@ class _VideosScreenState extends ConsumerState<VideosScreen> {
   Timer? _debounce;
 
   // -- Colours ---------------------------------------------------------------
-  static const _primaryGreen = Color(0xFF16A34A);
+  static const _primaryGreen = AppColors.emerald700;
 
   @override
   void initState() {
@@ -132,7 +133,7 @@ class _VideosScreenState extends ConsumerState<VideosScreen> {
       scrolledUnderElevation: 0.5,
       toolbarHeight: 64,
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       title: Row(
         children: [
           Container(
@@ -140,7 +141,7 @@ class _VideosScreenState extends ConsumerState<VideosScreen> {
             height: 38,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [_primaryGreen, Color(0xFF059669)],
+                colors: [_primaryGreen, AppColors.emerald600],
               ),
               borderRadius: BorderRadius.circular(11),
             ),
@@ -156,7 +157,7 @@ class _VideosScreenState extends ConsumerState<VideosScreen> {
             style: GoogleFonts.lora(
               fontSize: 26,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : const Color(0xFF111827),
+              color: isDark ? Colors.white : AppColors.ink,
             ),
           ),
         ],
@@ -195,7 +196,7 @@ class _VideosScreenState extends ConsumerState<VideosScreen> {
           subtitle: 'Please check your connection and try again.',
           actionLabel: 'Retry',
           onAction: _onRefresh,
-          iconColor: Colors.red.shade400,
+          iconColor: AppColors.dangerOnDark,
         ),
       );
     }
@@ -303,7 +304,7 @@ class _SearchBar extends StatelessWidget {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.slateCard : Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
@@ -321,19 +322,19 @@ class _SearchBar extends StatelessWidget {
         style: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           fontWeight: FontWeight.w500,
-          color: isDark ? Colors.white : const Color(0xFF111827),
+          color: isDark ? Colors.white : AppColors.ink,
         ),
         decoration: InputDecoration(
           hintText: 'Search videos...',
           hintStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+            color: isDark ? AppColors.onDarkSubtle : AppColors.subtle,
           ),
           prefixIcon: Icon(
             Icons.search_rounded,
             size: 20,
-            color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+            color: isDark ? AppColors.onDarkSubtle : AppColors.subtle,
           ),
           suffixIcon: ListenableBuilder(
             listenable: controller,
@@ -344,8 +345,8 @@ class _SearchBar extends StatelessWidget {
                   Icons.close_rounded,
                   size: 18,
                   color: isDark
-                      ? const Color(0xFF9CA3AF)
-                      : const Color(0xFF6B7280),
+                      ? AppColors.onDarkMuted
+                      : AppColors.muted,
                 ),
                 onPressed: onClear,
               );

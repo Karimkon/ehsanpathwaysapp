@@ -12,6 +12,9 @@ import 'package:ehsan_pathways/core/services/notification_service.dart';
 import 'package:ehsan_pathways/core/services/fcm_service.dart';
 import 'firebase_options.dart';
 
+/// Longest any single startup step may delay the first frame.
+const _startupStepTimeout = Duration(seconds: 8);
+
 void main() {
   // Run everything inside a guarded zone so that ANY uncaught async error
   // during startup is logged instead of crashing the app on launch. A release
@@ -29,9 +32,11 @@ void main() {
     // Firebase must succeed for messaging, but a failure here must not stop
     // the app from opening — the reviewer's device may have transient issues.
     try {
+      // Bounded: on a bad network the platform call can hang indefinitely,
+      // and launch must never wait on it.
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
-      );
+      ).timeout(_startupStepTimeout);
       // Register FCM background handler (only valid once Firebase is up).
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     } catch (e, s) {
@@ -40,14 +45,16 @@ void main() {
 
     // Local notifications: timezone/channel setup. Non-fatal on failure.
     try {
-      await NotificationService.instance.initialize();
+      await NotificationService.instance.initialize().timeout(
+        _startupStepTimeout,
+      );
     } catch (e, s) {
       debugPrint('NotificationService init failed: $e\n$s');
     }
 
     // FCM token/permission/listeners. Non-fatal on failure.
     try {
-      await FcmService.instance.initialize();
+      await FcmService.instance.initialize().timeout(_startupStepTimeout);
     } catch (e, s) {
       debugPrint('FcmService init failed: $e\n$s');
     }
@@ -55,7 +62,7 @@ void main() {
     // Onboarding flag — default to showing onboarding if it can't be read.
     bool hasSeen = false;
     try {
-      hasSeen = await hasSeenOnboarding();
+      hasSeen = await hasSeenOnboarding().timeout(_startupStepTimeout);
     } catch (e, s) {
       debugPrint('hasSeenOnboarding failed: $e\n$s');
     }

@@ -14,9 +14,9 @@ class HadithScreen extends ConsumerWidget {
     final collectionsAsync = ref.watch(hadithCollectionsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF9),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1D4ED8),
+        backgroundColor: AppColors.sapphire,
         foregroundColor: Colors.white,
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,8 +51,8 @@ class HadithScreen extends ConsumerWidget {
 
   Widget _buildShimmer() {
     return Shimmer.fromColors(
-      baseColor: const Color(0xFFE5E7EB),
-      highlightColor: const Color(0xFFF9FAFB),
+      baseColor: AppColors.sand,
+      highlightColor: AppColors.cream,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: 4,
@@ -76,12 +76,12 @@ class HadithScreen extends ConsumerWidget {
           const Icon(
             Icons.wifi_off_rounded,
             size: 48,
-            color: Color(0xFFD1D5DB),
+            color: AppColors.sandDeep,
           ),
           const SizedBox(height: 12),
           const Text(
             'Failed to load collections',
-            style: TextStyle(color: Color(0xFF6B7280)),
+            style: TextStyle(color: AppColors.muted),
           ),
           const SizedBox(height: 12),
           TextButton(onPressed: retry, child: const Text('Retry')),
@@ -100,11 +100,11 @@ class _CollectionCard extends StatelessWidget {
       case 'green':
         return AppTheme.primaryGreen;
       case 'blue':
-        return const Color(0xFF1D4ED8);
+        return AppColors.sapphire;
       case 'amber':
         return AppTheme.accentGold;
       case 'purple':
-        return const Color(0xFF7C3AED);
+        return AppColors.amethyst;
       default:
         return AppTheme.primaryGreen;
     }
@@ -141,7 +141,7 @@ class _CollectionCard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
+              border: Border.all(color: AppColors.sand),
             ),
             child: Row(
               children: [
@@ -174,7 +174,7 @@ class _CollectionCard extends StatelessWidget {
                         collection.arabic,
                         style: TextStyle(
                           fontSize: 14,
-                          fontFamily: 'Amiri',
+                          fontFamily: AppTheme.arabicFamily,
                           color: color.withOpacity(0.7),
                         ),
                       ),
@@ -183,7 +183,7 @@ class _CollectionCard extends StatelessWidget {
                         collection.desc,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: Color(0xFF6B7280),
+                          color: AppColors.muted,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,

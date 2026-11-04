@@ -8,9 +8,10 @@ import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/features/notes/notes_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
-const Color _green = Color(0xFF16A34A);
-const Color _gold = Color(0xFFF59E0B);
+const Color _green = AppColors.emerald700;
+const Color _gold = AppColors.gold;
 
 class NotesScreen extends ConsumerWidget {
   const NotesScreen({super.key});
@@ -24,14 +25,14 @@ class NotesScreen extends ConsumerWidget {
     if (auth.status != AuthStatus.authenticated) {
       return Scaffold(
         backgroundColor:
-            isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+            isDark ? AppColors.slate : AppColors.cream,
         appBar: AppBar(
           title: Text('My Notes',
               style: GoogleFonts.lora(
                   fontSize: 24, fontWeight: FontWeight.w700)),
           centerTitle: false,
           backgroundColor:
-              isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+              isDark ? AppColors.slate : AppColors.cream,
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
@@ -46,7 +47,7 @@ class NotesScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       appBar: AppBar(
         title: Text(
           'My Notes',
@@ -57,7 +58,7 @@ class NotesScreen extends ConsumerWidget {
         ),
         centerTitle: false,
         backgroundColor:
-            isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+            isDark ? AppColors.slate : AppColors.cream,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
@@ -108,7 +109,7 @@ class NotesScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      backgroundColor: isDark ? AppColors.slateCard : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -142,7 +143,7 @@ class NotesScreen extends ConsumerWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                 ),
               ),
               const SizedBox(height: 16),
@@ -153,19 +154,19 @@ class NotesScreen extends ConsumerWidget {
                 autofocus: true,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Write your note...',
                   hintStyle: GoogleFonts.plusJakartaSans(
                     color: isDark
-                        ? const Color(0xFF6B7280)
-                        : const Color(0xFF9CA3AF),
+                        ? AppColors.onDarkSubtle
+                        : AppColors.subtle,
                   ),
                   filled: true,
                   fillColor: isDark
-                      ? const Color(0xFF2A2A2A)
-                      : const Color(0xFFF9FAFB),
+                      ? AppColors.slateRaised
+                      : AppColors.cream,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide.none,
@@ -239,7 +240,7 @@ class NotesScreen extends ConsumerWidget {
             },
             child: Text('Delete',
                 style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w700, color: Colors.redAccent)),
+                    fontWeight: FontWeight.w700, color: AppColors.danger)),
           ),
         ],
       ),
@@ -284,7 +285,7 @@ class _NoteCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        color: isDark ? AppColors.slateCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -329,8 +330,8 @@ class _NoteCard extends StatelessWidget {
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 11,
                         color: isDark
-                            ? const Color(0xFF6B7280)
-                            : const Color(0xFF9CA3AF),
+                            ? AppColors.onDarkSubtle
+                            : AppColors.subtle,
                       ),
                     ),
                   ],
@@ -392,11 +393,11 @@ class _NoteCard extends StatelessWidget {
                     child: Row(
                       children: [
                         const Icon(Icons.delete_outline_rounded,
-                            size: 18, color: Colors.redAccent),
+                            size: 18, color: AppColors.danger),
                         const SizedBox(width: 8),
                         Text('Delete',
                             style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14, color: Colors.redAccent)),
+                                fontSize: 14, color: AppColors.danger)),
                       ],
                     ),
                   ),
@@ -412,7 +413,7 @@ class _NoteCard extends StatelessWidget {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w400,
-              color: isDark ? const Color(0xFFD1D5DB) : const Color(0xFF374151),
+              color: isDark ? AppColors.onDarkMuted : AppColors.ink2,
               height: 1.6,
             ),
           ),

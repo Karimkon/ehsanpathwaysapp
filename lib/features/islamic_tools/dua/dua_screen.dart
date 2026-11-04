@@ -14,7 +14,7 @@ class DuaScreen extends ConsumerWidget {
     final categoriesAsync = ref.watch(duaCategoriesProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF9),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
         backgroundColor: AppTheme.accentGold,
         foregroundColor: Colors.white,
@@ -55,8 +55,8 @@ class DuaScreen extends ConsumerWidget {
 
   Widget _buildShimmer() {
     return Shimmer.fromColors(
-      baseColor: const Color(0xFFE5E7EB),
-      highlightColor: const Color(0xFFF9FAFB),
+      baseColor: AppColors.sand,
+      highlightColor: AppColors.cream,
       child: GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -77,10 +77,10 @@ class DuaScreen extends ConsumerWidget {
   Widget _buildError(VoidCallback retry) {
     return Center(
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.wifi_off_rounded, size: 48, color: Color(0xFFD1D5DB)),
+        const Icon(Icons.wifi_off_rounded, size: 48, color: AppColors.sandDeep),
         const SizedBox(height: 12),
         const Text('Failed to load duas',
-            style: TextStyle(color: Color(0xFF6B7280))),
+            style: TextStyle(color: AppColors.muted)),
         const SizedBox(height: 12),
         TextButton(onPressed: retry, child: const Text('Retry')),
       ]),
@@ -97,23 +97,23 @@ class _CategoryCard extends StatelessWidget {
       case 'green':
         return AppTheme.primaryGreen;
       case 'blue':
-        return const Color(0xFF1D4ED8);
+        return AppColors.sapphire;
       case 'amber':
         return AppTheme.accentGold;
       case 'purple':
-        return const Color(0xFF7C3AED);
+        return AppColors.amethyst;
       case 'red':
-        return const Color(0xFFDC2626);
+        return AppColors.danger;
       case 'teal':
-        return const Color(0xFF0D9488);
+        return AppColors.teal;
       case 'indigo':
-        return const Color(0xFF4F46E5);
+        return AppColors.amethyst;
       case 'rose':
-        return const Color(0xFFE11D48);
+        return AppColors.ruby;
       case 'cyan':
-        return const Color(0xFF0891B2);
+        return AppColors.teal;
       case 'orange':
-        return const Color(0xFFEA580C);
+        return AppColors.goldDeep;
       default:
         return AppTheme.primaryGreen;
     }
@@ -134,7 +134,7 @@ class _CategoryCard extends StatelessWidget {
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: AppColors.sand),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +166,7 @@ class _CategoryCard extends StatelessWidget {
               Text(
                 '${category.count} duas',
                 style:
-                    const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF)),
+                    const TextStyle(fontSize: 11, color: AppColors.subtle),
               ),
             ],
           ),

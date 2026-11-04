@@ -166,9 +166,9 @@ class _KhutbahsScreenState extends ConsumerState<KhutbahsScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF14532D),
-                      Color(0xFF15803D),
-                      Color(0xFF16A34A),
+                      AppColors.emerald900,
+                      AppColors.emerald800,
+                      AppColors.emerald700,
                     ],
                   ),
                 ),
@@ -341,7 +341,7 @@ class _KhutbahCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -365,7 +365,7 @@ class _KhutbahCard extends StatelessWidget {
                     height: 42,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF16A34A), Color(0xFF15803D)],
+                        colors: [AppColors.emerald700, AppColors.emerald800],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -388,7 +388,7 @@ class _KhutbahCard extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: isDark
                                 ? Colors.white
-                                : const Color(0xFF111827),
+                                : AppColors.ink,
                             height: 1.35,
                           ),
                         ),
@@ -409,7 +409,7 @@ class _KhutbahCard extends StatelessWidget {
                   const Icon(
                     Icons.chevron_right_rounded,
                     size: 20,
-                    color: Color(0xFF9CA3AF),
+                    color: AppColors.subtle,
                   ),
                 ],
               ),
@@ -423,8 +423,8 @@ class _KhutbahCard extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
                     color: isDark
-                        ? const Color(0xFF9CA3AF)
-                        : const Color(0xFF6B7280),
+                        ? AppColors.onDarkMuted
+                        : AppColors.muted,
                     height: 1.5,
                   ),
                 ),
@@ -482,7 +482,7 @@ class _KhutbahShimmer extends StatelessWidget {
         child: Container(
           height: 130,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
           ),
           padding: const EdgeInsets.all(16),

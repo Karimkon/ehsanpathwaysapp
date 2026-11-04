@@ -65,14 +65,14 @@ class _HajjUmrahScreenState extends ConsumerState<HajjUmrahScreen>
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           // ── Gradient header ──────────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
-            backgroundColor: const Color(0xFF14532D),
+            backgroundColor: AppColors.emerald900,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
@@ -80,9 +80,9 @@ class _HajjUmrahScreenState extends ConsumerState<HajjUmrahScreen>
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color(0xFF14532D),
-                      Color(0xFF15803D),
-                      Color(0xFF16A34A),
+                      AppColors.emerald900,
+                      AppColors.emerald800,
+                      AppColors.emerald700,
                     ],
                   ),
                 ),
@@ -131,7 +131,7 @@ class _HajjUmrahScreenState extends ConsumerState<HajjUmrahScreen>
             ),
             bottom: TabBar(
               controller: _tabController,
-              indicatorColor: const Color(0xFFF59E0B),
+              indicatorColor: AppColors.gold,
               indicatorWeight: 3,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
@@ -228,7 +228,7 @@ class _GuideCard extends StatelessWidget {
 
     final isHajj = guideType.toLowerCase() == 'hajj';
     final accentColor =
-        isHajj ? AppTheme.primaryGreen : const Color(0xFFF59E0B);
+        isHajj ? AppTheme.primaryGreen : AppColors.gold;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -236,7 +236,7 @@ class _GuideCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -292,7 +292,7 @@ class _GuideCard extends StatelessWidget {
                                     fontWeight: FontWeight.w700,
                                     color: isDark
                                         ? Colors.white
-                                        : const Color(0xFF111827),
+                                        : AppColors.ink,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -328,8 +328,8 @@ class _GuideCard extends StatelessWidget {
                             Icons.arrow_forward_ios_rounded,
                             size: 16,
                             color: isDark
-                                ? const Color(0xFF6B7280)
-                                : const Color(0xFF9CA3AF),
+                                ? AppColors.onDarkSubtle
+                                : AppColors.subtle,
                           ),
                         ],
                       ),
@@ -342,8 +342,8 @@ class _GuideCard extends StatelessWidget {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: isDark
-                                ? const Color(0xFF9CA3AF)
-                                : const Color(0xFF6B7280),
+                                ? AppColors.onDarkMuted
+                                : AppColors.muted,
                             height: 1.5,
                           ),
                         ),
@@ -376,7 +376,7 @@ class _GuideShimmer extends StatelessWidget {
         child: Container(
           height: 120,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
           ),
           padding: const EdgeInsets.all(16),

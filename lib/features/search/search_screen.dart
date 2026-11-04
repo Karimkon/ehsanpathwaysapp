@@ -12,6 +12,7 @@ import 'package:ehsan_pathways/shared/widgets/scholar_avatar.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 // ---------------------------------------------------------------------------
 // Search provider
@@ -61,7 +62,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   final _focusNode = FocusNode();
   Timer? _debounce;
 
-  static const _green = Color(0xFF16A34A);
+  static const _green = AppColors.emerald700;
 
   @override
   void initState() {
@@ -93,7 +94,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final resultsAsync = ref.watch(_searchResultsProvider);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+      backgroundColor: isDark ? AppColors.slate : AppColors.cream,
       body: SafeArea(
         child: Column(
           children: [
@@ -117,7 +118,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       child: Icon(
                         Icons.arrow_back_rounded,
                         size: 20,
-                        color: isDark ? Colors.white : const Color(0xFF111827),
+                        color: isDark ? Colors.white : AppColors.ink,
                       ),
                     ),
                   ),
@@ -134,7 +135,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         border: Border.all(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.1)
-                              : const Color(0xFFE5E7EB),
+                              : AppColors.sand,
                         ),
                       ),
                       child: TextField(
@@ -143,15 +144,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         onChanged: _onSearchChanged,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 15,
-                          color: isDark ? Colors.white : const Color(0xFF111827),
+                          color: isDark ? Colors.white : AppColors.ink,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Search for Islamic knowledge...',
                           hintStyle: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             color: isDark
-                                ? const Color(0xFF6B7280)
-                                : const Color(0xFF9CA3AF),
+                                ? AppColors.onDarkSubtle
+                                : AppColors.subtle,
                           ),
                           prefixIcon: Icon(
                             Icons.search_rounded,
@@ -260,7 +261,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   subtitle: v['scholar']?['name'] ?? '',
                   imageUrl: v['thumbnail_url'],
                   icon: Icons.play_circle_rounded,
-                  iconColor: const Color(0xFF3B82F6),
+                  iconColor: AppColors.sapphire,
                   isDark: isDark,
                   onTap: () => context.push('/videos/${v['uuid']}'),
                 )),
@@ -278,7 +279,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   subtitle: a['scholar']?['name'] ?? '',
                   imageUrl: a['featured_image_url'],
                   icon: Icons.article_rounded,
-                  iconColor: const Color(0xFF10B981),
+                  iconColor: AppColors.emerald500,
                   isDark: isDark,
                   onTap: () => context.push('/articles/${a['slug']}'),
                 )),
@@ -296,7 +297,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   subtitle: p['scholar']?['name'] ?? '',
                   imageUrl: p['cover_image_url'],
                   icon: Icons.headphones_rounded,
-                  iconColor: const Color(0xFF8B5CF6),
+                  iconColor: AppColors.amethyst,
                   isDark: isDark,
                   onTap: () => context.push('/podcasts/${p['slug']}'),
                 )),
@@ -384,7 +385,7 @@ class _SearchResultTile extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF111827),
+                      color: isDark ? Colors.white : AppColors.ink,
                       height: 1.3,
                     ),
                   ),
@@ -398,8 +399,8 @@ class _SearchResultTile extends StatelessWidget {
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: isDark
-                            ? const Color(0xFF9CA3AF)
-                            : const Color(0xFF6B7280),
+                            ? AppColors.onDarkMuted
+                            : AppColors.muted,
                       ),
                     ),
                   ],
@@ -455,7 +456,7 @@ class _ScholarResultTile extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                 ),
               ),
             ),

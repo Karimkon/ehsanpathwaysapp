@@ -17,15 +17,16 @@ import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/section_header.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 // ---------------------------------------------------------------------------
 // Colour constants
 // ---------------------------------------------------------------------------
 
-const Color _podcastPurple = Color(0xFF8B5CF6);
-const Color _podcastPurpleLight = Color(0xFFA78BFA);
-const Color _podcastPurpleDark = Color(0xFF7C3AED);
-const Color _primaryGreen = Color(0xFF16A34A);
+const Color _podcastPurple = AppColors.amethyst;
+const Color _podcastPurpleLight = AppColors.amethystLight;
+const Color _podcastPurpleDark = AppColors.amethyst;
+const Color _primaryGreen = AppColors.emerald700;
 
 // ---------------------------------------------------------------------------
 // Podcast Detail Screen
@@ -111,7 +112,7 @@ class _PodcastDetailScreenState extends ConsumerState<PodcastDetailScreen> {
         SliverAppBar(
           expandedHeight: 300,
           pinned: true,
-          backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
+          backgroundColor: isDark ? AppColors.slate : Colors.white,
           flexibleSpace: FlexibleSpaceBar(
             background: ShimmerWrap(
               child: Container(color: Colors.white),
@@ -179,7 +180,7 @@ class _PodcastDetailScreenState extends ConsumerState<PodcastDetailScreen> {
         SliverAppBar(
           expandedHeight: 340,
           pinned: true,
-          backgroundColor: isDark ? const Color(0xFF121212) : Colors.white,
+          backgroundColor: isDark ? AppColors.slate : Colors.white,
           leading: _BackButton(isDark: isDark),
           flexibleSpace: FlexibleSpaceBar(
             background: _CoverArtHeader(
@@ -214,7 +215,7 @@ class _PodcastDetailScreenState extends ConsumerState<PodcastDetailScreen> {
                     fontSize: 26,
                     fontWeight: FontWeight.w800,
                     height: 1.25,
-                    color: isDark ? Colors.white : const Color(0xFF111827),
+                    color: isDark ? Colors.white : AppColors.ink,
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -348,7 +349,7 @@ class _BackButton extends StatelessWidget {
         child: IconButton(
           icon: Icon(
             Icons.arrow_back_rounded,
-            color: isDark ? Colors.white : const Color(0xFF111827),
+            color: isDark ? Colors.white : AppColors.ink,
             size: 22,
           ),
           onPressed: () => Navigator.of(context).maybePop(),
@@ -436,7 +437,7 @@ class _CoverArtHeaderState extends State<_CoverArtHeader>
           colors: widget.isDark
               ? [
                   _podcastPurple.withValues(alpha: 0.15),
-                  const Color(0xFF121212),
+                  AppColors.slate,
                 ]
               : [
                   _podcastPurple.withValues(alpha: 0.08),
@@ -485,11 +486,11 @@ class _CoverArtHeaderState extends State<_CoverArtHeader>
                       height: 220,
                       placeholder: (_, __) => Shimmer.fromColors(
                         baseColor: widget.isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFE5E7EB),
+                            ? AppColors.slateRaised
+                            : AppColors.sand,
                         highlightColor: widget.isDark
-                            ? const Color(0xFF3A3A3A)
-                            : const Color(0xFFF3F4F6),
+                            ? AppColors.slateLine
+                            : AppColors.creamDeep,
                         child: Container(color: Colors.white),
                       ),
                       errorWidget: (_, __, ___) => _placeholder(),
@@ -619,7 +620,7 @@ class _ScholarRow extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                 ),
               ),
               if (episodeNumber != null) ...[
@@ -797,8 +798,8 @@ class _SeekBar extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                     ),
                   ),
                   Text(
@@ -807,8 +808,8 @@ class _SeekBar extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                     ),
                   ),
                 ],
@@ -870,12 +871,12 @@ class _PlayPauseButton extends StatelessWidget {
                 end: Alignment.bottomRight,
                 colors: hasAudio
                     ? [
-                        const Color(0xFF22C55E),
+                        AppColors.emerald500,
                         _primaryGreen,
                       ]
                     : [
-                        const Color(0xFF6B7280),
-                        const Color(0xFF4B5563),
+                        AppColors.muted,
+                        AppColors.muted,
                       ],
               ),
               boxShadow: hasAudio
@@ -937,8 +938,8 @@ class _ControlButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onTap != null;
     final color = enabled
-        ? (isDark ? Colors.white : const Color(0xFF111827))
-        : (isDark ? const Color(0xFF4B5563) : const Color(0xFF9CA3AF));
+        ? (isDark ? Colors.white : AppColors.ink)
+        : (isDark ? AppColors.onDarkSubtle : AppColors.subtle);
 
     return GestureDetector(
       onTap: onTap,
@@ -998,7 +999,7 @@ class _ExpandableDescription extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 16,
             fontWeight: FontWeight.w800,
-            color: isDark ? Colors.white : const Color(0xFF111827),
+            color: isDark ? Colors.white : AppColors.ink,
             letterSpacing: -0.2,
           ),
         ),
@@ -1012,8 +1013,8 @@ class _ExpandableDescription extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w400,
               color: isDark
-                  ? const Color(0xFFD1D5DB)
-                  : const Color(0xFF4B5563),
+                  ? AppColors.onDarkMuted
+                  : AppColors.muted,
               height: 1.7,
             ),
           ),
@@ -1023,8 +1024,8 @@ class _ExpandableDescription extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w400,
               color: isDark
-                  ? const Color(0xFFD1D5DB)
-                  : const Color(0xFF4B5563),
+                  ? AppColors.onDarkMuted
+                  : AppColors.muted,
               height: 1.7,
             ),
           ),
@@ -1085,7 +1086,7 @@ class _RelatedEpisodeItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: _podcastPurple.withValues(alpha: isDark ? 0.1 : 0.06),
@@ -1110,8 +1111,8 @@ class _RelatedEpisodeItem extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: isDark
-                    ? const Color(0xFF2A2A2A)
-                    : const Color(0xFFF3F4F6),
+                    ? AppColors.slateRaised
+                    : AppColors.creamDeep,
               ),
               clipBehavior: Clip.antiAlias,
               child: podcast.coverImageUrl != null &&
@@ -1123,8 +1124,8 @@ class _RelatedEpisodeItem extends StatelessWidget {
                       height: 56,
                       placeholder: (_, __) => Container(
                         color: isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFF3F4F6),
+                            ? AppColors.slateRaised
+                            : AppColors.creamDeep,
                       ),
                       errorWidget: (_, __, ___) => _relatedPlaceholder(),
                     )
@@ -1147,7 +1148,7 @@ class _RelatedEpisodeItem extends StatelessWidget {
                       height: 1.35,
                       color: isDark
                           ? Colors.white
-                          : const Color(0xFF111827),
+                          : AppColors.ink,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -1175,8 +1176,8 @@ class _RelatedEpisodeItem extends StatelessWidget {
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                             color: isDark
-                                ? const Color(0xFF9CA3AF)
-                                : const Color(0xFF6B7280),
+                                ? AppColors.onDarkMuted
+                                : AppColors.muted,
                           ),
                         ),
                       ],

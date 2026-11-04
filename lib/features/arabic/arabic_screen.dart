@@ -86,9 +86,9 @@ class _ArabicScreenState extends ConsumerState<ArabicScreen> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Color(0xFF15803D),
-                      Color(0xFF16A34A),
-                      Color(0xFF22C55E),
+                      AppColors.emerald800,
+                      AppColors.emerald700,
+                      AppColors.emerald500,
                     ],
                   ),
                 ),
@@ -143,7 +143,7 @@ class _ArabicScreenState extends ConsumerState<ArabicScreen> {
           // ── Level filter chips ───────────────────────────────────────────
           SliverToBoxAdapter(
             child: Container(
-              color: isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+              color: isDark ? AppColors.slate : AppColors.cream,
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -162,15 +162,15 @@ class _ArabicScreenState extends ConsumerState<ArabicScreen> {
                             color: selected
                                 ? AppTheme.primaryGreen
                                 : (isDark
-                                    ? const Color(0xFF1E1E1E)
+                                    ? AppColors.slateCard
                                     : Colors.white),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: selected
                                   ? AppTheme.primaryGreen
                                   : (isDark
-                                      ? const Color(0xFF3A3A3A)
-                                      : const Color(0xFFE5E7EB)),
+                                      ? AppColors.slateLine
+                                      : AppColors.sand),
                             ),
                           ),
                           child: Text(
@@ -181,8 +181,8 @@ class _ArabicScreenState extends ConsumerState<ArabicScreen> {
                               color: selected
                                   ? Colors.white
                                   : (isDark
-                                      ? const Color(0xFF9CA3AF)
-                                      : const Color(0xFF6B7280)),
+                                      ? AppColors.onDarkMuted
+                                      : AppColors.muted),
                             ),
                           ),
                         ),
@@ -268,13 +268,13 @@ class _CourseCard extends StatelessWidget {
   Color get _levelColor {
     switch ((course['level'] as String? ?? '').toLowerCase()) {
       case 'beginner':
-        return const Color(0xFF16A34A);
+        return AppColors.emerald700;
       case 'elementary':
-        return const Color(0xFF2563EB);
+        return AppColors.sapphire;
       case 'intermediate':
-        return const Color(0xFFF59E0B);
+        return AppColors.gold;
       default:
-        return const Color(0xFF6B7280);
+        return AppColors.muted;
     }
   }
 
@@ -304,7 +304,7 @@ class _CourseCard extends StatelessWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -354,7 +354,7 @@ class _CourseCard extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                               color: isDark
                                   ? Colors.white
-                                  : const Color(0xFF111827),
+                                  : AppColors.ink,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -382,8 +382,8 @@ class _CourseCard extends StatelessWidget {
                       Icons.arrow_forward_ios_rounded,
                       size: 16,
                       color: isDark
-                          ? const Color(0xFF6B7280)
-                          : const Color(0xFF9CA3AF),
+                          ? AppColors.onDarkSubtle
+                          : AppColors.subtle,
                     ),
                   ],
                 ),
@@ -396,8 +396,8 @@ class _CourseCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                       height: 1.5,
                     ),
                   ),
@@ -427,7 +427,7 @@ class _CourseShimmer extends StatelessWidget {
         child: Container(
           height: 110,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
           ),
           padding: const EdgeInsets.all(16),

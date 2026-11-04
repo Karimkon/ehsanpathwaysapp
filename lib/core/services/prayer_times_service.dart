@@ -1,6 +1,4 @@
-import 'dart:math' as math;
 import 'package:adhan/adhan.dart';
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -90,6 +88,7 @@ class PrayerTimesService {
   static const _keyIsha = 'notify_isha';
   static const _keyJumah = 'notify_jumah';
   static const _keyEnabled = 'prayer_notify_enabled';
+  static const _keyMadhab = 'prayer_madhab';
 
   /// Load saved settings
   static Future<Map<String, dynamic>> loadSettings() async {
@@ -106,6 +105,8 @@ class PrayerTimesService {
       'notify_maghrib': prefs.getBool(_keyMaghrib) ?? true,
       'notify_isha': prefs.getBool(_keyIsha) ?? true,
       'notify_jumah': prefs.getBool(_keyJumah) ?? true,
+      // 'hanafi' moves Asr later (shadow twice the object's length).
+      'madhab': prefs.getString(_keyMadhab) ?? 'shafi',
     };
   }
 
@@ -130,6 +131,24 @@ class PrayerTimesService {
     await prefs.setBool(_keyMaghrib, prayerToggles[Prayer.maghrib] ?? true);
     await prefs.setBool(_keyIsha, prayerToggles[Prayer.isha] ?? true);
     await prefs.setBool(_keyJumah, prayerToggles[Prayer.dhuhr] ?? true);
+  }
+
+  /// Asr juristic method: 'shafi' (Shafi'i, Maliki, Hanbali) or 'hanafi'.
+  static Future<void> saveMadhab(String madhab) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyMadhab, madhab == 'hanafi' ? 'hanafi' : 'shafi');
+  }
+
+  /// Saves a location chosen by hand or resolved from GPS.
+  static Future<void> saveLocation({
+    required double lat,
+    required double lng,
+    required String city,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(_keyLat, lat);
+    await prefs.setDouble(_keyLng, lng);
+    await prefs.setString(_keyCity, city);
   }
 
   /// Request location permission and get current GPS position.
@@ -157,11 +176,15 @@ class PrayerTimesService {
     required double latitude,
     required double longitude,
     required PrayerCalculationMethod method,
+    bool hanafi = false,
+    DateTime? date,
   }) {
     try {
       final coordinates = Coordinates(latitude, longitude);
-      final dateComponents = DateComponents.from(DateTime.now());
-      return PrayerTimes(coordinates, dateComponents, method.params);
+      final dateComponents = DateComponents.from(date ?? DateTime.now());
+      final params = method.params;
+      params.madhab = hanafi ? Madhab.hanafi : Madhab.shafi;
+      return PrayerTimes(coordinates, dateComponents, params);
     } catch (_) {
       return null;
     }

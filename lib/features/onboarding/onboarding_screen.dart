@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:ehsan_pathways/core/providers/onboarding_provider.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 // ---------------------------------------------------------------------------
 // Onboarding page data
@@ -34,39 +35,39 @@ class _OnboardingPage {
 const _pages = [
   _OnboardingPage(
     icon: Icons.menu_book_rounded,
-    iconBg: Color(0xFFDCFCE7),
-    iconColor: Color(0xFF16A34A),
+    iconBg: AppColors.emerald100,
+    iconColor: AppColors.emerald700,
     title: 'Seek Knowledge',
     subtitle:
         'Access thousands of Islamic videos, articles, and podcasts — completely free, for everyone.',
-    gradient: [Color(0xFF052E16), Color(0xFF166534), Color(0xFF16A34A)],
+    gradient: [AppColors.emerald950, AppColors.emerald800, AppColors.emerald700],
   ),
   _OnboardingPage(
     icon: Icons.headphones_rounded,
-    iconBg: Color(0xFFEDE9FE),
-    iconColor: Color(0xFF7C3AED),
+    iconBg: AppColors.amethystTint,
+    iconColor: AppColors.amethyst,
     title: 'Watch, Listen, Read',
     subtitle:
         'Videos from trusted scholars, podcasts to listen on the go, and in-depth articles to deepen your understanding.',
-    gradient: [Color(0xFF1E1B4B), Color(0xFF4338CA), Color(0xFF6D28D9)],
+    gradient: [AppColors.amethystDeep, AppColors.amethyst, AppColors.amethyst],
   ),
   _OnboardingPage(
     icon: Icons.route_rounded,
-    iconBg: Color(0xFFFEF3C7),
-    iconColor: Color(0xFFD97706),
+    iconBg: AppColors.goldTint,
+    iconColor: AppColors.goldDeep,
     title: 'Your Learning Path',
     subtitle:
         'Follow curated learning pathways designed by scholars to guide you step by step on your Islamic journey.',
-    gradient: [Color(0xFF1C1917), Color(0xFF78350F), Color(0xFFD97706)],
+    gradient: [AppColors.slate, AppColors.goldDarkest, AppColors.goldDeep],
   ),
   _OnboardingPage(
     icon: Icons.people_alt_rounded,
-    iconBg: Color(0xFFDCFCE7),
-    iconColor: Color(0xFF16A34A),
+    iconBg: AppColors.emerald100,
+    iconColor: AppColors.emerald700,
     title: 'Join the Ummah',
     subtitle:
         'Create an account to save bookmarks, track progress, and get personalised recommendations.',
-    gradient: [Color(0xFF052E16), Color(0xFF166534), Color(0xFF16A34A)],
+    gradient: [AppColors.emerald950, AppColors.emerald800, AppColors.emerald700],
   ),
 ];
 
@@ -382,12 +383,12 @@ class _NextButton extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF052E16),
+                color: AppColors.emerald950,
               ),
             ),
             const SizedBox(width: 8),
             const Icon(Icons.arrow_forward_rounded,
-                color: Color(0xFF16A34A), size: 20),
+                color: AppColors.emerald700, size: 20),
           ],
         ),
       ),
@@ -423,15 +424,15 @@ class _LastPageActions extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.red.withValues(alpha: 0.15),
+              color: AppColors.danger.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+              border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
             ),
             child: Text(
               errorMessage!,
               textAlign: TextAlign.center,
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13, color: Colors.red.shade200),
+                  fontSize: 13, color: AppColors.dangerOnDark),
             ),
           ),
           const SizedBox(height: 12),
@@ -443,7 +444,7 @@ class _LastPageActions extends StatelessWidget {
           icon: _GoogleIcon(),
           label: 'Continue with Google',
           backgroundColor: Colors.white,
-          textColor: const Color(0xFF1F2937),
+          textColor: AppColors.slateCard,
         ),
 
         const SizedBox(height: 12),

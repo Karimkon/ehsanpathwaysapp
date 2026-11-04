@@ -56,7 +56,7 @@ class _ScholarsScreenState extends ConsumerState<ScholarsScreen> {
                 style: GoogleFonts.lora(
                   fontSize: 28,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : AppColors.ink,
                 ),
               ),
             ),
@@ -68,8 +68,8 @@ class _ScholarsScreenState extends ConsumerState<ScholarsScreen> {
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: isDark
-                      ? const Color(0xFF9CA3AF)
-                      : const Color(0xFF6B7280),
+                      ? AppColors.onDarkMuted
+                      : AppColors.muted,
                 ),
               ),
             ),
@@ -81,7 +81,7 @@ class _ScholarsScreenState extends ConsumerState<ScholarsScreen> {
               padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                  color: isDark ? AppColors.slateCard : Colors.white,
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
@@ -100,8 +100,8 @@ class _ScholarsScreenState extends ConsumerState<ScholarsScreen> {
                     hintStyle: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: isDark
-                          ? const Color(0xFF6B7280)
-                          : const Color(0xFF9CA3AF),
+                          ? AppColors.onDarkSubtle
+                          : AppColors.subtle,
                     ),
                     prefixIcon: Icon(
                       Icons.search_rounded,
@@ -114,8 +114,8 @@ class _ScholarsScreenState extends ConsumerState<ScholarsScreen> {
                               Icons.close_rounded,
                               size: 20,
                               color: isDark
-                                  ? const Color(0xFF9CA3AF)
-                                  : const Color(0xFF6B7280),
+                                  ? AppColors.onDarkMuted
+                                  : AppColors.muted,
                             ),
                             onPressed: () {
                               _searchController.clear();
@@ -261,7 +261,7 @@ class _ScholarCardState extends State<_ScholarCard>
         onTapCancel: () => _controller.reverse(),
         child: Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
@@ -302,7 +302,7 @@ class _ScholarCardState extends State<_ScholarCard>
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF111827),
+                    color: isDark ? Colors.white : AppColors.ink,
                   ),
                 ),
 
@@ -378,7 +378,7 @@ class _CountChip extends StatelessWidget {
         Icon(
           icon,
           size: 14,
-          color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+          color: isDark ? AppColors.onDarkMuted : AppColors.muted,
         ),
         const SizedBox(width: 3),
         Text(
@@ -386,7 +386,7 @@ class _CountChip extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
+            color: isDark ? AppColors.onDarkMuted : AppColors.muted,
           ),
         ),
       ],

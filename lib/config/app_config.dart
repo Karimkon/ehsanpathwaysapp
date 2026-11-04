@@ -10,8 +10,8 @@ class AppConfig {
   // ---------------------------------------------------------------
   static const String appName = 'EhsanPathways';
   static const String appTagline = 'Your Journey to Islamic Knowledge';
-  static const String appVersion = '1.0.0';
-  static const int appBuildNumber = 1;
+  static const String appVersion = '1.1.0';
+  static const int appBuildNumber = 10;
 
   // ---------------------------------------------------------------
   // API

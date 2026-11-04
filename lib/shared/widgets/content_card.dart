@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 /// The type of content a card represents.
 enum ContentType { video, article, podcast, document, khutbah }
@@ -78,11 +79,11 @@ class _ContentCardState extends State<ContentCard>
   // -- Badge colours keyed by content type ----------------------------------
 
   static const Map<ContentType, Color> _badgeColors = {
-    ContentType.video: Color(0xFF3B82F6), // blue
-    ContentType.article: Color(0xFF10B981), // emerald
-    ContentType.podcast: Color(0xFF8B5CF6), // purple
-    ContentType.document: Color(0xFFEF4444), // red
-    ContentType.khutbah: Color(0xFFF59E0B), // amber
+    ContentType.video: AppColors.sapphire, // blue
+    ContentType.article: AppColors.emerald500, // emerald
+    ContentType.podcast: AppColors.amethyst, // purple
+    ContentType.document: AppColors.danger, // red
+    ContentType.khutbah: AppColors.gold, // amber
   };
 
   static const Map<ContentType, IconData> _badgeIcons = {
@@ -121,7 +122,7 @@ class _ContentCardState extends State<ContentCard>
         onTapCancel: () => _controller.reverse(),
         child: Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            color: isDark ? AppColors.slateCard : Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -158,17 +159,17 @@ class _ContentCardState extends State<ContentCard>
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Shimmer.fromColors(
                           baseColor: isDark
-                              ? const Color(0xFF2A2A2A)
-                              : const Color(0xFFE5E7EB),
+                              ? AppColors.slateRaised
+                              : AppColors.sand,
                           highlightColor: isDark
-                              ? const Color(0xFF3A3A3A)
-                              : const Color(0xFFF3F4F6),
+                              ? AppColors.slateLine
+                              : AppColors.creamDeep,
                           child: Container(color: Colors.white),
                         ),
                         errorWidget: (_, __, ___) => Container(
                           color: isDark
-                              ? const Color(0xFF2A2A2A)
-                              : const Color(0xFFF3F4F6),
+                              ? AppColors.slateRaised
+                              : AppColors.creamDeep,
                           child: Icon(
                             Icons.image_not_supported_outlined,
                             size: 40,
@@ -279,7 +280,7 @@ class _ContentCardState extends State<ContentCard>
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         height: 1.35,
-                        color: isDark ? Colors.white : const Color(0xFF111827),
+                        color: isDark ? Colors.white : AppColors.ink,
                       ),
                     ),
 
@@ -293,8 +294,8 @@ class _ContentCardState extends State<ContentCard>
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: isDark
-                              ? const Color(0xFF9CA3AF)
-                              : const Color(0xFF6B7280),
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted,
                         ),
                       ),
                     ],
@@ -310,8 +311,8 @@ class _ContentCardState extends State<ContentCard>
                                 widget.trailingIcon,
                                 size: 14,
                                 color: isDark
-                                    ? const Color(0xFF9CA3AF)
-                                    : const Color(0xFF6B7280),
+                                    ? AppColors.onDarkMuted
+                                    : AppColors.muted,
                               ),
                               const SizedBox(width: 4),
                             ],
@@ -321,8 +322,8 @@ class _ContentCardState extends State<ContentCard>
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 color: isDark
-                                    ? const Color(0xFF9CA3AF)
-                                    : const Color(0xFF6B7280),
+                                    ? AppColors.onDarkMuted
+                                    : AppColors.muted,
                               ),
                             ),
                           ],

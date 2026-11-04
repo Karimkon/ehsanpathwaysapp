@@ -98,7 +98,7 @@ class _HadithSearchScreenState extends ConsumerState<HadithSearchScreen> {
                   style: AppTheme.ui(
                     size: 12.5,
                     weight: FontWeight.w600,
-                    color: Colors.red.shade400,
+                    color: AppColors.dangerOnDark,
                   ),
                 ),
               ),

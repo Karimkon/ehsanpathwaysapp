@@ -4,6 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'package:ehsan_pathways/config/app_config.dart';
+import 'package:ehsan_pathways/core/services/offline_cache.dart';
+import 'package:ehsan_pathways/features/islamic_tools/quran/quran_data.dart';
+import 'package:ehsan_pathways/features/islamic_tools/quran/quran_text.dart';
 
 // ---------------------------------------------------------------------------
 // Shared Dio (no auth needed — static data)
@@ -62,48 +65,95 @@ class Surah {
 // Quran providers
 // ---------------------------------------------------------------------------
 
-final quranSurahsProvider = FutureProvider<List<Surah>>((ref) async {
-  final dio = ref.read(_isToolsDioProvider);
-  final res = await dio.get('/islamic-tools/quran/surahs');
-  final data = res.data as Map<String, dynamic>;
-  return (data['data'] as List)
-      .map((e) => Surah.fromJson(e as Map<String, dynamic>))
-      .toList();
-});
+/// The surah index ships with the app (see quran_data.dart), so it is
+/// available offline and never waits on the network.
+final quranSurahsProvider =
+    FutureProvider<List<Surah>>((ref) async => kSurahs);
+
+Surah surahByNumber(int no) =>
+    kSurahs.firstWhere((s) => s.no == no, orElse: () => kSurahs.first);
 
 // ===========================================================================
 // QURAN VERSE MODEL
 // ===========================================================================
 
 class QuranVerse {
-  final int number;       // verse number within surah
+  /// Verse number within the surah.
+  final int number;
+
+  /// Verse number across the whole mushaf (1-6236); recitation audio is
+  /// addressed by it.
+  final int globalNumber;
   final String arabic;
   final String translation;
 
   const QuranVerse({
     required this.number,
+    required this.globalNumber,
     required this.arabic,
     required this.translation,
   });
+
+  Map<String, Object> toJson() => {
+        'n': number,
+        'g': globalNumber,
+        'a': arabic,
+        't': translation,
+      };
+
+  factory QuranVerse.fromJson(Map<String, dynamic> j) => QuranVerse(
+        number: (j['n'] as num).toInt(),
+        globalNumber: (j['g'] as num).toInt(),
+        arabic: j['a'] as String,
+        translation: j['t'] as String,
+      );
 }
 
-/// Fetches Arabic + English translation from alquran.cloud
-final quranVersesProvider =
-    FutureProvider.family<List<QuranVerse>, int>((ref, surahNo) async {
-  final dio = ref.read(_quranCloudDioProvider);
-  final res = await dio.get('/surah/$surahNo/editions/quran-simple,en.sahih');
-  final editions = (res.data['data'] as List).cast<Map<String, dynamic>>();
-  // editions[0] = Arabic, editions[1] = English
-  final arabicAyahs = (editions[0]['ayahs'] as List).cast<Map<String, dynamic>>();
-  final englishAyahs = (editions[1]['ayahs'] as List).cast<Map<String, dynamic>>();
-
-  return List.generate(arabicAyahs.length, (i) {
+/// Parses an alquran.cloud `/surah/{n}/editions/quran-uthmani,en.sahih`
+/// response.
+List<QuranVerse> parseQuranEditions(Object? body, int surahNo) {
+  final data = (body as Map<String, dynamic>)['data'] as List;
+  final arabic = ((data[0] as Map)['ayahs'] as List).cast<Map>();
+  final english = ((data[1] as Map)['ayahs'] as List).cast<Map>();
+  if (arabic.length != english.length) {
+    throw const FormatException('Arabic and translation verse counts differ');
+  }
+  return List.generate(arabic.length, (i) {
+    final number = (arabic[i]['numberInSurah'] as num).toInt();
+    final text = arabic[i]['text'] as String;
     return QuranVerse(
-      number: (arabicAyahs[i]['numberInSurah'] as num).toInt(),
-      arabic: arabicAyahs[i]['text'] as String,
-      translation: englishAyahs[i]['text'] as String,
+      number: number,
+      globalNumber: (arabic[i]['number'] as num).toInt(),
+      arabic: number == 1 ? stripLeadingBasmalah(text, surahNo) : text,
+      translation: english[i]['text'] as String,
     );
   });
+}
+
+/// Verses of a surah: Uthmani Arabic with the Saheeh International
+/// translation. The text never changes, so a surah read once is served from
+/// the offline cache from then on.
+final quranVersesProvider =
+    FutureProvider.family<List<QuranVerse>, int>((ref, surahNo) async {
+  final cache = OfflineCache.instance;
+  final key = 'quran_v2_surah_$surahNo';
+
+  final cached = await cache.read(key);
+  if (cached is List && cached.isNotEmpty) {
+    try {
+      return cached
+          .map((e) => QuranVerse.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      // Corrupt entry: fetch afresh below.
+    }
+  }
+
+  final dio = ref.read(_quranCloudDioProvider);
+  final res = await dio.get('/surah/$surahNo/editions/quran-uthmani,en.sahih');
+  final verses = parseQuranEditions(res.data, surahNo);
+  await cache.write(key, verses.map((v) => v.toJson()).toList());
+  return verses;
 });
 
 // ===========================================================================
@@ -328,6 +378,20 @@ class HifzState {
   int get notStartedCount =>
       surahs.where((s) => s.status == HifzStatus.notStarted).length;
   double get percentage => surahs.isEmpty ? 0 : memorisedCount / surahs.length * 100;
+
+  /// Progress weighted by length: Al-Baqarah counts for 286 verses, not one
+  /// surah. Out of 6,236.
+  int get totalVerses => surahs.fold(0, (a, s) => a + s.verses);
+  int get memorisedVerses => surahs
+      .where((s) => s.status == HifzStatus.memorised)
+      .fold(0, (a, s) => a + s.verses);
+  int get inProgressVerses => surahs
+      .where((s) => s.status == HifzStatus.inProgress)
+      .fold(0, (a, s) => a + s.verses);
+  double get verseFraction =>
+      totalVerses == 0 ? 0 : memorisedVerses / totalVerses;
+  double get inProgressFraction =>
+      totalVerses == 0 ? 0 : inProgressVerses / totalVerses;
 }
 
 class HifzNotifier extends Notifier<HifzState> {

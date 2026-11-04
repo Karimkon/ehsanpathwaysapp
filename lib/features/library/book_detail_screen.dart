@@ -236,7 +236,7 @@ class _DetailState extends ConsumerState<_Detail> {
                       style: AppTheme.ui(
                           size: 12.5,
                           weight: FontWeight.w500,
-                          color: Colors.red.shade400)),
+                          color: AppColors.dangerOnDark)),
                 ],
 
                 const SizedBox(height: 20),

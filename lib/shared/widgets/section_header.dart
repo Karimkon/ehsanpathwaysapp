@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 /// A section title row with an optional subtitle and a trailing "See All"
 /// action button. Provides consistent, beautiful spacing across every
@@ -52,7 +53,7 @@ class SectionHeader extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? Colors.white : const Color(0xFF111827),
+                    color: isDark ? Colors.white : AppColors.ink,
                     letterSpacing: -0.3,
                     height: 1.25,
                   ),
@@ -65,8 +66,8 @@ class SectionHeader extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                       height: 1.4,
                     ),
                   ),
@@ -107,7 +108,7 @@ class _SeeAllButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryGreen = Color(0xFF16A34A);
+    const Color primaryGreen = AppColors.emerald700;
 
     return Material(
       color: Colors.transparent,

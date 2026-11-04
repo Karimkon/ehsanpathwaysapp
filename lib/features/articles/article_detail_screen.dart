@@ -119,7 +119,7 @@ class _ArticleDetailBody extends ConsumerWidget {
             pinned: true,
             stretch: true,
             backgroundColor:
-                isDark ? const Color(0xFF121212) : Colors.white,
+                isDark ? AppColors.slate : Colors.white,
             foregroundColor: Colors.white,
             actions: [
               // Bookmark button
@@ -146,17 +146,17 @@ class _ArticleDetailBody extends ConsumerWidget {
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Shimmer.fromColors(
                         baseColor: isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFE5E7EB),
+                            ? AppColors.slateRaised
+                            : AppColors.sand,
                         highlightColor: isDark
-                            ? const Color(0xFF3A3A3A)
-                            : const Color(0xFFF3F4F6),
+                            ? AppColors.slateLine
+                            : AppColors.creamDeep,
                         child: Container(color: Colors.white),
                       ),
                       errorWidget: (_, __, ___) => Container(
                         color: isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFF3F4F6),
+                            ? AppColors.slateRaised
+                            : AppColors.creamDeep,
                         child: const Icon(
                           Icons.article_outlined,
                           size: 60,
@@ -218,7 +218,7 @@ class _ArticleDetailBody extends ConsumerWidget {
                       fontSize: 26,
                       fontWeight: FontWeight.w800,
                       height: 1.3,
-                      color: isDark ? Colors.white : const Color(0xFF111827),
+                      color: isDark ? Colors.white : AppColors.ink,
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -246,7 +246,7 @@ class _ArticleDetailBody extends ConsumerWidget {
                                   fontWeight: FontWeight.w700,
                                   color: isDark
                                       ? Colors.white
-                                      : const Color(0xFF111827),
+                                      : AppColors.ink,
                                 ),
                               ),
                               if (article.publishedAt != null)
@@ -258,8 +258,8 @@ class _ArticleDetailBody extends ConsumerWidget {
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
                                       color: isDark
-                                          ? const Color(0xFF9CA3AF)
-                                          : const Color(0xFF6B7280),
+                                          ? AppColors.onDarkMuted
+                                          : AppColors.muted,
                                     ),
                                   ),
                                 ),
@@ -333,8 +333,8 @@ class _ArticleDetailBody extends ConsumerWidget {
                       fontSize: FontSize(16),
                       lineHeight: LineHeight(1.75),
                       color: isDark
-                          ? const Color(0xFFD1D5DB)
-                          : const Color(0xFF374151),
+                          ? AppColors.onDarkMuted
+                          : AppColors.ink2,
                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
                       margin: Margins.zero,
                       padding: HtmlPaddings.zero,
@@ -343,21 +343,21 @@ class _ArticleDetailBody extends ConsumerWidget {
                       fontSize: FontSize(24),
                       fontWeight: FontWeight.w800,
                       fontFamily: GoogleFonts.lora().fontFamily,
-                      color: isDark ? Colors.white : const Color(0xFF111827),
+                      color: isDark ? Colors.white : AppColors.ink,
                       margin: Margins.only(top: 24, bottom: 12),
                     ),
                     'h2': Style(
                       fontSize: FontSize(20),
                       fontWeight: FontWeight.w700,
                       fontFamily: GoogleFonts.lora().fontFamily,
-                      color: isDark ? Colors.white : const Color(0xFF111827),
+                      color: isDark ? Colors.white : AppColors.ink,
                       margin: Margins.only(top: 20, bottom: 10),
                     ),
                     'h3': Style(
                       fontSize: FontSize(18),
                       fontWeight: FontWeight.w700,
                       fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
-                      color: isDark ? Colors.white : const Color(0xFF111827),
+                      color: isDark ? Colors.white : AppColors.ink,
                       margin: Margins.only(top: 18, bottom: 8),
                     ),
                     'p': Style(
@@ -370,8 +370,8 @@ class _ArticleDetailBody extends ConsumerWidget {
                     'blockquote': Style(
                       fontStyle: FontStyle.italic,
                       color: isDark
-                          ? const Color(0xFF9CA3AF)
-                          : const Color(0xFF6B7280),
+                          ? AppColors.onDarkMuted
+                          : AppColors.muted,
                       border: Border(
                         left: BorderSide(
                           color: AppTheme.accentGold,
@@ -395,8 +395,8 @@ class _ArticleDetailBody extends ConsumerWidget {
                     ),
                     'code': Style(
                       backgroundColor: isDark
-                          ? const Color(0xFF2A2A2A)
-                          : const Color(0xFFF3F4F6),
+                          ? AppColors.slateRaised
+                          : AppColors.creamDeep,
                       padding: HtmlPaddings.symmetric(
                         horizontal: 6,
                         vertical: 2,
@@ -482,7 +482,7 @@ class _RelatedArticleCard extends StatelessWidget {
       child: Container(
         width: 200,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
@@ -508,25 +508,25 @@ class _RelatedArticleCard extends StatelessWidget {
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Shimmer.fromColors(
                         baseColor: isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFE5E7EB),
+                            ? AppColors.slateRaised
+                            : AppColors.sand,
                         highlightColor: isDark
-                            ? const Color(0xFF3A3A3A)
-                            : const Color(0xFFF3F4F6),
+                            ? AppColors.slateLine
+                            : AppColors.creamDeep,
                         child: Container(color: Colors.white),
                       ),
                       errorWidget: (_, __, ___) => Container(
                         color: isDark
-                            ? const Color(0xFF2A2A2A)
-                            : const Color(0xFFF3F4F6),
+                            ? AppColors.slateRaised
+                            : AppColors.creamDeep,
                         child: const Icon(Icons.article_outlined,
                             size: 28, color: Colors.grey),
                       ),
                     )
                   : Container(
                       color: isDark
-                          ? const Color(0xFF2A2A2A)
-                          : const Color(0xFFF3F4F6),
+                          ? AppColors.slateRaised
+                          : AppColors.creamDeep,
                       child: const Center(
                         child: Icon(Icons.article_outlined,
                             size: 28, color: Colors.grey),
@@ -551,7 +551,7 @@ class _RelatedArticleCard extends StatelessWidget {
                         height: 1.3,
                         color: isDark
                             ? Colors.white
-                            : const Color(0xFF111827),
+                            : AppColors.ink,
                       ),
                     ),
                     const Spacer(),
@@ -562,8 +562,8 @@ class _RelatedArticleCard extends StatelessWidget {
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: isDark
-                              ? const Color(0xFF9CA3AF)
-                              : const Color(0xFF6B7280),
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted,
                         ),
                       ),
                   ],
@@ -653,7 +653,7 @@ class _ArticleBookmarkButtonState
               : Icons.bookmark_border_rounded,
           key: ValueKey(_isBookmarked),
           color: _isBookmarked
-              ? const Color(0xFFF59E0B)
+              ? AppColors.gold
               : Colors.white,
           size: 24,
         ),

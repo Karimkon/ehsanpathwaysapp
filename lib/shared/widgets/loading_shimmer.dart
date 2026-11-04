@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 // ---------------------------------------------------------------------------
 // Core shimmer building block
@@ -50,9 +51,9 @@ class ShimmerWrap extends StatelessWidget {
 
     return Shimmer.fromColors(
       baseColor:
-          isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE5E7EB),
+          isDark ? AppColors.slateRaised : AppColors.sand,
       highlightColor:
-          isDark ? const Color(0xFF3D3D3D) : const Color(0xFFF9FAFB),
+          isDark ? AppColors.slateLine : AppColors.cream,
       period: const Duration(milliseconds: 1500),
       child: child,
     );

@@ -8,8 +8,9 @@ import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/features/bookmarks/bookmark_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
-const Color _green = Color(0xFF16A34A);
+const Color _green = AppColors.emerald700;
 
 class BookmarksScreen extends ConsumerStatefulWidget {
   const BookmarksScreen({super.key});
@@ -57,14 +58,14 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
     if (auth.status != AuthStatus.authenticated) {
       return Scaffold(
         backgroundColor:
-            isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+            isDark ? AppColors.slate : AppColors.cream,
         appBar: AppBar(
           title: Text('Bookmarks',
               style: GoogleFonts.lora(
                   fontSize: 24, fontWeight: FontWeight.w700)),
           centerTitle: false,
           backgroundColor:
-              isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+              isDark ? AppColors.slate : AppColors.cream,
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
@@ -79,7 +80,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+          isDark ? AppColors.slate : AppColors.cream,
       appBar: AppBar(
         title: Text(
           'Bookmarks',
@@ -90,7 +91,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
         ),
         centerTitle: false,
         backgroundColor:
-            isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF8),
+            isDark ? AppColors.slate : AppColors.cream,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
@@ -118,11 +119,11 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
                       color: selected
                           ? Colors.white
                           : isDark
-                              ? const Color(0xFFD1D5DB)
-                              : const Color(0xFF374151),
+                              ? AppColors.onDarkMuted
+                              : AppColors.ink2,
                     ),
                     backgroundColor: isDark
-                        ? const Color(0xFF1E1E1E)
+                        ? AppColors.slateCard
                         : Colors.white,
                     selectedColor: _green,
                     checkmarkColor: Colors.white,
@@ -133,7 +134,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
                             ? _green
                             : isDark
                                 ? Colors.white12
-                                : const Color(0xFFE5E7EB),
+                                : AppColors.sand,
                       ),
                     ),
                     onSelected: (_) {
@@ -247,7 +248,7 @@ class _BookmarksScreenState extends ConsumerState<BookmarksScreen> {
             },
             child: Text('Remove',
                 style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w700, color: Colors.redAccent)),
+                    fontWeight: FontWeight.w700, color: AppColors.danger)),
           ),
         ],
       ),
@@ -292,15 +293,15 @@ class _BookmarkCard extends StatelessWidget {
   Color get _typeColor {
     switch (bookmark.type) {
       case 'video':
-        return const Color(0xFF3B82F6);
+        return AppColors.sapphire;
       case 'pathway':
         return _green;
       case 'scholar':
-        return const Color(0xFF8B5CF6);
+        return AppColors.amethyst;
       case 'khutbah':
-        return const Color(0xFFF59E0B);
+        return AppColors.gold;
       case 'arabic_course':
-        return const Color(0xFF10B981);
+        return AppColors.emerald500;
       default:
         return _green;
     }
@@ -309,7 +310,7 @@ class _BookmarkCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      color: isDark ? AppColors.slateCard : Colors.white,
       borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,
       elevation: isDark ? 0 : 1,
@@ -379,7 +380,7 @@ class _BookmarkCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         color: isDark
                             ? Colors.white
-                            : const Color(0xFF111827),
+                            : AppColors.ink,
                         height: 1.3,
                       ),
                     ),
@@ -394,8 +395,8 @@ class _BookmarkCard extends StatelessWidget {
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: isDark
-                              ? const Color(0xFF9CA3AF)
-                              : const Color(0xFF6B7280),
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted,
                         ),
                       ),
                     ],

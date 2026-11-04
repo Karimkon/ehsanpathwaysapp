@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
 /// Size presets for [ScholarAvatar].
 enum ScholarAvatarSize {
@@ -93,7 +94,7 @@ class ScholarAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryGreen = Color(0xFF16A34A);
+    const Color primaryGreen = AppColors.emerald700;
     final Color ring = borderColor ?? primaryGreen;
 
     final double d = size.diameter;
@@ -187,8 +188,8 @@ class ScholarAvatar extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF16A34A),
-            Color(0xFF059669),
+            AppColors.emerald700,
+            AppColors.emerald600,
           ],
         ),
       ),

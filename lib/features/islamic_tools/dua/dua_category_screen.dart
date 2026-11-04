@@ -15,7 +15,7 @@ class DuaCategoryScreen extends ConsumerWidget {
     final duaAsync = ref.watch(duaCategoryProvider(categoryId));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF9),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
         backgroundColor: AppTheme.accentGold,
         foregroundColor: Colors.white,
@@ -29,10 +29,10 @@ class DuaCategoryScreen extends ConsumerWidget {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 16)),
               Text(data.category.arabic,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 12,
                       color: Colors.white70,
-                      fontFamily: 'Amiri')),
+                      fontFamily: AppTheme.arabicFamily)),
             ],
           ),
         ),
@@ -59,8 +59,8 @@ class DuaCategoryScreen extends ConsumerWidget {
 
   Widget _buildShimmer() {
     return Shimmer.fromColors(
-      baseColor: const Color(0xFFE5E7EB),
-      highlightColor: const Color(0xFFF9FAFB),
+      baseColor: AppColors.sand,
+      highlightColor: AppColors.cream,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: 5,
@@ -77,10 +77,10 @@ class DuaCategoryScreen extends ConsumerWidget {
   Widget _buildError(VoidCallback retry) {
     return Center(
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.wifi_off_rounded, size: 48, color: Color(0xFFD1D5DB)),
+        const Icon(Icons.wifi_off_rounded, size: 48, color: AppColors.sandDeep),
         const SizedBox(height: 12),
         const Text('Failed to load duas',
-            style: TextStyle(color: Color(0xFF6B7280))),
+            style: TextStyle(color: AppColors.muted)),
         const SizedBox(height: 12),
         TextButton(onPressed: retry, child: const Text('Retry')),
       ]),
@@ -99,7 +99,7 @@ class _DuaCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: AppColors.sand),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +115,7 @@ class _DuaCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF111827),
+                      color: AppColors.ink,
                     ),
                   ),
                 ),
@@ -132,7 +132,7 @@ class _DuaCard extends StatelessWidget {
                   },
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
-                  color: const Color(0xFF9CA3AF),
+                  color: AppColors.subtle,
                 ),
               ],
             ),
@@ -144,11 +144,11 @@ class _DuaCard extends StatelessWidget {
             color: AppTheme.accentGold.withOpacity(0.05),
             child: Text(
               dua.arabic,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 height: 1.9,
-                fontFamily: 'Amiri',
-                color: Color(0xFF1F2937),
+                fontFamily: AppTheme.arabicFamily,
+                color: AppColors.slateCard,
               ),
               textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
@@ -176,7 +176,7 @@ class _DuaCard extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 14,
                 height: 1.6,
-                color: Color(0xFF374151),
+                color: AppColors.ink2,
               ),
             ),
           ),
@@ -190,12 +190,12 @@ class _DuaCard extends StatelessWidget {
                   Row(
                     children: [
                       const Icon(Icons.menu_book_rounded,
-                          size: 12, color: Color(0xFF9CA3AF)),
+                          size: 12, color: AppColors.subtle),
                       const SizedBox(width: 4),
                       Text(
                         dua.ref,
                         style: const TextStyle(
-                            fontSize: 11, color: Color(0xFF9CA3AF)),
+                            fontSize: 11, color: AppColors.subtle),
                       ),
                     ],
                   ),

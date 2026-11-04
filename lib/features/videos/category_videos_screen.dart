@@ -8,8 +8,9 @@ import 'package:ehsan_pathways/features/videos/video_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/content_card.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
+import 'package:ehsan_pathways/config/theme.dart';
 
-const _green = Color(0xFF16A34A);
+const _green = AppColors.emerald700;
 
 /// Fetches videos filtered by a category slug. Isolated from the Videos tab's
 /// shared list state so a category view can't clobber the main feed.
@@ -42,7 +43,7 @@ class CategoryVideosScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF8FAF9),
+          isDark ? AppColors.slate : AppColors.cream,
       appBar: AppBar(
         title: Text(
           name,
@@ -77,7 +78,7 @@ class CategoryVideosScreen extends ConsumerWidget {
                 subtitle: 'Please check your connection and try again.',
                 actionLabel: 'Retry',
                 onAction: () => ref.invalidate(categoryVideosProvider(slug)),
-                iconColor: Colors.red.shade400,
+                iconColor: AppColors.dangerOnDark,
               ),
             ],
           ),

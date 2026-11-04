@@ -61,6 +61,8 @@
 	<!-- Push notifications -->
 	<key>UIBackgroundModes</key>
 	<array>
+		<!-- Qur'an recitation and podcasts keep playing with the screen locked. -->
+		<string>audio</string>
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>

@@ -49,6 +49,8 @@ import 'package:ehsan_pathways/features/islamic_tools/hifz/hifz_screen.dart';
 import 'package:ehsan_pathways/features/prayer/prayer_times_screen.dart';
 import 'package:ehsan_pathways/features/qibla/qibla_screen.dart';
 import 'package:ehsan_pathways/features/tasbih/tasbih_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/calendar/hijri_calendar_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/names/asma_ul_husna_screen.dart';
 import 'package:ehsan_pathways/features/videos/category_videos_screen.dart';
 
 /// Holds the initial route to open on cold start.
@@ -404,6 +406,9 @@ final routerProvider = Provider<GoRouter>((ref) {
                   surahNo: int.tryParse(
                           state.pathParameters['no'] ?? '1') ??
                       1,
+                  initialVerse:
+                      int.tryParse(state.uri.queryParameters['verse'] ?? ''),
+                  memorise: state.uri.queryParameters['mode'] == 'hifz',
                 ),
               ),
             ],
@@ -469,6 +474,18 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'tasbih',
             name: 'tasbih',
             builder: (context, state) => const TasbihScreen(),
+          ),
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'names',
+            name: 'asma-ul-husna',
+            builder: (context, state) => const AsmaUlHusnaScreen(),
+          ),
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'calendar',
+            name: 'hijri-calendar',
+            builder: (context, state) => const HijriCalendarScreen(),
           ),
         ],
       ),
