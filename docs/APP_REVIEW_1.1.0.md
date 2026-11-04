@@ -1,8 +1,8 @@
-# App Review resubmission: 1.1.0 (10)
+# App Review resubmission: 1.1.0 (11)
 
 Build 1.1.0 (9) was rejected under Guidelines 2.1(a) (twice) and 2.3.6. This
 note records the cause of each issue, the fix in code, and the steps that have
-to be done by hand in Apple's and Google's consoles before uploading build 10.
+to be done by hand in Apple's and Google's consoles before uploading build 11.
 
 ## 1. Sign in with Apple showed "Apple sign-in failed" (2.1(a))
 
@@ -116,7 +116,7 @@ sessions were never restored at launch. Auto-login now runs after `build()`.
 
 ## Suggested App Review notes
 
-> Thank you for the feedback. In 1.1.0 (10):
+> Thank you for the feedback. In 1.1.0 (11):
 > - Sign in with Apple: the Sign in with Apple entitlement was not applied to the
 >   signed build. It is now enabled and verified on iPhone and iPad.
 > - Google Sign-In: the crash came from a missing Google SDK configuration in the
@@ -131,7 +131,7 @@ sessions were never restored at launch. Auto-login now runs after `build()`.
 >
 > Demo account: <email> / <password>
 
-## Before uploading build 10
+## Before uploading build 11
 
 - [ ] App ID capabilities enabled and profile regenerated (section 1)
 - [ ] Age Rating In-App Controls set to None (section 3)
