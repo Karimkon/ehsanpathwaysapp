@@ -9,15 +9,33 @@ import 'package:ehsan_pathways/shared/widgets/reading_width.dart';
 
 /// Hijri months in Arabic, 1-12.
 const kHijriMonthsArabic = [
-  'مُحَرَّم', 'صَفَر', 'رَبِيع الأَوَّل', 'رَبِيع الآخِر', 'جُمَادَى الأُولَى',
-  'جُمَادَى الآخِرَة', 'رَجَب', 'شَعْبَان', 'رَمَضَان', 'شَوَّال',
-  'ذُو القَعْدَة', 'ذُو الحِجَّة',
+  'مُحَرَّم',
+  'صَفَر',
+  'رَبِيع الأَوَّل',
+  'رَبِيع الآخِر',
+  'جُمَادَى الأُولَى',
+  'جُمَادَى الآخِرَة',
+  'رَجَب',
+  'شَعْبَان',
+  'رَمَضَان',
+  'شَوَّال',
+  'ذُو القَعْدَة',
+  'ذُو الحِجَّة',
 ];
 
 const kHijriMonthsEnglish = [
-  'Muharram', 'Safar', "Rabi' al-Awwal", "Rabi' al-Akhir", 'Jumada al-Ula',
-  'Jumada al-Akhirah', 'Rajab', "Sha'ban", 'Ramadan', 'Shawwal',
-  "Dhul-Qa'dah", 'Dhul-Hijjah',
+  'Muharram',
+  'Safar',
+  "Rabi' al-Awwal",
+  "Rabi' al-Akhir",
+  'Jumada al-Ula',
+  'Jumada al-Akhirah',
+  'Rajab',
+  "Sha'ban",
+  'Ramadan',
+  'Shawwal',
+  "Dhul-Qa'dah",
+  'Dhul-Hijjah',
 ];
 
 /// Days with an established basis in the Sunnah. Kept deliberately to dates
@@ -113,8 +131,9 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
   }
 
   /// Gregorian date of a Hijri day, honouring the adjustment.
-  DateTime _gregorianOf(int y, int m, int d) =>
-      HijriCalendar().hijriToGregorian(y, m, d).subtract(Duration(days: _adjust));
+  DateTime _gregorianOf(int y, int m, int d) => HijriCalendar()
+      .hijriToGregorian(y, m, d)
+      .subtract(Duration(days: _adjust));
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +151,7 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: 230,
+            expandedHeight: 236 + MediaQuery.paddingOf(context).top,
             backgroundColor: AppColors.emerald900,
             foregroundColor: Colors.white,
             systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -143,36 +162,63 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 56, 20, 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${today.hDay} ${kHijriMonthsArabic[today.hMonth - 1]} ${today.hYear}',
-                          textDirection: TextDirection.rtl,
-                          style: AppTheme.arabic(size: 30, weight: FontWeight.w700, color: AppColors.goldLight, height: 1.5),
-                        ),
-                        Text(
-                          '${today.hDay} ${kHijriMonthsEnglish[today.hMonth - 1]} ${today.hYear} AH',
-                          style: AppTheme.ui(size: 16, weight: FontWeight.w800, color: Colors.white),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          DateFormat('EEEE, d MMMM y').format(now),
-                          style: AppTheme.ui(size: 13, weight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.8)),
-                        ),
-                        if (todayNote != null) ...[
-                          const SizedBox(height: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: AppColors.gold.withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(999),
-                              border: Border.all(color: AppColors.gold.withValues(alpha: 0.6)),
+                    child: FitHeader(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${today.hDay} ${kHijriMonthsArabic[today.hMonth - 1]} ${today.hYear}',
+                            textDirection: TextDirection.rtl,
+                            style: AppTheme.arabic(
+                              size: 30,
+                              weight: FontWeight.w700,
+                              color: AppColors.goldLight,
+                              height: 1.5,
                             ),
-                            child: Text(todayNote, style: AppTheme.ui(size: 12, color: AppColors.goldPale)),
                           ),
+                          Text(
+                            '${today.hDay} ${kHijriMonthsEnglish[today.hMonth - 1]} ${today.hYear} AH',
+                            style: AppTheme.ui(
+                              size: 16,
+                              weight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            DateFormat('EEEE, d MMMM y').format(now),
+                            style: AppTheme.ui(
+                              size: 13,
+                              weight: FontWeight.w500,
+                              color: Colors.white.withValues(alpha: 0.8),
+                            ),
+                          ),
+                          if (todayNote != null) ...[
+                            const SizedBox(height: 10),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.gold.withValues(alpha: 0.18),
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: AppColors.gold.withValues(alpha: 0.6),
+                                ),
+                              ),
+                              child: Text(
+                                todayNote,
+                                style: AppTheme.ui(
+                                  size: 12,
+                                  color: AppColors.goldPale,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -180,7 +226,13 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
             ),
           ),
           SliverPadding(
-            padding: readingInsets(context, horizontal: 16, top: 16, bottom: 32, maxWidth: 640),
+            padding: readingInsets(
+              context,
+              horizontal: 16,
+              top: 16,
+              bottom: 32,
+              maxWidth: 640,
+            ),
             sliver: SliverList.list(
               children: [
                 Row(
@@ -195,7 +247,10 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                         children: [
                           Text(
                             '${kHijriMonthsEnglish[_month - 1]} $_year',
-                            style: AppTheme.ui(size: 17, weight: FontWeight.w800),
+                            style: AppTheme.ui(
+                              size: 17,
+                              weight: FontWeight.w800,
+                            ),
                           ),
                           Text(
                             '${DateFormat('MMM y').format(first)} – '
@@ -203,7 +258,9 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                             style: AppTheme.ui(
                               size: 12,
                               weight: FontWeight.w500,
-                              color: isDark ? AppColors.onDarkMuted : AppColors.muted,
+                              color: isDark
+                                  ? AppColors.onDarkMuted
+                                  : AppColors.muted,
                             ),
                           ),
                         ],
@@ -219,7 +276,15 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    for (final d in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+                    for (final d in [
+                      'Sun',
+                      'Mon',
+                      'Tue',
+                      'Wed',
+                      'Thu',
+                      'Fri',
+                      'Sat',
+                    ])
                       Expanded(
                         child: Center(
                           child: Text(
@@ -228,8 +293,12 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                               size: 11.5,
                               weight: FontWeight.w700,
                               color: d == 'Fri'
-                                  ? (isDark ? AppColors.gold : AppColors.goldDeep)
-                                  : (isDark ? AppColors.onDarkMuted : AppColors.muted),
+                                  ? (isDark
+                                        ? AppColors.gold
+                                        : AppColors.goldDeep)
+                                  : (isDark
+                                        ? AppColors.onDarkMuted
+                                        : AppColors.muted),
                             ),
                           ),
                         ),
@@ -250,7 +319,10 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                     if (i < leading) return const SizedBox.shrink();
                     final day = i - leading + 1;
                     final greg = first.add(Duration(days: day - 1));
-                    final isToday = _year == today.hYear && _month == today.hMonth && day == today.hDay;
+                    final isToday =
+                        _year == today.hYear &&
+                        _month == today.hMonth &&
+                        day == today.hDay;
                     final note = hijriObservance(_month, day);
                     return _DayCell(
                       hijriDay: day,
@@ -260,8 +332,12 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                       onTap: note == null
                           ? null
                           : () => ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('$day ${kHijriMonthsEnglish[_month - 1]}: $note')),
+                              SnackBar(
+                                content: Text(
+                                  '$day ${kHijriMonthsEnglish[_month - 1]}: $note',
+                                ),
                               ),
+                            ),
                     );
                   },
                 ),
@@ -272,7 +348,12 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('DATE ADJUSTMENT', style: AppTheme.eyebrow(isDark ? AppColors.onDarkMuted : AppColors.muted)),
+                        Text(
+                          'DATE ADJUSTMENT',
+                          style: AppTheme.eyebrow(
+                            isDark ? AppColors.onDarkMuted : AppColors.muted,
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         Text(
                           'Dates follow the Umm al-Qura calendar. If your community '
@@ -281,7 +362,9 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                             size: 13,
                             weight: FontWeight.w500,
                             height: 1.45,
-                            color: isDark ? AppColors.onDarkMuted : AppColors.muted,
+                            color: isDark
+                                ? AppColors.onDarkMuted
+                                : AppColors.muted,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -290,7 +373,10 @@ class _HijriCalendarScreenState extends State<HijriCalendarScreen> {
                           child: SegmentedButton<int>(
                             segments: [
                               for (final v in [-2, -1, 0, 1, 2])
-                                ButtonSegment(value: v, label: Text(v > 0 ? '+$v' : '$v')),
+                                ButtonSegment(
+                                  value: v,
+                                  label: Text(v > 0 ? '+$v' : '$v'),
+                                ),
                             ],
                             selected: {_adjust},
                             showSelectedIcon: false,
@@ -331,9 +417,12 @@ class _DayCell extends StatelessWidget {
     final bg = isToday
         ? AppColors.emerald900
         : (isDark ? AppColors.slateCard : AppColors.card);
-    final fg = isToday ? Colors.white : (isDark ? AppColors.onDark : AppColors.ink);
+    final fg = isToday
+        ? Colors.white
+        : (isDark ? AppColors.onDark : AppColors.ink);
     return Semantics(
-      label: 'Hijri day $hijriDay, Gregorian $gregorianDay${marked ? ', observance' : ''}',
+      label:
+          'Hijri day $hijriDay, Gregorian $gregorianDay${marked ? ', observance' : ''}',
       button: onTap != null,
       child: Material(
         color: bg,
@@ -358,7 +447,14 @@ class _DayCell extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('$hijriDay', style: AppTheme.ui(size: 16, weight: FontWeight.w800, color: fg)),
+                    Text(
+                      '$hijriDay',
+                      style: AppTheme.ui(
+                        size: 16,
+                        weight: FontWeight.w800,
+                        color: fg,
+                      ),
+                    ),
                     Text(
                       '$gregorianDay',
                       style: AppTheme.ui(
@@ -366,7 +462,9 @@ class _DayCell extends StatelessWidget {
                         weight: FontWeight.w600,
                         color: isToday
                             ? AppColors.goldLight
-                            : (isDark ? AppColors.onDarkSubtle : AppColors.subtle),
+                            : (isDark
+                                  ? AppColors.onDarkSubtle
+                                  : AppColors.subtle),
                       ),
                     ),
                   ],

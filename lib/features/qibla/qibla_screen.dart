@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
-import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
+import 'package:ehsan_pathways/features/prayer/prayer_times_screen.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 
 const _green = AppColors.emerald700;
@@ -52,7 +53,9 @@ class _QiblaScreenState extends State<QiblaScreen> {
     String label = settings['city'] as String? ?? '';
 
     if (lat == null || lng == null) {
-      final pos = await PrayerTimesService.getCurrentPosition();
+      final pos = await PrayerTimesService.getCurrentPosition()
+          .timeout(const Duration(seconds: 20))
+          .catchError((Object _) => null);
       if (pos == null) {
         if (mounted) {
           setState(() {
@@ -90,6 +93,24 @@ class _QiblaScreenState extends State<QiblaScreen> {
     return (bearing + 360) % 360;
   }
 
+  Future<void> _chooseCity() async {
+    final city = await showPrayerCityPicker(context);
+    if (city == null) return;
+    await PrayerTimesService.saveLocation(lat: city.lat, lng: city.lng, city: city.label);
+    await _resolveLocation();
+  }
+
+  /// Fires a firm tap the moment the phone comes into line with the Qibla.
+  bool _wasAligned = false;
+  void _onHeading(double? heading) {
+    final bearing = _qiblaBearing;
+    if (heading == null || bearing == null) return;
+    final diff = ((bearing - heading + 540) % 360) - 180;
+    final aligned = diff.abs() <= 5;
+    if (aligned && !_wasAligned) HapticFeedback.heavyImpact();
+    _wasAligned = aligned;
+  }
+
   double _rad(double deg) => deg * math.pi / 180.0;
   double _deg(double rad) => rad * 180.0 / math.pi;
 
@@ -100,9 +121,15 @@ class _QiblaScreenState extends State<QiblaScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppColors.slateDeep : AppColors.cream,
       appBar: AppBar(
-        title: const Text('Qibla Direction',
-            style: TextStyle(fontWeight: FontWeight.w700)),
+        title: const Text('Qibla Direction'),
         backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            tooltip: 'Change city',
+            icon: const Icon(Icons.location_city_rounded),
+            onPressed: _chooseCity,
+          ),
+        ],
       ),
       body: _buildBody(isDark),
     );
@@ -115,13 +142,48 @@ class _QiblaScreenState extends State<QiblaScreen> {
 
     if (_locationDenied) {
       return Center(
-        child: EmptyState(
-          icon: Icons.location_off_rounded,
-          title: 'Location needed',
-          subtitle:
-              'We need your location to calculate the direction of the Kaaba. Please enable location access.',
-          actionLabel: 'Enable & Retry',
-          onAction: _resolveLocation,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(28),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Icon(Icons.explore_rounded, size: 56, color: AppColors.gold),
+                const SizedBox(height: 16),
+                Text(
+                  'Where are you?',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'The direction of the Ka\'bah depends on where you are. Share your '
+                  'location, or choose your city.',
+                  textAlign: TextAlign.center,
+                  style: AppTheme.ui(
+                    size: 14,
+                    weight: FontWeight.w500,
+                    height: 1.5,
+                    color: isDark ? AppColors.onDarkMuted : AppColors.muted,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: _resolveLocation,
+                  icon: const Icon(Icons.my_location_rounded),
+                  label: const Text('Use my location'),
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: _chooseCity,
+                  icon: const Icon(Icons.location_city_rounded),
+                  label: const Text('Choose a city'),
+                ),
+              ],
+            ),
+          ),
         ),
       );
     }
@@ -135,6 +197,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
         // static readout of the Qibla bearing so the screen is still useful.
         final heading = snapshot.data?.heading;
         final hasCompass = snapshot.hasData && heading != null;
+        _onHeading(heading);
 
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

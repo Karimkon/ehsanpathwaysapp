@@ -22,8 +22,10 @@ class DuaScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Duas', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('أدعية من القرآن والسنة',
-                style: TextStyle(fontSize: 12, color: Colors.white70)),
+            Text(
+              'أدعية من القرآن والسنة',
+              style: TextStyle(fontSize: 12, color: Colors.white70),
+            ),
           ],
         ),
         actions: [
@@ -68,7 +70,9 @@ class DuaScreen extends ConsumerWidget {
         itemCount: 8,
         itemBuilder: (_, __) => Container(
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(16)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       ),
     );
@@ -76,14 +80,23 @@ class DuaScreen extends ConsumerWidget {
 
   Widget _buildError(VoidCallback retry) {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.wifi_off_rounded, size: 48, color: AppColors.sandDeep),
-        const SizedBox(height: 12),
-        const Text('Failed to load duas',
-            style: TextStyle(color: AppColors.muted)),
-        const SizedBox(height: 12),
-        TextButton(onPressed: retry, child: const Text('Retry')),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.wifi_off_rounded,
+            size: 48,
+            color: AppColors.sandDeep,
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Failed to load duas',
+            style: TextStyle(color: AppColors.muted),
+          ),
+          const SizedBox(height: 12),
+          TextButton(onPressed: retry, child: const Text('Retry')),
+        ],
+      ),
     );
   }
 }
@@ -128,8 +141,7 @@ class _CategoryCard extends StatelessWidget {
       elevation: 0,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () =>
-            context.push('/islamic-tools/dua/${category.id}'),
+        onTap: () => context.push('/islamic-tools/dua/${category.id}'),
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
@@ -147,8 +159,10 @@ class _CategoryCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
-                  child:
-                      Text(category.icon, style: const TextStyle(fontSize: 22)),
+                  child: Text(
+                    category.icon,
+                    style: const TextStyle(fontSize: 22),
+                  ),
                 ),
               ),
               const Spacer(),
@@ -165,8 +179,7 @@ class _CategoryCard extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 '${category.count} duas',
-                style:
-                    const TextStyle(fontSize: 11, color: AppColors.subtle),
+                style: const TextStyle(fontSize: 11, color: AppColors.subtle),
               ),
             ],
           ),

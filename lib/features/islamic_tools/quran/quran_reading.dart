@@ -28,9 +28,19 @@ class Reciter {
 
 const kReciters = <Reciter>[
   Reciter('ar.alafasy', 'Mishary Rashid Alafasy', 'مشاري العفاسي', 128),
-  Reciter('ar.abdurrahmaansudais', 'Abdur-Rahman As-Sudais', 'عبد الرحمن السديس', 192),
+  Reciter(
+    'ar.abdurrahmaansudais',
+    'Abdur-Rahman As-Sudais',
+    'عبد الرحمن السديس',
+    192,
+  ),
   Reciter('ar.husary', 'Mahmoud Khalil Al-Husary', 'محمود خليل الحصري', 128),
-  Reciter('ar.minshawi', 'Mohamed Siddiq Al-Minshawi', 'محمد صديق المنشاوي', 128),
+  Reciter(
+    'ar.minshawi',
+    'Mohamed Siddiq Al-Minshawi',
+    'محمد صديق المنشاوي',
+    128,
+  ),
   Reciter('ar.mahermuaiqly', 'Maher Al-Muaiqly', 'ماهر المعيقلي', 128),
 ];
 
@@ -91,22 +101,21 @@ class QuranReadingState {
     bool? showTranslation,
     List<String>? bookmarks,
     VerseRef? lastRead,
-  }) =>
-      QuranReadingState(
-        reciterId: reciterId ?? this.reciterId,
-        arabicSize: arabicSize ?? this.arabicSize,
-        showTranslation: showTranslation ?? this.showTranslation,
-        bookmarks: bookmarks ?? this.bookmarks,
-        lastRead: lastRead ?? this.lastRead,
-      );
+  }) => QuranReadingState(
+    reciterId: reciterId ?? this.reciterId,
+    arabicSize: arabicSize ?? this.arabicSize,
+    showTranslation: showTranslation ?? this.showTranslation,
+    bookmarks: bookmarks ?? this.bookmarks,
+    lastRead: lastRead ?? this.lastRead,
+  );
 
   Map<String, Object?> toJson() => {
-        'reciter': reciterId,
-        'size': arabicSize,
-        'translation': showTranslation,
-        'bookmarks': bookmarks,
-        'last': lastRead?.key,
-      };
+    'reciter': reciterId,
+    'size': arabicSize,
+    'translation': showTranslation,
+    'bookmarks': bookmarks,
+    'last': lastRead?.key,
+  };
 
   factory QuranReadingState.fromJson(Map<String, dynamic> j) =>
       QuranReadingState(
@@ -142,8 +151,10 @@ class QuranReadingNotifier extends Notifier<QuranReadingState> {
 
   Future<void> _save() async {
     try {
-      await (await SharedPreferences.getInstance())
-          .setString(_key, jsonEncode(state.toJson()));
+      await (await SharedPreferences.getInstance()).setString(
+        _key,
+        jsonEncode(state.toJson()),
+      );
     } catch (e) {
       debugPrint('Quran reading state could not be saved: $e');
     }
@@ -182,8 +193,8 @@ class QuranReadingNotifier extends Notifier<QuranReadingState> {
 
 final quranReadingProvider =
     NotifierProvider<QuranReadingNotifier, QuranReadingState>(
-  QuranReadingNotifier.new,
-);
+      QuranReadingNotifier.new,
+    );
 
 // ===========================================================================
 // Recitation player
@@ -219,15 +230,14 @@ class RecitationState {
     bool? repeatVerse,
     String? error,
     bool clearError = false,
-  }) =>
-      RecitationState(
-        surah: surah ?? this.surah,
-        verse: verse ?? this.verse,
-        isPlaying: isPlaying ?? this.isPlaying,
-        isLoading: isLoading ?? this.isLoading,
-        repeatVerse: repeatVerse ?? this.repeatVerse,
-        error: clearError ? null : (error ?? this.error),
-      );
+  }) => RecitationState(
+    surah: surah ?? this.surah,
+    verse: verse ?? this.verse,
+    isPlaying: isPlaying ?? this.isPlaying,
+    isLoading: isLoading ?? this.isLoading,
+    repeatVerse: repeatVerse ?? this.repeatVerse,
+    error: clearError ? null : (error ?? this.error),
+  );
 }
 
 /// Plays a surah verse by verse, advancing automatically (or repeating one
@@ -266,7 +276,8 @@ class RecitationNotifier extends Notifier<RecitationState> {
       } else {
         state = state.copyWith(
           isPlaying: s.playing,
-          isLoading: s.processingState == ProcessingState.loading ||
+          isLoading:
+              s.processingState == ProcessingState.loading ||
               s.processingState == ProcessingState.buffering,
         );
       }
@@ -305,7 +316,8 @@ class RecitationNotifier extends Notifier<RecitationState> {
       state = state.copyWith(
         isPlaying: false,
         isLoading: false,
-        error: 'Recitation could not be played. Check your connection and '
+        error:
+            'Recitation could not be played. Check your connection and '
             'try again.',
       );
     }
@@ -353,5 +365,5 @@ class RecitationNotifier extends Notifier<RecitationState> {
 
 final recitationProvider =
     NotifierProvider<RecitationNotifier, RecitationState>(
-  RecitationNotifier.new,
-);
+      RecitationNotifier.new,
+    );

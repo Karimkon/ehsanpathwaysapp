@@ -18,7 +18,8 @@ bool showsBasmalahHeader(int surahNo) => surahNo != 1 && surahNo != 9;
 String normalizeArabic(String input) {
   final out = StringBuffer();
   for (final rune in input.runes) {
-    final isMark = (rune >= 0x0610 && rune <= 0x061A) ||
+    final isMark =
+        (rune >= 0x0610 && rune <= 0x061A) ||
         (rune >= 0x064B && rune <= 0x065F) ||
         rune == 0x0670 || // superscript alef
         (rune >= 0x06D6 && rune <= 0x06ED) ||

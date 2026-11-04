@@ -40,7 +40,7 @@ class _HifzScreenState extends ConsumerState<HifzScreen>
       body: NestedScrollView(
         headerSliverBuilder: (context, _) => [
           SliverAppBar(
-            expandedHeight: 200,
+            expandedHeight: 232 + MediaQuery.paddingOf(context).top,
             pinned: true,
             backgroundColor: AppColors.emerald900,
             foregroundColor: Colors.white,
@@ -224,50 +224,52 @@ class _ProgressHeader extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 60, 20, 56),
           child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 640),
-              child: Row(
-                children: [
-                  _ProgressRing(
-                    memorised: state.verseFraction,
-                    inProgress: state.inProgressFraction,
-                    label: pct >= 10
-                        ? '${pct.round()}%'
-                        : '${pct.toStringAsFixed(1)}%',
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'OF THE QUR\'AN MEMORISED',
-                          style: AppTheme.eyebrow(AppColors.goldLight),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          '${state.memorisedVerses} of ${state.totalVerses} verses',
-                          style: AppTheme.ui(
-                            size: 16,
-                            weight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${state.memorisedCount} surahs memorised · '
-                          '${state.inProgressCount} in progress',
-                          style: AppTheme.ui(
-                            size: 12.5,
-                            weight: FontWeight.w500,
-                            color: Colors.white.withValues(alpha: 0.82),
-                          ),
-                        ),
-                      ],
+            child: FitHeader(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 640),
+                child: Row(
+                  children: [
+                    _ProgressRing(
+                      memorised: state.verseFraction,
+                      inProgress: state.inProgressFraction,
+                      label: pct >= 10
+                          ? '${pct.round()}%'
+                          : '${pct.toStringAsFixed(1)}%',
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'OF THE QUR\'AN MEMORISED',
+                            style: AppTheme.eyebrow(AppColors.goldLight),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            '${state.memorisedVerses} of ${state.totalVerses} verses',
+                            style: AppTheme.ui(
+                              size: 16,
+                              weight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${state.memorisedCount} surahs memorised · '
+                            '${state.inProgressCount} in progress',
+                            style: AppTheme.ui(
+                              size: 12.5,
+                              weight: FontWeight.w500,
+                              color: Colors.white.withValues(alpha: 0.82),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

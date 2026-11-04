@@ -34,11 +34,13 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
     String fold(String s) => s.toLowerCase().replaceAll(RegExp(r"[-'\s]"), '');
     final fq = fold(q);
     return kSurahs
-        .where((s) =>
-            fold(s.name).contains(fq) ||
-            s.meaning.toLowerCase().contains(q) ||
-            s.arabic.contains(q) ||
-            s.no.toString() == q)
+        .where(
+          (s) =>
+              fold(s.name).contains(fq) ||
+              s.meaning.toLowerCase().contains(q) ||
+              s.arabic.contains(q) ||
+              s.no.toString() == q,
+        )
         .toList();
   }
 
@@ -55,14 +57,23 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
           SliverAppBar(
             pinned: true,
             expandedHeight: 168,
-            backgroundColor: isDark ? AppColors.slateDeep : AppColors.emerald900,
+            backgroundColor: isDark
+                ? AppColors.slateDeep
+                : AppColors.emerald900,
             foregroundColor: Colors.white,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsetsDirectional.only(start: 56, bottom: 72),
+              titlePadding: EdgeInsetsDirectional.only(
+                start: Navigator.of(context).canPop() ? 56 : 20,
+                bottom: 72,
+              ),
               title: Text(
                 'Al-Qur\'an',
-                style: AppTheme.ui(size: 18, weight: FontWeight.w800, color: Colors.white),
+                style: AppTheme.ui(
+                  size: 18,
+                  weight: FontWeight.w800,
+                  color: Colors.white,
+                ),
               ),
               background: DecoratedBox(
                 decoration: const BoxDecoration(gradient: AppGradients.emerald),
@@ -87,7 +98,11 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                 child: TextField(
                   controller: _searchController,
                   onChanged: (v) => setState(() => _query = v),
-                  style: AppTheme.ui(size: 15, weight: FontWeight.w500, color: Colors.white),
+                  style: AppTheme.ui(
+                    size: 15,
+                    weight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
                   cursorColor: AppColors.goldLight,
                   textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
@@ -97,13 +112,18 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                       weight: FontWeight.w500,
                       color: Colors.white.withValues(alpha: 0.75),
                     ),
-                    prefixIcon: Icon(Icons.search_rounded,
-                        color: Colors.white.withValues(alpha: 0.85)),
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      color: Colors.white.withValues(alpha: 0.85),
+                    ),
                     suffixIcon: _query.isEmpty
                         ? null
                         : IconButton(
                             tooltip: 'Clear search',
-                            icon: const Icon(Icons.close_rounded, color: Colors.white),
+                            icon: const Icon(
+                              Icons.close_rounded,
+                              color: Colors.white,
+                            ),
                             onPressed: () {
                               _searchController.clear();
                               setState(() => _query = '');
@@ -114,7 +134,9 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                     contentPadding: const EdgeInsets.symmetric(vertical: 12),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.18)),
+                      borderSide: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.18),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -154,10 +176,16 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
             )
           else
             SliverPadding(
-              padding: readingInsets(context, horizontal: 8, top: 8, bottom: 32),
+              padding: readingInsets(
+                context,
+                horizontal: 8,
+                top: 8,
+                bottom: 32,
+              ),
               sliver: SliverList.separated(
                 itemCount: surahs.length,
-                separatorBuilder: (_, _) => const Divider(indent: 72, endIndent: 8),
+                separatorBuilder: (_, _) =>
+                    const Divider(indent: 72, endIndent: 8),
                 itemBuilder: (context, i) => _SurahTile(surah: surahs[i]),
               ),
             ),
@@ -178,7 +206,9 @@ class _ContinueCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
-        onTap: () => context.push('/islamic-tools/quran/${ref.surah}?verse=${ref.verse}'),
+        onTap: () => context.push(
+          '/islamic-tools/quran/${ref.surah}?verse=${ref.verse}',
+        ),
         child: Ink(
           decoration: BoxDecoration(
             gradient: AppGradients.emerald,
@@ -196,18 +226,28 @@ class _ContinueCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: AppGradients.gold,
                 ),
-                child: const Icon(Icons.menu_book_rounded, color: AppColors.emerald950),
+                child: const Icon(
+                  Icons.menu_book_rounded,
+                  color: AppColors.emerald950,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('CONTINUE READING', style: AppTheme.eyebrow(AppColors.goldLight)),
+                    Text(
+                      'CONTINUE READING',
+                      style: AppTheme.eyebrow(AppColors.goldLight),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       '${surah.name} · Verse ${ref.verse}',
-                      style: AppTheme.ui(size: 16, weight: FontWeight.w800, color: Colors.white),
+                      style: AppTheme.ui(
+                        size: 16,
+                        weight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ),
@@ -215,7 +255,11 @@ class _ContinueCard extends StatelessWidget {
               Text(
                 surah.arabic,
                 textDirection: TextDirection.rtl,
-                style: AppTheme.quran(size: 22, color: AppColors.goldLight, height: 1.4),
+                style: AppTheme.quran(
+                  size: 22,
+                  color: AppColors.goldLight,
+                  height: 1.4,
+                ),
               ),
             ],
           ),
@@ -232,7 +276,11 @@ class _BookmarksStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final refs = keys.map(VerseRef.parse).whereType<VerseRef>().take(12).toList();
+    final refs = keys
+        .map(VerseRef.parse)
+        .whereType<VerseRef>()
+        .take(12)
+        .toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -240,7 +288,9 @@ class _BookmarksStrip extends StatelessWidget {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             'BOOKMARKS',
-            style: AppTheme.eyebrow(isDark ? AppColors.onDarkMuted : AppColors.muted),
+            style: AppTheme.eyebrow(
+              isDark ? AppColors.onDarkMuted : AppColors.muted,
+            ),
           ),
         ),
         SizedBox(
@@ -257,9 +307,12 @@ class _BookmarksStrip extends StatelessWidget {
                   size: 16,
                   color: isDark ? AppColors.gold : AppColors.goldDeep,
                 ),
-                label: Text('${surahByNumber(r.surah).name} ${r.surah}:${r.verse}'),
-                onPressed: () =>
-                    context.push('/islamic-tools/quran/${r.surah}?verse=${r.verse}'),
+                label: Text(
+                  '${surahByNumber(r.surah).name} ${r.surah}:${r.verse}',
+                ),
+                onPressed: () => context.push(
+                  '/islamic-tools/quran/${r.surah}?verse=${r.verse}',
+                ),
               );
             },
           ),
@@ -281,7 +334,10 @@ class _SurahTile extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       onTap: () => context.push('/islamic-tools/quran/${surah.no}'),
       leading: _NumberBadge(number: surah.no),
-      title: Text(surah.name, style: AppTheme.ui(size: 15.5, weight: FontWeight.w700)),
+      title: Text(
+        surah.name,
+        style: AppTheme.ui(size: 15.5, weight: FontWeight.w700),
+      ),
       subtitle: Text('${surah.meaning} · ${surah.verses} verses'),
       trailing: Text(
         surah.arabic,

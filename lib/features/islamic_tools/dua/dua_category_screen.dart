@@ -25,22 +25,28 @@ class DuaCategoryScreen extends ConsumerWidget {
           data: (data) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(data.category.name,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16)),
-              Text(data.category.arabic,
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white70,
-                      fontFamily: AppTheme.arabicFamily)),
+              Text(
+                data.category.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              Text(
+                data.category.arabic,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white70,
+                  fontFamily: AppTheme.arabicFamily,
+                ),
+              ),
             ],
           ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
-            onPressed: () =>
-                ref.invalidate(duaCategoryProvider(categoryId)),
+            onPressed: () => ref.invalidate(duaCategoryProvider(categoryId)),
           ),
         ],
       ),
@@ -68,7 +74,9 @@ class DuaCategoryScreen extends ConsumerWidget {
           height: 200,
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(12)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
@@ -76,14 +84,23 @@ class DuaCategoryScreen extends ConsumerWidget {
 
   Widget _buildError(VoidCallback retry) {
     return Center(
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Icon(Icons.wifi_off_rounded, size: 48, color: AppColors.sandDeep),
-        const SizedBox(height: 12),
-        const Text('Failed to load duas',
-            style: TextStyle(color: AppColors.muted)),
-        const SizedBox(height: 12),
-        TextButton(onPressed: retry, child: const Text('Retry')),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.wifi_off_rounded,
+            size: 48,
+            color: AppColors.sandDeep,
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Failed to load duas',
+            style: TextStyle(color: AppColors.muted),
+          ),
+          const SizedBox(height: 12),
+          TextButton(onPressed: retry, child: const Text('Retry')),
+        ],
+      ),
     );
   }
 }
@@ -126,8 +143,9 @@ class _DuaCard extends StatelessWidget {
                     Clipboard.setData(ClipboardData(text: text));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Dua copied'),
-                          duration: Duration(seconds: 1)),
+                        content: Text('Dua copied'),
+                        duration: Duration(seconds: 1),
+                      ),
                     );
                   },
                   padding: EdgeInsets.zero,
@@ -189,20 +207,27 @@ class _DuaCard extends StatelessWidget {
                 if (dua.ref.isNotEmpty)
                   Row(
                     children: [
-                      const Icon(Icons.menu_book_rounded,
-                          size: 12, color: AppColors.subtle),
+                      const Icon(
+                        Icons.menu_book_rounded,
+                        size: 12,
+                        color: AppColors.subtle,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         dua.ref,
                         style: const TextStyle(
-                            fontSize: 11, color: AppColors.subtle),
+                          fontSize: 11,
+                          color: AppColors.subtle,
+                        ),
                       ),
                     ],
                   ),
                 if (dua.count.isNotEmpty)
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 3),
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.accentGold.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),

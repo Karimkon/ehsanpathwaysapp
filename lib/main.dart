@@ -8,6 +8,7 @@ import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/config/routes.dart';
 import 'package:ehsan_pathways/core/providers/theme_provider.dart';
 import 'package:ehsan_pathways/core/providers/onboarding_provider.dart';
+import 'package:ehsan_pathways/core/providers/retry_policy.dart';
 import 'package:ehsan_pathways/core/services/notification_service.dart';
 import 'package:ehsan_pathways/core/services/fcm_service.dart';
 import 'firebase_options.dart';
@@ -69,6 +70,7 @@ void main() {
 
     runApp(
       ProviderScope(
+        retry: appRetryPolicy,
         overrides: [
           initialRouteProvider.overrideWithValue(hasSeen ? '/' : '/onboarding'),
         ],

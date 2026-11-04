@@ -182,8 +182,8 @@ class GlassCard extends StatelessWidget {
     final fill = highContrast
         ? (isDark ? AppColors.slateCard : AppColors.card)
         : (isDark
-            ? Colors.white.withValues(alpha: 0.08)
-            : Colors.white.withValues(alpha: 0.72));
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.white.withValues(alpha: 0.72));
     final edge = isDark
         ? Colors.white.withValues(alpha: 0.14)
         : AppColors.sand.withValues(alpha: 0.9);
@@ -208,23 +208,45 @@ class GlassCard extends StatelessWidget {
   }
 }
 
+/// Hero-header content that always fits: it keeps the full width (so text
+/// wraps normally) and scales down only if it is taller than the space a
+/// collapsing app bar gives it, e.g. under a notch with large Dynamic Type.
+class FitHeader extends StatelessWidget {
+  const FitHeader({
+    super.key,
+    required this.child,
+    this.alignment = Alignment.center,
+  });
+  final Widget child;
+  final AlignmentGeometry alignment;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, c) => FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: alignment,
+      child: SizedBox(width: c.maxWidth, child: child),
+    ),
+  );
+}
+
 /// Soft elevated card shadow. Shadows vanish on slate, so dark mode relies on
 /// the card's hairline border instead.
 List<BoxShadow> softShadow(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark
-        ? const []
-        : [
-            BoxShadow(
-              color: AppColors.emerald950.withValues(alpha: 0.06),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
-            ),
-            BoxShadow(
-              color: AppColors.emerald950.withValues(alpha: 0.04),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ];
+    ? const []
+    : [
+        BoxShadow(
+          color: AppColors.emerald950.withValues(alpha: 0.06),
+          blurRadius: 24,
+          offset: const Offset(0, 8),
+        ),
+        BoxShadow(
+          color: AppColors.emerald950.withValues(alpha: 0.04),
+          blurRadius: 4,
+          offset: const Offset(0, 1),
+        ),
+      ];
 
 class AppTheme {
   AppTheme._();
@@ -269,8 +291,11 @@ class AppTheme {
   // ---------------------------------------------------------------
 
   /// Qur'anic text.
-  static TextStyle quran({double size = 28, Color? color, double height = 2.1}) =>
-      GoogleFonts.amiriQuran(fontSize: size, color: color, height: height);
+  static TextStyle quran({
+    double size = 28,
+    Color? color,
+    double height = 2.1,
+  }) => GoogleFonts.amiriQuran(fontSize: size, color: color, height: height);
 
   /// Font family names for code that builds its own TextStyle. Reading them
   /// through google_fonts registers and loads the font; a bare 'Amiri'
@@ -284,13 +309,12 @@ class AppTheme {
     FontWeight weight = FontWeight.w400,
     Color? color,
     double height = 1.9,
-  }) =>
-      GoogleFonts.amiri(
-        fontSize: size,
-        fontWeight: weight,
-        color: color,
-        height: height,
-      );
+  }) => GoogleFonts.amiri(
+    fontSize: size,
+    fontWeight: weight,
+    color: color,
+    height: height,
+  );
 
   /// Long-form English.
   static TextStyle reading({
@@ -298,13 +322,12 @@ class AppTheme {
     FontWeight weight = FontWeight.w400,
     Color? color,
     double height = 1.72,
-  }) =>
-      GoogleFonts.lora(
-        fontSize: size,
-        fontWeight: weight,
-        color: color,
-        height: height,
-      );
+  }) => GoogleFonts.lora(
+    fontSize: size,
+    fontWeight: weight,
+    color: color,
+    height: height,
+  );
 
   /// Display headings.
   static TextStyle display({
@@ -312,14 +335,13 @@ class AppTheme {
     FontWeight weight = FontWeight.w700,
     Color? color,
     double height = 1.2,
-  }) =>
-      GoogleFonts.lora(
-        fontSize: size,
-        fontWeight: weight,
-        color: color,
-        height: height,
-        letterSpacing: -0.2,
-      );
+  }) => GoogleFonts.lora(
+    fontSize: size,
+    fontWeight: weight,
+    color: color,
+    height: height,
+    letterSpacing: -0.2,
+  );
 
   /// Interface chrome.
   static TextStyle ui({
@@ -328,22 +350,21 @@ class AppTheme {
     Color? color,
     double height = 1.3,
     double? letterSpacing,
-  }) =>
-      GoogleFonts.plusJakartaSans(
-        fontSize: size,
-        fontWeight: weight,
-        color: color,
-        height: height,
-        letterSpacing: letterSpacing,
-      );
+  }) => GoogleFonts.plusJakartaSans(
+    fontSize: size,
+    fontWeight: weight,
+    color: color,
+    height: height,
+    letterSpacing: letterSpacing,
+  );
 
   /// Small uppercase section label.
   static TextStyle eyebrow(Color color) => GoogleFonts.plusJakartaSans(
-        fontSize: 11,
-        fontWeight: FontWeight.w700,
-        color: color,
-        letterSpacing: 1.1,
-      );
+    fontSize: 11,
+    fontWeight: FontWeight.w700,
+    color: color,
+    letterSpacing: 1.1,
+  );
 
   // ---------------------------------------------------------------
   // Themes
@@ -440,15 +461,18 @@ class AppTheme {
           displaySmall: display(size: 32, color: text),
           headlineMedium: display(size: 26, color: text),
           headlineSmall: display(size: 22, color: text),
+          titleLarge: ui(size: 18, weight: FontWeight.w800, color: text),
         );
 
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(16));
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    );
     const buttonPadding = EdgeInsets.symmetric(horizontal: 22, vertical: 15);
     final buttonText = ui(size: 15, weight: FontWeight.w700);
     OutlineInputBorder field(Color c, [double w = 1]) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: c, width: w),
-        );
+      borderRadius: BorderRadius.circular(16),
+      borderSide: BorderSide(color: c, width: w),
+    );
 
     return base.copyWith(
       scaffoldBackgroundColor: scheme.surface,
@@ -468,9 +492,12 @@ class AppTheme {
         backgroundColor: scheme.surface,
         foregroundColor: text,
         surfaceTintColor: Colors.transparent,
-        systemOverlayStyle:
-            isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        titleTextStyle: ui(size: 18, weight: FontWeight.w800, color: text),
+        systemOverlayStyle: isDark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
+        // No titleTextStyle: AppBar then styles its title from
+        // textTheme.titleLarge in its foregroundColor, so white-on-emerald
+        // headers stay legible.
       ),
       cardTheme: CardThemeData(
         elevation: 0,
@@ -513,7 +540,9 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: link,
-          side: BorderSide(color: isDark ? AppColors.slateLine : AppColors.sandDeep),
+          side: BorderSide(
+            color: isDark ? AppColors.slateLine : AppColors.sandDeep,
+          ),
           minimumSize: const Size(64, 50),
           padding: buttonPadding,
           shape: shape,
@@ -559,7 +588,11 @@ class AppTheme {
         indicatorColor: isDark ? AppColors.emerald800 : AppColors.emerald100,
         selectedIconTheme: IconThemeData(color: accent),
         unselectedIconTheme: IconThemeData(color: mutedText),
-        selectedLabelTextStyle: ui(size: 12, weight: FontWeight.w800, color: text),
+        selectedLabelTextStyle: ui(
+          size: 12,
+          weight: FontWeight.w800,
+          color: text,
+        ),
         unselectedLabelTextStyle: ui(size: 12, color: mutedText),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -581,8 +614,11 @@ class AppTheme {
         iconColor: link,
         textColor: text,
         titleTextStyle: ui(size: 15, color: text),
-        subtitleTextStyle:
-            ui(size: 13, weight: FontWeight.w500, color: mutedText),
+        subtitleTextStyle: ui(
+          size: 13,
+          weight: FontWeight.w500,
+          color: mutedText,
+        ),
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
@@ -619,8 +655,11 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         titleTextStyle: ui(size: 18, weight: FontWeight.w800, color: text),
-        contentTextStyle:
-            ui(size: 14, weight: FontWeight.w500, color: mutedText),
+        contentTextStyle: ui(
+          size: 14,
+          weight: FontWeight.w500,
+          color: mutedText,
+        ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: cardColor,
@@ -641,11 +680,15 @@ class AppTheme {
         suffixIconColor: mutedText,
         border: field(line),
         enabledBorder: field(line),
-        focusedBorder:
-            field(isDark ? AppColors.gold : AppColors.emerald700, 1.6),
+        focusedBorder: field(
+          isDark ? AppColors.gold : AppColors.emerald700,
+          1.6,
+        ),
         errorBorder: field(scheme.error),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 15,
+        ),
       ),
     );
   }

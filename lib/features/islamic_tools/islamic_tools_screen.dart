@@ -24,19 +24,73 @@ class _Section {
 
 const _sections = [
   _Section('Qur\'an & Memorisation', [
-    _Tool(Icons.menu_book_rounded, 'Qur\'an', 'القرآن', '114 surahs · audio', '/islamic-tools/quran'),
-    _Tool(Icons.psychology_rounded, 'Hifz', 'الحفظ', 'Memorise & track', '/islamic-tools/hifz'),
+    _Tool(
+      Icons.menu_book_rounded,
+      'Qur\'an',
+      'القرآن',
+      '114 surahs · audio',
+      '/islamic-tools/quran',
+    ),
+    _Tool(
+      Icons.psychology_rounded,
+      'Hifz',
+      'الحفظ',
+      'Memorise & track',
+      '/islamic-tools/hifz',
+    ),
   ]),
   _Section('Hadith & Du\'a', [
-    _Tool(Icons.auto_stories_rounded, 'Hadith', 'الحديث', 'Authentic collections', '/islamic-tools/hadith'),
-    _Tool(Icons.volunteer_activism_rounded, 'Du\'a & Adhkar', 'الدعاء', 'For every occasion', '/islamic-tools/dua'),
+    _Tool(
+      Icons.auto_stories_rounded,
+      'Hadith',
+      'الحديث',
+      'Authentic collections',
+      '/islamic-tools/hadith',
+    ),
+    _Tool(
+      Icons.volunteer_activism_rounded,
+      'Du\'a & Adhkar',
+      'الدعاء',
+      'For every occasion',
+      '/islamic-tools/dua',
+    ),
   ]),
   _Section('Worship', [
-    _Tool(Icons.access_time_filled_rounded, 'Prayer Times', 'مواقيت الصلاة', 'Works offline', '/islamic-tools/prayer-times'),
-    _Tool(Icons.explore_rounded, 'Qibla', 'القبلة', 'Direction to the Ka\'bah', '/islamic-tools/qibla'),
-    _Tool(Icons.blur_circular_rounded, 'Tasbih', 'التسبيح', 'Dhikr counter', '/islamic-tools/tasbih'),
-    _Tool(Icons.star_rounded, 'Asma\'ul Husna', 'الأسماء الحسنى', 'The 99 Names', '/islamic-tools/names'),
-    _Tool(Icons.calendar_month_rounded, 'Hijri Calendar', 'التقويم الهجري', 'Dates & sacred days', '/islamic-tools/calendar'),
+    _Tool(
+      Icons.access_time_filled_rounded,
+      'Prayer Times',
+      'مواقيت الصلاة',
+      'Works offline',
+      '/islamic-tools/prayer-times',
+    ),
+    _Tool(
+      Icons.explore_rounded,
+      'Qibla',
+      'القبلة',
+      'Direction to the Ka\'bah',
+      '/islamic-tools/qibla',
+    ),
+    _Tool(
+      Icons.blur_circular_rounded,
+      'Tasbih',
+      'التسبيح',
+      'Dhikr counter',
+      '/islamic-tools/tasbih',
+    ),
+    _Tool(
+      Icons.star_rounded,
+      'Asma\'ul Husna',
+      'الأسماء الحسنى',
+      'The 99 Names',
+      '/islamic-tools/names',
+    ),
+    _Tool(
+      Icons.calendar_month_rounded,
+      'Hijri Calendar',
+      'التقويم الهجري',
+      'Dates & sacred days',
+      '/islamic-tools/calendar',
+    ),
   ]),
 ];
 
@@ -47,7 +101,11 @@ class IslamicToolsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.sizeOf(context).width;
-    final columns = width >= 1000 ? 4 : width >= 640 ? 3 : 2;
+    final columns = width >= 1000
+        ? 4
+        : width >= 640
+        ? 3
+        : 2;
     final hijri = HijriCalendar.now();
 
     return Scaffold(
@@ -60,10 +118,17 @@ class IslamicToolsScreen extends StatelessWidget {
             foregroundColor: Colors.white,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsetsDirectional.only(start: 20, bottom: 16),
+              titlePadding: const EdgeInsetsDirectional.only(
+                start: 20,
+                bottom: 16,
+              ),
               title: Text(
                 'Islamic Tools',
-                style: AppTheme.ui(size: 19, weight: FontWeight.w800, color: Colors.white),
+                style: AppTheme.ui(
+                  size: 19,
+                  weight: FontWeight.w800,
+                  color: Colors.white,
+                ),
               ),
               background: DecoratedBox(
                 decoration: const BoxDecoration(gradient: AppGradients.emerald),
@@ -102,11 +167,19 @@ class IslamicToolsScreen extends StatelessWidget {
           ),
           for (final section in _sections) ...[
             SliverPadding(
-              padding: readingInsets(context, horizontal: 20, top: 24, bottom: 10, maxWidth: 1100),
+              padding: readingInsets(
+                context,
+                horizontal: 20,
+                top: 24,
+                bottom: 10,
+                maxWidth: 1100,
+              ),
               sliver: SliverToBoxAdapter(
                 child: Text(
                   section.title.toUpperCase(),
-                  style: AppTheme.eyebrow(isDark ? AppColors.onDarkMuted : AppColors.muted),
+                  style: AppTheme.eyebrow(
+                    isDark ? AppColors.onDarkMuted : AppColors.muted,
+                  ),
                 ),
               ),
             ),
@@ -155,7 +228,9 @@ class _ToolCard extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: isDark ? AppColors.slateLine : AppColors.sand),
+              border: Border.all(
+                color: isDark ? AppColors.slateLine : AppColors.sand,
+              ),
               boxShadow: softShadow(context),
             ),
             child: Column(
@@ -170,23 +245,31 @@ class _ToolCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: AppGradients.emerald,
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppColors.gold.withValues(alpha: 0.7)),
+                        border: Border.all(
+                          color: AppColors.gold.withValues(alpha: 0.7),
+                        ),
                       ),
-                      child: Icon(tool.icon, color: AppColors.goldLight, size: 24),
+                      child: Icon(
+                        tool.icon,
+                        color: AppColors.goldLight,
+                        size: 24,
+                      ),
                     ),
                     const Spacer(),
                     Flexible(
                       flex: 3,
-                      child: Text(
-                        tool.arabic,
-                        textDirection: TextDirection.rtl,
-                        maxLines: 1,
-                        overflow: TextOverflow.fade,
-                        softWrap: false,
-                        style: AppTheme.arabic(
-                          size: 16,
-                          height: 1.4,
-                          color: isDark ? AppColors.gold : AppColors.goldDeep,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: Text(
+                          tool.arabic,
+                          textDirection: TextDirection.rtl,
+                          maxLines: 1,
+                          style: AppTheme.arabic(
+                            size: 16,
+                            height: 1.4,
+                            color: isDark ? AppColors.gold : AppColors.goldDeep,
+                          ),
                         ),
                       ),
                     ),

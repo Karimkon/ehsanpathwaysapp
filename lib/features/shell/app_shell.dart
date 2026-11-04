@@ -1,63 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
 
-/// The bottom navigation.
+/// The app's top-level navigation.
 ///
-/// The five destinations are the things a Muslim opens the app to do daily —
-/// Quran and the library sit here rather than three taps down inside a tools
-/// menu, which is where they used to live.
+/// The five destinations are the things a Muslim opens the app to do daily.
+/// Phones get a bottom bar; from 768 pt wide (iPad) a navigation rail runs
+/// down the side, as iPadOS apps do, and from 1,100 pt it shows labels.
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
+  static const railBreakpoint = 768.0;
+  static const extendedRailBreakpoint = 1100.0;
+
   static const _destinations = <_Destination>[
-    _Destination(
-      icon: Icons.wb_twilight_rounded,
-      activeIcon: Icons.wb_twilight_rounded,
-      label: 'Today',
-    ),
-    _Destination(
-      icon: Icons.play_circle_outline_rounded,
-      activeIcon: Icons.play_circle_rounded,
-      label: 'Watch',
-    ),
-    _Destination(
-      icon: Icons.menu_book_outlined,
-      activeIcon: Icons.menu_book_rounded,
-      label: 'Quran',
-    ),
-    _Destination(
-      icon: Icons.auto_stories_outlined,
-      activeIcon: Icons.auto_stories_rounded,
-      label: 'Library',
-    ),
-    _Destination(
-      icon: Icons.person_outline_rounded,
-      activeIcon: Icons.person_rounded,
-      label: 'Profile',
-    ),
+    _Destination(Icons.wb_twilight_rounded, Icons.wb_twilight_rounded, 'Today'),
+    _Destination(Icons.play_circle_outline_rounded, Icons.play_circle_rounded, 'Watch'),
+    _Destination(Icons.menu_book_outlined, Icons.menu_book_rounded, 'Quran'),
+    _Destination(Icons.auto_stories_outlined, Icons.auto_stories_rounded, 'Library'),
+    _Destination(Icons.person_outline_rounded, Icons.person_rounded, 'Profile'),
   ];
+
+  void _go(int i) {
+    HapticFeedback.selectionClick();
+    navigationShell.goBranch(
+      i,
+      // Tapping the tab you are already on returns to its root.
+      initialLocation: i == navigationShell.currentIndex,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final width = MediaQuery.sizeOf(context).width;
+    if (width >= railBreakpoint) {
+      return _RailLayout(
+        shell: navigationShell,
+        destinations: _destinations,
+        extended: width >= extendedRailBreakpoint,
+        onSelect: _go,
+      );
+    }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: DecoratedBox(
         decoration: BoxDecoration(
-          color: isDark ? AppTheme.inkSoft : Colors.white,
+          color: isDark ? AppColors.slateDeep : AppColors.card,
           border: Border(
-            top: BorderSide(
-              color: isDark ? AppTheme.inkLine : AppTheme.sand,
-            ),
+            top: BorderSide(color: isDark ? AppColors.slateLine : AppColors.sand),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.34 : 0.05),
+              color: AppColors.emerald950.withValues(alpha: isDark ? 0.3 : 0.06),
               blurRadius: 18,
               offset: const Offset(0, -3),
             ),
@@ -75,12 +75,7 @@ class AppShell extends StatelessWidget {
                       destination: _destinations[i],
                       isSelected: navigationShell.currentIndex == i,
                       isDark: isDark,
-                      onTap: () => navigationShell.goBranch(
-                        i,
-                        // Tapping the tab you are already on returns to its
-                        // root, which is what people expect of a tab bar.
-                        initialLocation: i == navigationShell.currentIndex,
-                      ),
+                      onTap: () => _go(i),
                     ),
                   ),
               ],
@@ -92,13 +87,100 @@ class AppShell extends StatelessWidget {
   }
 }
 
-class _Destination {
-  const _Destination({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
+class _RailLayout extends StatelessWidget {
+  const _RailLayout({
+    required this.shell,
+    required this.destinations,
+    required this.extended,
+    required this.onSelect,
   });
 
+  final StatefulNavigationShell shell;
+  final List<_Destination> destinations;
+  final bool extended;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      body: Row(
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(color: isDark ? AppColors.slateLine : AppColors.sand),
+              ),
+            ),
+            child: SafeArea(
+              right: false,
+              child: NavigationRail(
+                extended: extended,
+                minExtendedWidth: 216,
+                selectedIndex: shell.currentIndex,
+                onDestinationSelected: onSelect,
+                labelType: extended ? NavigationRailLabelType.none : NavigationRailLabelType.all,
+                groupAlignment: -0.85,
+                leading: Padding(
+                  padding: const EdgeInsets.only(top: 12, bottom: 20),
+                  child: _RailBrand(extended: extended),
+                ),
+                destinations: [
+                  for (final d in destinations)
+                    NavigationRailDestination(
+                      icon: Icon(d.icon),
+                      selectedIcon: Icon(d.activeIcon),
+                      label: Text(d.label),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(child: shell),
+        ],
+      ),
+    );
+  }
+}
+
+class _RailBrand extends StatelessWidget {
+  const _RailBrand({required this.extended});
+  final bool extended;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final mark = Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        gradient: AppGradients.emerald,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.8)),
+      ),
+      child: const Icon(Icons.mosque_rounded, color: AppColors.goldLight, size: 24),
+    );
+    if (!extended) return mark;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        mark,
+        const SizedBox(width: 12),
+        Text(
+          'Ehsan\nPathways',
+          style: AppTheme.display(
+            size: 17,
+            height: 1.1,
+            color: isDark ? AppColors.onDark : AppColors.emerald900,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Destination {
+  const _Destination(this.icon, this.activeIcon, this.label);
   final IconData icon;
   final IconData activeIcon;
   final String label;
@@ -119,14 +201,15 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final active = isDark ? AppTheme.primaryGreenLight : AppTheme.primaryGreen;
-    final idle = isDark ? AppTheme.textMutedDark : AppTheme.textMutedLight;
+    final active = isDark ? AppColors.goldLight : AppColors.emerald900;
+    final idle = isDark ? AppColors.onDarkSubtle : AppColors.subtle;
     final color = isSelected ? active : idle;
 
     return Semantics(
       selected: isSelected,
       button: true,
       label: destination.label,
+      excludeSemantics: true,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
@@ -135,15 +218,14 @@ class _NavItem extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // A short bar above the active icon, instead of a filled pill —
-              // it marks the tab without crowding five of them together.
+              // A short gold bar above the active icon.
               AnimatedContainer(
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutCubic,
+                duration: AppMotion.of(context, AppMotion.standard),
+                curve: AppMotion.curve,
                 height: 3,
                 width: isSelected ? 22 : 0,
                 decoration: BoxDecoration(
-                  color: active,
+                  gradient: AppGradients.gold,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

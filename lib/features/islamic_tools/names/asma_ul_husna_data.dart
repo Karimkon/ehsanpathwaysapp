@@ -1,6 +1,11 @@
 /// One of the Most Beautiful Names.
 class DivineName {
-  const DivineName(this.number, this.arabic, this.transliteration, this.meaning);
+  const DivineName(
+    this.number,
+    this.arabic,
+    this.transliteration,
+    this.meaning,
+  );
   final int number;
   final String arabic;
   final String transliteration;
@@ -88,12 +93,27 @@ const kAsmaUlHusna = <DivineName>[
   DivineName(77, 'الْوَالِي', 'Al-Wali', 'The Governor'),
   DivineName(78, 'الْمُتَعَالِي', "Al-Muta'ali", 'The Most Exalted'),
   DivineName(79, 'الْبَرُّ', 'Al-Barr', 'The Source of All Goodness'),
-  DivineName(80, 'التَّوَّابُ', 'At-Tawwab', 'The Ever-Accepting of Repentance'),
+  DivineName(
+    80,
+    'التَّوَّابُ',
+    'At-Tawwab',
+    'The Ever-Accepting of Repentance',
+  ),
   DivineName(81, 'الْمُنْتَقِمُ', 'Al-Muntaqim', 'The Avenger'),
   DivineName(82, 'الْعَفُوُّ', "Al-'Afuww", 'The Pardoner'),
   DivineName(83, 'الرَّءُوفُ', "Ar-Ra'uf", 'The Most Kind'),
-  DivineName(84, 'مَالِكُ الْمُلْكِ', 'Malik al-Mulk', 'Owner of All Sovereignty'),
-  DivineName(85, 'ذُو الْجَلَالِ وَالْإِكْرَامِ', 'Dhul-Jalali wal-Ikram', 'Possessor of Majesty and Honour'),
+  DivineName(
+    84,
+    'مَالِكُ الْمُلْكِ',
+    'Malik al-Mulk',
+    'Owner of All Sovereignty',
+  ),
+  DivineName(
+    85,
+    'ذُو الْجَلَالِ وَالْإِكْرَامِ',
+    'Dhul-Jalali wal-Ikram',
+    'Possessor of Majesty and Honour',
+  ),
   DivineName(86, 'الْمُقْسِطُ', 'Al-Muqsit', 'The Equitable'),
   DivineName(87, 'الْجَامِعُ', "Al-Jami'", 'The Gatherer'),
   DivineName(88, 'الْغَنِيُّ', 'Al-Ghaniyy', 'The Self-Sufficient'),

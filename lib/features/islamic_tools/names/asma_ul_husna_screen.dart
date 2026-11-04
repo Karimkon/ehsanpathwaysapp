@@ -24,21 +24,27 @@ class _AsmaUlHusnaScreenState extends State<AsmaUlHusnaScreen> {
     final names = q.isEmpty
         ? kAsmaUlHusna
         : kAsmaUlHusna
-            .where((n) =>
-                n.transliteration.toLowerCase().contains(q) ||
-                n.meaning.toLowerCase().contains(q) ||
-                n.arabic.contains(q) ||
-                '${n.number}' == q)
-            .toList();
+              .where(
+                (n) =>
+                    n.transliteration.toLowerCase().contains(q) ||
+                    n.meaning.toLowerCase().contains(q) ||
+                    n.arabic.contains(q) ||
+                    '${n.number}' == q,
+              )
+              .toList();
     final width = MediaQuery.sizeOf(context).width;
-    final columns = width >= 1000 ? 4 : width >= 680 ? 3 : 2;
+    final columns = width >= 1000
+        ? 4
+        : width >= 680
+        ? 3
+        : 2;
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             pinned: true,
-            expandedHeight: 210,
+            expandedHeight: 236 + MediaQuery.paddingOf(context).top,
             backgroundColor: AppColors.emerald900,
             foregroundColor: Colors.white,
             systemOverlayStyle: SystemUiOverlayStyle.light,
@@ -49,26 +55,33 @@ class _AsmaUlHusnaScreenState extends State<AsmaUlHusnaScreen> {
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(24, 56, 24, 16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا',
-                          textAlign: TextAlign.center,
-                          textDirection: TextDirection.rtl,
-                          style: AppTheme.quran(size: 24, color: AppColors.goldLight, height: 1.8),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          '"And to Allah belong the best names, so invoke Him by them." (7:180)',
-                          textAlign: TextAlign.center,
-                          style: AppTheme.reading(
-                            size: 13.5,
-                            color: Colors.white.withValues(alpha: 0.88),
-                            height: 1.5,
+                    child: FitHeader(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا',
+                            textAlign: TextAlign.center,
+                            textDirection: TextDirection.rtl,
+                            style: AppTheme.quran(
+                              size: 24,
+                              color: AppColors.goldLight,
+                              height: 1.8,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 6),
+                          Text(
+                            '"And to Allah belong the best names, so invoke Him by them." (7:180)',
+                            textAlign: TextAlign.center,
+                            style: AppTheme.reading(
+                              size: 13.5,
+                              color: Colors.white.withValues(alpha: 0.88),
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -76,7 +89,12 @@ class _AsmaUlHusnaScreenState extends State<AsmaUlHusnaScreen> {
             ),
           ),
           SliverPadding(
-            padding: readingInsets(context, horizontal: 16, top: 16, maxWidth: 1100),
+            padding: readingInsets(
+              context,
+              horizontal: 16,
+              top: 16,
+              maxWidth: 1100,
+            ),
             sliver: SliverToBoxAdapter(
               child: TextField(
                 onChanged: (v) => setState(() => _query = v),
@@ -88,7 +106,13 @@ class _AsmaUlHusnaScreenState extends State<AsmaUlHusnaScreen> {
             ),
           ),
           SliverPadding(
-            padding: readingInsets(context, horizontal: 16, top: 16, bottom: 16, maxWidth: 1100),
+            padding: readingInsets(
+              context,
+              horizontal: 16,
+              top: 16,
+              bottom: 16,
+              maxWidth: 1100,
+            ),
             sliver: SliverGrid.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: columns,
@@ -101,7 +125,12 @@ class _AsmaUlHusnaScreenState extends State<AsmaUlHusnaScreen> {
             ),
           ),
           SliverPadding(
-            padding: readingInsets(context, horizontal: 20, bottom: 40, maxWidth: 1100),
+            padding: readingInsets(
+              context,
+              horizontal: 20,
+              bottom: 40,
+              maxWidth: 1100,
+            ),
             sliver: SliverToBoxAdapter(
               child: Text(
                 'The Prophet ﷺ said that Allah has ninety-nine names, and whoever '
@@ -140,9 +169,11 @@ class _NameCard extends StatelessWidget {
           '${name.arabic}\n${name.transliteration}: ${name.meaning}',
         ),
         onTap: () {
-          Clipboard.setData(ClipboardData(
-            text: '${name.arabic} (${name.transliteration}): ${name.meaning}',
-          ));
+          Clipboard.setData(
+            ClipboardData(
+              text: '${name.arabic} (${name.transliteration}): ${name.meaning}',
+            ),
+          );
           HapticFeedback.selectionClick();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${name.transliteration} copied')),
@@ -151,7 +182,9 @@ class _NameCard extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: isDark ? AppColors.slateLine : AppColors.sand),
+            border: Border.all(
+              color: isDark ? AppColors.slateLine : AppColors.sand,
+            ),
             boxShadow: softShadow(context),
           ),
           padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
@@ -179,7 +212,9 @@ class _NameCard extends StatelessWidget {
                         size: 30,
                         weight: FontWeight.w700,
                         height: 1.5,
-                        color: isDark ? AppColors.goldLight : AppColors.emerald900,
+                        color: isDark
+                            ? AppColors.goldLight
+                            : AppColors.emerald900,
                       ),
                     ),
                   ),

@@ -106,11 +106,7 @@ class _PrayerTimesScreenState extends ConsumerState<PrayerTimesScreen> {
   }
 
   Future<void> _pickCity() async {
-    final city = await showModalBottomSheet<PrayerCity>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => const _CityPicker(),
-    );
+    final city = await showPrayerCityPicker(context);
     if (city == null) return;
     await PrayerTimesService.saveLocation(
       lat: city.lat,
@@ -379,12 +375,16 @@ class _NextPrayerHeader extends StatelessWidget {
                       color: _gold,
                     ),
                     const SizedBox(width: 6),
-                    Text(
-                      '${PrayerTimesService.formatTime(next.time)}  •  in ${_formatRemaining(remaining)}',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                    Flexible(
+                      child: Text(
+                        '${PrayerTimesService.formatTime(next.time)}  •  in ${_formatRemaining(remaining)}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],
@@ -724,6 +724,14 @@ extension on Widget {
 // ===========================================================================
 // City picker
 // ===========================================================================
+
+/// Bottom sheet listing the bundled cities; returns the one chosen.
+Future<PrayerCity?> showPrayerCityPicker(BuildContext context) =>
+    showModalBottomSheet<PrayerCity>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => const _CityPicker(),
+    );
 
 class _CityPicker extends StatefulWidget {
   const _CityPicker();

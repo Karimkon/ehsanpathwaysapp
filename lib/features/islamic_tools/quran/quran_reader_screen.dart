@@ -87,7 +87,9 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
   }
 
   void _playFrom(List<QuranVerse> verses, int verse) {
-    ref.read(recitationProvider.notifier).play(
+    ref
+        .read(recitationProvider.notifier)
+        .play(
           surah: _surah.no,
           verse: verse,
           globalByVerse: {for (final v in verses) v.number: v.globalNumber},
@@ -108,8 +110,9 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
         _scrollToVerse(next.verse!);
       }
       if (next.error != null && next.error != prev?.error) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(next.error!)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error!)));
       }
     });
 
@@ -127,7 +130,11 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
           children: [
             Text(
               surah.name,
-              style: AppTheme.ui(size: 17, weight: FontWeight.w800, color: Colors.white),
+              style: AppTheme.ui(
+                size: 17,
+                weight: FontWeight.w800,
+                color: Colors.white,
+              ),
             ),
             Text(
               '${surah.meaning} · ${surah.verses} verses',
@@ -143,7 +150,9 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
           IconButton(
             tooltip: _memorise ? 'Show all verses' : 'Memorisation mode',
             icon: Icon(
-              _memorise ? Icons.visibility_off_rounded : Icons.psychology_rounded,
+              _memorise
+                  ? Icons.visibility_off_rounded
+                  : Icons.psychology_rounded,
               color: _memorise ? AppColors.goldLight : Colors.white,
             ),
             onPressed: () {
@@ -173,8 +182,9 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
               ScrollablePositionedList.builder(
                 itemScrollController: _scroll,
                 itemPositionsListener: _positions,
-                initialScrollIndex:
-                    initial != null && initial <= verses.length ? initial : 0,
+                initialScrollIndex: initial != null && initial <= verses.length
+                    ? initial
+                    : 0,
                 initialAlignment: initial != null ? 0.05 : 0,
                 padding: readingInsets(
                   context,
@@ -279,7 +289,11 @@ class _SurahHeader extends StatelessWidget {
                 Text(
                   'سُورَةُ ${surah.arabic}',
                   textDirection: TextDirection.rtl,
-                  style: AppTheme.quran(size: 30, color: AppColors.goldLight, height: 1.6),
+                  style: AppTheme.quran(
+                    size: 30,
+                    color: AppColors.goldLight,
+                    height: 1.6,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -300,7 +314,9 @@ class _SurahHeader extends StatelessWidget {
                 Container(
                   height: 1,
                   width: 140,
-                  decoration: const BoxDecoration(gradient: AppGradients.goldRule),
+                  decoration: const BoxDecoration(
+                    gradient: AppGradients.goldRule,
+                  ),
                 ),
                 if (showsBasmalahHeader(surah.no)) ...[
                   const SizedBox(height: 14),
@@ -308,7 +324,11 @@ class _SurahHeader extends StatelessWidget {
                     kBasmalah,
                     textDirection: TextDirection.rtl,
                     textAlign: TextAlign.center,
-                    style: AppTheme.quran(size: 26, color: Colors.white, height: 1.8),
+                    style: AppTheme.quran(
+                      size: 26,
+                      color: Colors.white,
+                      height: 1.8,
+                    ),
                   ),
                 ],
                 const SizedBox(height: 14),
@@ -416,12 +436,16 @@ class _VerseTile extends ConsumerWidget {
                 ),
                 const Spacer(),
                 _VerseAction(
-                  icon: isCurrent ? Icons.graphic_eq_rounded : Icons.play_arrow_rounded,
+                  icon: isCurrent
+                      ? Icons.graphic_eq_rounded
+                      : Icons.play_arrow_rounded,
                   tooltip: 'Play verse ${verse.number}',
                   onTap: onPlay,
                 ),
                 _VerseAction(
-                  icon: bookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                  icon: bookmarked
+                      ? Icons.bookmark_rounded
+                      : Icons.bookmark_border_rounded,
                   tooltip: bookmarked ? 'Remove bookmark' : 'Bookmark verse',
                   active: bookmarked,
                   onTap: () => ref
@@ -600,7 +624,11 @@ class _MemoriseBanner extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
           child: Row(
             children: [
-              const Icon(Icons.psychology_rounded, size: 18, color: AppColors.goldDarkest),
+              const Icon(
+                Icons.psychology_rounded,
+                size: 18,
+                color: AppColors.goldDarkest,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -610,7 +638,9 @@ class _MemoriseBanner extends StatelessWidget {
               ),
               TextButton(
                 onPressed: onRevealAll,
-                style: TextButton.styleFrom(foregroundColor: AppColors.goldDarkest),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.goldDarkest,
+                ),
                 child: const Text('Reveal all'),
               ),
             ],
@@ -664,7 +694,11 @@ class _RecitationBar extends ConsumerWidget {
                       children: [
                         Text(
                           'Verse ${state.verse ?? ''}',
-                          style: AppTheme.ui(size: 14, weight: FontWeight.w800, color: Colors.white),
+                          style: AppTheme.ui(
+                            size: 14,
+                            weight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                         ),
                         Text(
                           reciter.name,
@@ -681,7 +715,9 @@ class _RecitationBar extends ConsumerWidget {
                   ),
                   _BarButton(
                     icon: Icons.repeat_one_rounded,
-                    tooltip: state.repeatVerse ? 'Stop repeating' : 'Repeat verse',
+                    tooltip: state.repeatVerse
+                        ? 'Stop repeating'
+                        : 'Repeat verse',
                     active: state.repeatVerse,
                     onTap: player.toggleRepeat,
                   ),
@@ -708,7 +744,9 @@ class _RecitationBar extends ConsumerWidget {
                               foregroundColor: AppColors.emerald950,
                             ),
                             icon: Icon(
-                              state.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                              state.isPlaying
+                                  ? Icons.pause_rounded
+                                  : Icons.play_arrow_rounded,
                               size: 28,
                             ),
                             onPressed: player.togglePlayPause,
@@ -749,13 +787,13 @@ class _BarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IconButton(
-        tooltip: tooltip,
-        onPressed: onTap,
-        icon: Icon(
-          icon,
-          color: active ? AppColors.goldLight : Colors.white.withValues(alpha: 0.9),
-        ),
-      );
+    tooltip: tooltip,
+    onPressed: onTap,
+    icon: Icon(
+      icon,
+      color: active ? AppColors.goldLight : Colors.white.withValues(alpha: 0.9),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -778,7 +816,10 @@ class _ReadingSettingsSheet extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Reading settings', style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              'Reading settings',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             const SizedBox(height: 20),
             Text('ARABIC TEXT SIZE', style: AppTheme.eyebrow(muted)),
             Slider(
@@ -826,7 +867,11 @@ class _ReadingSettingsSheet extends ConsumerWidget {
                       subtitle: Text(
                         r.arabicName,
                         textDirection: TextDirection.rtl,
-                        style: AppTheme.arabic(size: 15, color: muted, height: 1.4),
+                        style: AppTheme.arabic(
+                          size: 15,
+                          color: muted,
+                          height: 1.4,
+                        ),
                       ),
                     ),
                 ],
@@ -847,9 +892,8 @@ class _ReaderLoading extends StatelessWidget {
   const _ReaderLoading();
 
   @override
-  Widget build(BuildContext context) => const Center(
-        child: CircularProgressIndicator(),
-      );
+  Widget build(BuildContext context) =>
+      const Center(child: CircularProgressIndicator());
 }
 
 class _ReaderError extends StatelessWidget {
