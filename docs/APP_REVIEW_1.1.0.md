@@ -94,6 +94,26 @@ again later.
 rejects with "Tried to read the state of an uninitialized provider". Saved
 sessions were never restored at launch. Auto-login now runs after `build()`.
 
+## 7. Also fixed for this build
+
+- **Placeholders removed (2.1 / 2.2).** "Asma'ul Husna" and "Islamic
+  Calendar" were "coming soon" cards. Both are now real features.
+- **Endless loading.** Riverpod 3 retried failed requests ten times while
+  showing a spinner, so offline screens could load for minutes. Errors now
+  surface at once with a Retry button. Prayer Times never left its spinner
+  when no location was saved; it now offers "Use my location" or "Choose a
+  city".
+- **Launch can no longer hang** on Firebase or notification setup: each
+  startup step has an 8-second limit.
+- **Background audio.** `UIBackgroundModes` now includes `audio` so Qur'an
+  recitation keeps playing with the screen locked. Mention it in the review
+  notes (below); reviewers check that the mode is used for its purpose.
+- **Offline.** The surah index ships with the app; each surah is cached
+  after its first reading; prayer times are calculated on the device.
+- **iPad.** From 768pt the app uses a navigation rail. Seven redesigned
+  screens are tested at iPhone SE, iPhone 16 Pro Max and iPad Air 11" in
+  both orientations and both themes.
+
 ## Suggested App Review notes
 
 > Thank you for the feedback. In 1.1.0 (10):
@@ -105,6 +125,9 @@ sessions were never restored at launch. Auto-login now runs after `build()`.
 > - Age Rating: the app has no parental controls or age assurance. We corrected
 >   the In-App Controls answers to "None".
 > - Account deletion is available under Profile → Delete Account.
+> - Background audio is used for Qur'an recitation: open Qur'an → any surah →
+>   Listen to surah, then lock the device; recitation continues.
+> - Prayer times work without location access: choose "Choose a city".
 >
 > Demo account: <email> / <password>
 
@@ -115,4 +138,9 @@ sessions were never restored at launch. Auto-login now runs after `build()`.
 - [ ] Backend deployed, then `php artisan config:clear && php artisan migrate`
 - [ ] On a real iPhone **and** iPad: Apple sign-in, Google sign-in, cancel each,
       airplane-mode error message, delete account, sign in again
+- [ ] Qur'an: play a surah, lock the screen, confirm audio continues; check
+      each reciter plays (audio URLs could not be tested from the build
+      environment)
+- [ ] Open a surah online once, then in airplane mode confirm it still opens
+- [ ] Decline location: Prayer Times and Qibla offer "Choose a city"
 - [ ] Demo account credentials entered in App Review Information
