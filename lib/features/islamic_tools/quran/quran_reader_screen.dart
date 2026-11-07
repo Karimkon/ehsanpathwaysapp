@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
@@ -467,6 +468,19 @@ class _VerseTile extends ConsumerWidget {
                   icon: Icons.ios_share_rounded,
                   tooltip: 'Share verse',
                   onTap: () => Share.share(_shareText, subject: _reference),
+                ),
+                // Commentary is fetched per verse when asked for: Ibn Kathir
+                // on all 286 verses of Al-Baqarah would be a megabyte
+                // nobody asked for.
+                _VerseAction(
+                  icon: Icons.menu_book_rounded,
+                  tooltip: 'Tafsir of verse ${verse.number}',
+                  onTap: () => showTafsirSheet(
+                    context,
+                    verseKey: verse.verseKey,
+                    reference: _reference,
+                    arabic: verse.arabic,
+                  ),
                 ),
               ],
             ),
@@ -939,6 +953,276 @@ class _ReaderError extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+
+// ===========================================================================
+// TAFSIR
+// ===========================================================================
+
+/// Opens the commentary on one verse.
+///
+/// A sheet rather than a screen: a reader dips into the tafsir and comes
+/// straight back to the ayah, and a push would lose their place in a long
+/// surah.
+Future<void> showTafsirSheet(
+  BuildContext context, {
+  required String verseKey,
+  required String reference,
+  required String arabic,
+}) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    backgroundColor: Theme.of(context).brightness == Brightness.dark
+        ? AppColors.slateCard
+        : AppColors.card,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+    ),
+    builder: (_) => _TafsirSheet(
+      verseKey: verseKey,
+      reference: reference,
+      arabic: arabic,
+    ),
+  );
+}
+
+class _TafsirSheet extends ConsumerWidget {
+  const _TafsirSheet({
+    required this.verseKey,
+    required this.reference,
+    required this.arabic,
+  });
+
+  final String verseKey;
+  final String reference;
+  final String arabic;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final tafsir = ref.watch(quranTafsirProvider(verseKey));
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.72,
+      minChildSize: 0.4,
+      maxChildSize: 0.94,
+      builder: (context, controller) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 12, 0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        reference,
+                        style: AppTheme.ui(
+                          size: 15,
+                          weight: FontWeight.w800,
+                          color: isDark ? AppColors.onDark : AppColors.ink,
+                        ),
+                      ),
+                      tafsir.maybeWhen(
+                        data: (t) => t == null
+                            ? const SizedBox.shrink()
+                            : Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(
+                                  t.authorName == null
+                                      ? t.resourceName
+                                      : '${t.resourceName} \u00b7 ${t.authorName}',
+                                  style: AppTheme.ui(
+                                    size: 12,
+                                    color: isDark
+                                        ? AppColors.onDarkSubtle
+                                        : AppColors.subtle,
+                                  ),
+                                ),
+                              ),
+                        orElse: () => const SizedBox.shrink(),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Close',
+                  icon: const Icon(Icons.close_rounded, size: 22),
+                  onPressed: () => Navigator.of(context).maybePop(),
+                ),
+              ],
+            ),
+          ),
+
+          const Divider(height: 18),
+
+          Expanded(
+            child: ListView(
+              controller: controller,
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+              children: [
+                Text(
+                  arabic,
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.rtl,
+                  style: AppTheme.quran(
+                    size: 21,
+                    color: isDark ? AppColors.onDark : AppColors.ink,
+                  ),
+                ),
+                const SizedBox(height: 18),
+
+                tafsir.when(
+                  loading: () => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+
+                  // A verse with no commentary in this edition is a real
+                  // answer, not a failure, and must not read like one.
+                  data: (t) => t == null
+                      ? _TafsirNote(
+                          icon: Icons.menu_book_outlined,
+                          message:
+                              'This edition has no commentary on this verse.',
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // A passage often covers several verses. Saying
+                            // so is what stops the same commentary under
+                            // five consecutive ayat reading like a bug.
+                            if (t.range != null) ...[
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isDark
+                                      ? AppColors.gold.withValues(alpha: 0.16)
+                                      : AppColors.goldLight.withValues(
+                                          alpha: 0.35,
+                                        ),
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Text(
+                                  'Covers ${t.range}',
+                                  style: AppTheme.ui(
+                                    size: 11.5,
+                                    weight: FontWeight.w700,
+                                    color: isDark
+                                        ? AppColors.goldLight
+                                        : AppColors.goldDeep,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                            ],
+
+                            // Upstream HTML: paragraphs, headings and Arabic
+                            // inline in <i> tags.
+                            Html(
+                              data: t.text,
+                              style: {
+                                'body': Style(
+                                  margin: Margins.zero,
+                                  padding: HtmlPaddings.zero,
+                                  fontSize: FontSize(15),
+                                  lineHeight: const LineHeight(1.7),
+                                  color: isDark
+                                      ? AppColors.onDarkMuted
+                                      : AppColors.muted,
+                                ),
+                                'p': Style(
+                                  margin: Margins.only(bottom: 12),
+                                ),
+                                'h2': Style(
+                                  fontSize: FontSize(16),
+                                  fontWeight: FontWeight.w800,
+                                ),
+                                'h3': Style(
+                                  fontSize: FontSize(15),
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+                            // Required by the licence wherever this content
+                            // appears.
+                            Text(
+                              'Quran data provided by Quran Foundation',
+                              style: AppTheme.ui(
+                                size: 11,
+                                color: isDark
+                                    ? AppColors.onDarkSubtle
+                                    : AppColors.subtle,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                  error: (_, _) => _TafsirNote(
+                    icon: Icons.cloud_off_rounded,
+                    message:
+                        'The commentary could not be loaded. Check your '
+                        'connection and try again.',
+                    onRetry: () => ref.invalidate(
+                      quranTafsirProvider(verseKey),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TafsirNote extends StatelessWidget {
+  const _TafsirNote({
+    required this.icon,
+    required this.message,
+    this.onRetry,
+  });
+
+  final IconData icon;
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = isDark ? AppColors.onDarkSubtle : AppColors.subtle;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 30),
+      child: Column(
+        children: [
+          Icon(icon, size: 34, color: color),
+          const SizedBox(height: 12),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: AppTheme.ui(size: 13.5, color: color),
+          ),
+          if (onRetry != null) ...[
+            const SizedBox(height: 14),
+            TextButton(onPressed: onRetry, child: const Text('Try again')),
+          ],
+        ],
       ),
     );
   }

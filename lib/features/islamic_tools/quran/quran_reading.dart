@@ -8,6 +8,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/services/auth_service.dart';
+
 // ===========================================================================
 // Reciters
 // ===========================================================================
@@ -127,11 +130,27 @@ class QuranReadingState {
       );
 }
 
+/// Reading preferences, bookmarks and reading position.
+///
+/// The device is authoritative for the UI: everything works signed out, on a
+/// plane, with no account. When a reader IS signed in the same changes are
+/// mirrored to our backend so their bookmarks and their place in the book
+/// follow them to the web reader and survive a reinstall.
+///
+/// Sync is deliberately one-way-per-event and never blocking. A failed push
+/// is swallowed: losing a bookmark sync is a nuisance, but an exception
+/// thrown while someone is reading is worse, and the next toggle or the next
+/// launch reconciles it.
 class QuranReadingNotifier extends Notifier<QuranReadingState> {
   static const _key = 'quran_reading_v1';
 
+  /// The reader scrolls constantly. Without this, every verse that passes
+  /// mid-screen would be its own request.
+  Timer? _positionDebounce;
+
   @override
   QuranReadingState build() {
+    ref.onDispose(() => _positionDebounce?.cancel());
     Future.microtask(_load);
     return const QuranReadingState();
   }
@@ -146,6 +165,106 @@ class QuranReadingNotifier extends Notifier<QuranReadingState> {
       }
     } catch (e) {
       debugPrint('Quran reading state could not be loaded: $e');
+    }
+
+    // Then reconcile with the server, if there is an account.
+    await _pull();
+  }
+
+  // ── server sync ────────────────────────────────────────────────────
+
+  Future<bool> _signedIn() async {
+    try {
+      return (await AuthService().getToken()) != null;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Merge the server's record into the device's.
+  ///
+  /// Bookmarks are UNIONED rather than replaced. Either side may hold ones
+  /// the other has not seen — saved on the web, or saved on the phone while
+  /// offline — and replacing would silently discard them. An explicit
+  /// removal still propagates, because that is sent the moment it happens.
+  Future<void> _pull() async {
+    if (!await _signedIn()) return;
+
+    try {
+      final dio = ref.read(apiProvider);
+
+      final results = await Future.wait([
+        dio.get('/quran/bookmarks'),
+        dio.get('/quran/position'),
+      ]);
+
+      final remoteKeys = <String>[];
+      final bookmarkBody = results[0].data;
+      if (bookmarkBody is Map && bookmarkBody['data'] is List) {
+        for (final row in bookmarkBody['data'] as List) {
+          if (row is Map && row['verse_key'] is String) {
+            remoteKeys.add(row['verse_key'] as String);
+          }
+        }
+      }
+
+      final merged = <String>[
+        ...remoteKeys.where((k) => !state.bookmarks.contains(k)),
+        ...state.bookmarks,
+      ];
+
+      // The server's position wins only if the device has none: a reader who
+      // just carried on reading offline is further along than the server.
+      VerseRef? position = state.lastRead;
+      if (position == null) {
+        final positionBody = results[1].data;
+        if (positionBody is Map && positionBody['data'] is Map) {
+          position = VerseRef.parse(
+            (positionBody['data'] as Map)['verse_key'] as String?,
+          );
+        }
+      }
+
+      state = state.copyWith(bookmarks: merged, lastRead: position);
+      await _save();
+
+      // Push anything the device had that the server did not.
+      for (final key in state.bookmarks) {
+        if (!remoteKeys.contains(key)) {
+          _pushBookmark(key, added: true);
+        }
+      }
+    } catch (e) {
+      debugPrint('Quran reading state could not be synced: $e');
+    }
+  }
+
+  Future<void> _pushBookmark(String verseKey, {required bool added}) async {
+    if (!await _signedIn()) return;
+
+    try {
+      final dio = ref.read(apiProvider);
+
+      if (added) {
+        await dio.post('/quran/bookmarks', data: {'verse_key': verseKey});
+      } else {
+        await dio.delete('/quran/bookmarks/$verseKey');
+      }
+    } catch (e) {
+      // Both endpoints are idempotent, so the next pull reconciles.
+      debugPrint('Bookmark $verseKey could not be synced: $e');
+    }
+  }
+
+  Future<void> _pushPosition(String verseKey) async {
+    if (!await _signedIn()) return;
+
+    try {
+      await ref
+          .read(apiProvider)
+          .put('/quran/position', data: {'verse_key': verseKey});
+    } catch (e) {
+      debugPrint('Reading position could not be synced: $e');
     }
   }
 
@@ -178,16 +297,31 @@ class QuranReadingNotifier extends Notifier<QuranReadingState> {
   void toggleBookmark(int surah, int verse) {
     final key = VerseRef(surah, verse).key;
     final list = [...state.bookmarks];
-    if (!list.remove(key)) list.insert(0, key);
+    final added = !list.remove(key);
+    if (added) list.insert(0, key);
     HapticFeedback.selectionClick();
     state = state.copyWith(bookmarks: list);
     _save();
+
+    // Not awaited: the bookmark is already saved on the device and the UI
+    // has already moved. The network is a mirror, not the gate.
+    _pushBookmark(key, added: added);
   }
 
   void markRead(int surah, int verse) {
     if (state.lastRead == VerseRef(surah, verse)) return;
-    state = state.copyWith(lastRead: VerseRef(surah, verse));
+
+    final verseRef = VerseRef(surah, verse);
+    state = state.copyWith(lastRead: verseRef);
     _save();
+
+    // Debounced: a reader scrolling through Al-Baqarah passes hundreds of
+    // verses, and only where they stop is worth a request.
+    _positionDebounce?.cancel();
+    _positionDebounce = Timer(
+      const Duration(seconds: 3),
+      () => _pushPosition(verseRef.key),
+    );
   }
 }
 
