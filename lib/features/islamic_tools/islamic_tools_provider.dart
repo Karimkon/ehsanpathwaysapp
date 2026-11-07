@@ -17,17 +17,6 @@ import 'package:ehsan_pathways/core/json_read.dart';
 /// The shared client: one base URL, and the sign-in token on every request.
 final _isToolsDioProvider = Provider<Dio>((ref) => ref.watch(apiProvider));
 
-// Separate Dio for alquran.cloud (different baseUrl)
-final _quranCloudDioProvider = Provider<Dio>((ref) {
-  return Dio(
-    BaseOptions(
-      baseUrl: 'https://api.alquran.cloud/v1',
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: {'Accept': 'application/json'},
-    ),
-  );
-});
 
 // ===========================================================================
 // QURAN MODELS
@@ -80,16 +69,21 @@ class QuranVerse {
   final int number;
 
   /// Verse number across the whole mushaf (1-6236); recitation audio is
-  /// addressed by it.
+  /// addressed by it, and so is a bookmark.
   final int globalNumber;
   final String arabic;
   final String translation;
+
+  /// "2:255". The canonical reference everywhere else in the system - tafsir,
+  /// bookmarks and the saved reading position are all keyed on it.
+  final String verseKey;
 
   const QuranVerse({
     required this.number,
     required this.globalNumber,
     required this.arabic,
     required this.translation,
+    required this.verseKey,
   });
 
   Map<String, Object> toJson() => {
@@ -97,43 +91,75 @@ class QuranVerse {
     'g': globalNumber,
     'a': arabic,
     't': translation,
+    'k': verseKey,
   };
 
-  factory QuranVerse.fromJson(Map<String, dynamic> j) => QuranVerse(
-    number: ((jNum(j['n']) ?? 0)).toInt(),
-    globalNumber: ((jNum(j['g']) ?? 0)).toInt(),
-    arabic: (jStr(j['a']) ?? ''),
-    translation: (jStr(j['t']) ?? ''),
-  );
+  /// Reads a cached verse.
+  ///
+  /// [verseKey] is required rather than defaulted: an entry without one was
+  /// written by the old alquran.cloud reader, and a verse whose key is wrong
+  /// silently breaks tafsir, bookmarks and the saved reading position. The
+  /// throw makes the caller discard the entry and fetch the surah afresh.
+  factory QuranVerse.fromJson(Map<String, dynamic> j) {
+    final key = jStr(j['k']);
+    if (key == null || key.isEmpty) {
+      throw const FormatException('cached verse has no verse key');
+    }
+
+    return QuranVerse(
+      number: ((jNum(j['n']) ?? 0)).toInt(),
+      globalNumber: ((jNum(j['g']) ?? 0)).toInt(),
+      arabic: (jStr(j['a']) ?? ''),
+      translation: (jStr(j['t']) ?? ''),
+      verseKey: key,
+    );
+  }
 }
 
-/// Parses an alquran.cloud `/surah/{n}/editions/quran-uthmani,en.sahih`
-/// response.
-List<QuranVerse> parseQuranEditions(Object? body, int surahNo) {
-  final data = (body as Map<String, dynamic>)['data'] as List;
-  final arabic = ((data[0] as Map)['ayahs'] as List).cast<Map>();
-  final english = ((data[1] as Map)['ayahs'] as List).cast<Map>();
-  if (arabic.length != english.length) {
-    throw const FormatException('Arabic and translation verse counts differ');
-  }
-  return List.generate(arabic.length, (i) {
-    final number = ((jNum(arabic[i]['numberInSurah']) ?? 0)).toInt();
-    final text = (jStr(arabic[i]['text']) ?? '');
+/// Parses our own `/quran/chapters/{id}` response.
+///
+/// One request per surah instead of the two editions the app used to fetch
+/// from alquran.cloud and stitch together by index - a join that silently
+/// mismatched if either edition was short.
+///
+/// Every field is read through [jNum]/[jStr] rather than cast: the wire types
+/// are the server's to change, and a reader that throws when an int arrives
+/// as a string is how the modules that "did not work" did not work.
+List<QuranVerse> parseQuranChapter(Object? body, int surahNo) {
+  final data = (body as Map<String, dynamic>)['data'] as Map<String, dynamic>;
+  final rows = (data['verses'] as List).cast<Map<String, dynamic>>();
+
+  return rows.map((row) {
+    final number = ((jNum(row['verse_number']) ?? 0)).toInt();
+    final text = jStr(row['text_uthmani']) ?? '';
+
     return QuranVerse(
       number: number,
-      globalNumber: ((jNum(arabic[i]['number']) ?? 0)).toInt(),
+      // Our ids ARE the mushaf numbers, which is what the recitation CDN
+      // addresses audio by.
+      globalNumber: ((jNum(row['id']) ?? 0)).toInt(),
+      // Quran Foundation does not prefix verse 1 with the basmalah, but the
+      // strip is a no-op on text that does not start with one, so it stays:
+      // it costs nothing and guards the reader against an edition that does.
       arabic: number == 1 ? stripLeadingBasmalah(text, surahNo) : text,
-      translation: (jStr(english[i]['text']) ?? ''),
+      translation: jStr(row['translation']) ?? '',
+      verseKey: jStr(row['verse_key']) ?? '$surahNo:$number',
     );
-  });
+  }).toList();
 }
 
 /// Verses of a surah: Uthmani Arabic with the Saheeh International
 /// translation.
 ///
-/// The whole Qur'an ships with the app (assets/quran/quran.json), so this
-/// never needs a connection. The cache-then-network path below is kept only
-/// for the case where that asset is somehow unreadable.
+/// The whole Qur'an ships with the app (assets/quran/quran.json), so the
+/// common path needs no connection at all and involves no third party. The
+/// cache-then-network path below is the fallback for the case where that
+/// asset is unreadable, and it now goes to OUR Laravel server, which holds
+/// the content synced from Quran Foundation - the app no longer calls a Quran
+/// API itself.
+///
+/// The text never changes between syncs, so a surah fetched once is served
+/// from the offline cache from then on.
 final quranVersesProvider = FutureProvider.family<List<QuranVerse>, int>((
   ref,
   surahNo,
@@ -145,7 +171,9 @@ final quranVersesProvider = FutureProvider.family<List<QuranVerse>, int>((
   }
 
   final cache = OfflineCache.instance;
-  final key = 'quran_v2_surah_$surahNo';
+  // v3: entries written by the alquran.cloud reader have no verseKey and
+  // would throw on read. Bumping the key discards them instead.
+  final key = 'quran_v3_surah_$surahNo';
 
   final cached = await cache.read(key);
   if (cached is List && cached.isNotEmpty) {
@@ -154,15 +182,110 @@ final quranVersesProvider = FutureProvider.family<List<QuranVerse>, int>((
           .map((e) => QuranVerse.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (_) {
+      // Corrupt or older entry: fetch afresh below.
+    }
+  }
+
+  final dio = ref.read(_isToolsDioProvider);
+  final res = await dio.get('/quran/chapters/$surahNo');
+  final verses = parseQuranChapter(res.data, surahNo);
+
+  // An empty surah means the server has not synced it yet. Caching that
+  // would make a transient gap permanent for this reader.
+  if (verses.isNotEmpty) {
+    await cache.write(key, verses.map((v) => v.toJson()).toList());
+  }
+
+  return verses;
+});
+
+// ===========================================================================
+// TAFSIR
+// ===========================================================================
+
+/// Commentary on a single verse.
+class VerseTafsir {
+  final String verseKey;
+  final String resourceName;
+  final String? authorName;
+  final String text;
+
+  /// "Verses 1-5" when this passage covers more than the verse it is filed
+  /// under. Null otherwise. Showing it is what stops the same commentary
+  /// under five consecutive ayat reading like a bug.
+  final String? range;
+
+  const VerseTafsir({
+    required this.verseKey,
+    required this.resourceName,
+    required this.text,
+    this.authorName,
+    this.range,
+  });
+
+  factory VerseTafsir.fromJson(Map<String, dynamic> j) {
+    final resource = (j['resource'] as Map?)?.cast<String, dynamic>() ?? const {};
+
+    return VerseTafsir(
+      verseKey: (j['verse_key'] as String?) ?? '',
+      resourceName: (resource['name'] as String?) ?? 'Tafsir',
+      authorName: resource['author'] as String?,
+      text: (j['text'] as String?) ?? '',
+      range: j['range'] as String?,
+    );
+  }
+
+  Map<String, Object?> toJson() => {
+    'verse_key': verseKey,
+    'resource': {'name': resourceName, 'author': authorName},
+    'text': text,
+    'range': range,
+  };
+}
+
+/// Tafsir for one verse, fetched on demand.
+///
+/// Deliberately NOT loaded with the surah: Ibn Kathir on all 286 verses of
+/// Al-Baqarah is a megabyte nobody asked for. Returns null when the edition
+/// has no commentary on that verse, which is a real answer rather than an
+/// error.
+final quranTafsirProvider = FutureProvider.family<VerseTafsir?, String>((
+  ref,
+  verseKey,
+) async {
+  final cache = OfflineCache.instance;
+  final key = 'quran_tafsir_$verseKey';
+
+  final cached = await cache.read(key);
+  if (cached is Map) {
+    try {
+      return VerseTafsir.fromJson(cached.cast<String, dynamic>());
+    } catch (_) {
       // Corrupt entry: fetch afresh below.
     }
   }
 
-  final dio = ref.read(_quranCloudDioProvider);
-  final res = await dio.get('/surah/$surahNo/editions/quran-uthmani,en.sahih');
-  final verses = parseQuranEditions(res.data, surahNo);
-  await cache.write(key, verses.map((v) => v.toJson()).toList());
-  return verses;
+  final dio = ref.read(_isToolsDioProvider);
+
+  final res = await dio.get(
+    '/quran/verses/$verseKey/tafsir',
+    // 404 is "no commentary on this verse" and must not throw.
+    options: Options(validateStatus: (code) => code != null && code < 500),
+  );
+
+  if (res.statusCode == 404) return null;
+
+  final body = res.data;
+  if (body is! Map || body['data'] is! Map) {
+    throw const FormatException('Unexpected tafsir response');
+  }
+
+  final tafsir = VerseTafsir.fromJson(
+    (body['data'] as Map).cast<String, dynamic>(),
+  );
+
+  await cache.write(key, tafsir.toJson());
+  return tafsir;
 });
 
 // ===========================================================================

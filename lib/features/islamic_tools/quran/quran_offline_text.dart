@@ -54,6 +54,11 @@ List<List<QuranVerse>> parseBundledQuran(String source) {
           // as a header, so strip it exactly as the network path does.
           arabic: number == 1 ? stripLeadingBasmalah(arabic, surahNo) : arabic,
           translation: pair[1] as String,
+          // The asset is keyed by position, not by verse key, so build the
+          // canonical reference here. Tafsir, bookmarks and the saved reading
+          // position are all keyed on it, and they must agree whether the
+          // verse came from this asset or from the server.
+          verseKey: '$surahNo:$number',
         ),
       );
     }
