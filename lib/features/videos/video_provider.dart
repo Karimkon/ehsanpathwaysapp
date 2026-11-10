@@ -140,6 +140,41 @@ class PaginatedVideos {
   }
 }
 
+/// One page of the cursor feed.
+///
+/// There is no page number and no total, on purpose. A cursor is "the last row
+/// you saw", so a video published while somebody is scrolling does not shift
+/// everything below it -- which is how page numbers repeat and skip rows. And
+/// the total is the expensive part: counting the filtered set measured 50
+/// seconds at a million rows on the server.
+class VideoFeedPage {
+  final List<Video> data;
+  final String? nextCursor;
+  final bool hasMore;
+
+  const VideoFeedPage({
+    required this.data,
+    this.nextCursor,
+    this.hasMore = false,
+  });
+
+  factory VideoFeedPage.fromJson(Map<String, dynamic> json) {
+    final meta = json['meta'] as Map<String, dynamic>? ?? const {};
+    final cursor = meta['next_cursor'] as String?;
+
+    return VideoFeedPage(
+      data: (json['data'] as List<dynamic>?)
+              ?.map((e) => Video.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      nextCursor: cursor,
+      // Trust the cursor over the flag: no cursor means there is nowhere to go
+      // even if the server said otherwise.
+      hasMore: (meta['has_more'] as bool? ?? false) && cursor != null,
+    );
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Filter state
 // ---------------------------------------------------------------------------
@@ -248,6 +283,17 @@ class VideoListState {
   final String? categorySlug;
   final String? search;
 
+  /// Where the next page starts. Null means the beginning, or the end -- which
+  /// of the two is what [hasMore] is for.
+  final String? cursor;
+
+  /// The extra filters the cursor feed understands.
+  final String? scholarSlug;
+  final String? language;
+  final List<int> durationBuckets;
+  final List<String> types;
+  final String sort;
+
   const VideoListState({
     this.videos = const [],
     this.isLoading = false,
@@ -257,7 +303,22 @@ class VideoListState {
     this.error,
     this.categorySlug,
     this.search,
+    this.cursor,
+    this.scholarSlug,
+    this.language,
+    this.durationBuckets = const [],
+    this.types = const [],
+    this.sort = 'latest',
   });
+
+  /// Is anything narrowing the feed?
+  bool get isFiltered =>
+      (search != null && search!.isNotEmpty) ||
+      categorySlug != null ||
+      scholarSlug != null ||
+      language != null ||
+      durationBuckets.isNotEmpty ||
+      types.isNotEmpty;
 
   VideoListState copyWith({
     List<Video>? videos,
@@ -268,9 +329,16 @@ class VideoListState {
     String? error,
     String? categorySlug,
     String? search,
+    String? cursor,
+    String? scholarSlug,
+    String? language,
+    List<int>? durationBuckets,
+    List<String>? types,
+    String? sort,
     bool clearError = false,
     bool clearCategory = false,
     bool clearSearch = false,
+    bool clearCursor = false,
   }) {
     return VideoListState(
       videos: videos ?? this.videos,
@@ -282,6 +350,15 @@ class VideoListState {
       categorySlug:
           clearCategory ? null : (categorySlug ?? this.categorySlug),
       search: clearSearch ? null : (search ?? this.search),
+      // Explicit clearing, because `cursor ?? this.cursor` can never set it
+      // back to null -- and reaching the end of the feed has to do exactly
+      // that, or loadMore would keep refetching the last page.
+      cursor: clearCursor ? null : (cursor ?? this.cursor),
+      scholarSlug: scholarSlug ?? this.scholarSlug,
+      language: language ?? this.language,
+      durationBuckets: durationBuckets ?? this.durationBuckets,
+      types: types ?? this.types,
+      sort: sort ?? this.sort,
     );
   }
 }
@@ -292,66 +369,101 @@ class VideoListNotifier extends Notifier<VideoListState> {
     return const VideoListState();
   }
 
-  Future<void> loadInitial({String? categorySlug, String? search}) async {
+  Future<void> loadInitial({
+    String? categorySlug,
+    String? search,
+    String? scholarSlug,
+    String? language,
+    List<int> durationBuckets = const [],
+    List<String> types = const [],
+    String sort = 'latest',
+  }) async {
     state = VideoListState(
       isLoading: true,
       categorySlug: categorySlug,
       search: search,
+      scholarSlug: scholarSlug,
+      language: language,
+      durationBuckets: durationBuckets,
+      types: types,
+      sort: sort,
     );
+
     try {
-      final result = await _fetchPage(1, categorySlug: categorySlug, search: search);
+      final result = await _fetch(null);
       state = state.copyWith(
         videos: result.data,
         isLoading: false,
         hasMore: result.hasMore,
+        cursor: result.nextCursor,
         currentPage: 1,
         clearError: true,
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
   Future<void> loadMore() async {
-    if (state.isLoadingMore || !state.hasMore) return;
+    // No cursor means the end, whatever hasMore says.
+    if (state.isLoadingMore || !state.hasMore || state.cursor == null) return;
+
     state = state.copyWith(isLoadingMore: true);
+
     try {
-      final nextPage = state.currentPage + 1;
-      final result = await _fetchPage(
-        nextPage,
-        categorySlug: state.categorySlug,
-        search: state.search,
-      );
+      final result = await _fetch(state.cursor);
+
+      // Guard against a repeat: if the server ever hands back a page we have
+      // already shown, stop rather than append duplicates forever.
+      final known = state.videos.map((v) => v.uuid).toSet();
+      final fresh = result.data.where((v) => !known.contains(v.uuid)).toList();
+
       state = state.copyWith(
-        videos: [...state.videos, ...result.data],
+        videos: [...state.videos, ...fresh],
         isLoadingMore: false,
-        hasMore: result.hasMore,
-        currentPage: nextPage,
+        hasMore: result.hasMore && fresh.isNotEmpty,
+        cursor: result.nextCursor,
+        clearCursor: result.nextCursor == null,
+        currentPage: state.currentPage + 1,
         clearError: true,
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoadingMore: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoadingMore: false, error: e.toString());
     }
   }
 
-  Future<PaginatedVideos> _fetchPage(
-    int page, {
-    String? categorySlug,
-    String? search,
-  }) async {
-    final dio = ref.read(_dioProvider);
-    final queryParams = <String, dynamic>{'page': page};
-    if (categorySlug != null) queryParams['category'] = categorySlug;
-    if (search != null && search.isNotEmpty) queryParams['search'] = search;
+  /// Change the sort without losing the filters, starting from the top.
+  Future<void> setSort(String sort) async {
+    if (sort == state.sort) return;
 
-    final response = await dio.get('/videos', queryParameters: queryParams);
-    return PaginatedVideos.fromJson(response.data as Map<String, dynamic>);
+    await loadInitial(
+      categorySlug: state.categorySlug,
+      search: state.search,
+      scholarSlug: state.scholarSlug,
+      language: state.language,
+      durationBuckets: state.durationBuckets,
+      types: state.types,
+      sort: sort,
+    );
+  }
+
+  Future<VideoFeedPage> _fetch(String? cursor) async {
+    final dio = ref.read(_dioProvider);
+
+    final queryParams = <String, dynamic>{
+      'per_page': 24,
+      'sort': state.sort,
+      if (cursor != null) 'cursor': cursor,
+      if (state.categorySlug != null) 'category': state.categorySlug,
+      if (state.scholarSlug != null) 'scholar': state.scholarSlug,
+      if (state.language != null) 'language': state.language,
+      if (state.search != null && state.search!.isNotEmpty) 'q': state.search,
+      if (state.durationBuckets.isNotEmpty) 'duration[]': state.durationBuckets,
+      if (state.types.isNotEmpty) 'type[]': state.types,
+    };
+
+    final response = await dio.get('/videos/feed', queryParameters: queryParams);
+    return VideoFeedPage.fromJson(response.data as Map<String, dynamic>);
   }
 }
 
