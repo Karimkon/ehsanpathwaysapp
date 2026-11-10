@@ -122,7 +122,7 @@ class HistoryNotifier extends Notifier<HistoryState> {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
       final dio = ref.read(apiProvider);
-      final response = await dio.get('/history');
+      final response = await dio.get('/progress/videos');
       final body = response.data as Map<String, dynamic>;
       final rawList = (body['data'] ?? body) as List<dynamic>;
       final items = rawList
@@ -138,7 +138,7 @@ class HistoryNotifier extends Notifier<HistoryState> {
     state = state.copyWith(isClearing: true);
     try {
       final dio = ref.read(apiProvider);
-      await dio.delete('/history/clear');
+      await dio.delete('/progress/history');
       state = state.copyWith(items: [], isClearing: false, clearError: true);
     } catch (e) {
       state = state.copyWith(isClearing: false, error: e.toString());
@@ -146,14 +146,17 @@ class HistoryNotifier extends Notifier<HistoryState> {
   }
 
   /// Optimistic remove — reverts on API failure.
-  Future<void> remove(int id) async {
+  ///
+  /// Takes the item rather than its id: the server addresses history by the
+  /// video's uuid, which only the item carries.
+  Future<void> remove(WatchHistoryItem item) async {
     final saved = List<WatchHistoryItem>.from(state.items);
     state = state.copyWith(
-      items: saved.where((i) => i.id != id).toList(),
+      items: saved.where((i) => i.id != item.id).toList(),
     );
     try {
       final dio = ref.read(apiProvider);
-      await dio.delete('/history/$id');
+      await dio.delete('/progress/videos/${item.videoUuid}');
     } catch (_) {
       state = state.copyWith(items: saved);
     }
@@ -167,7 +170,7 @@ class HistoryNotifier extends Notifier<HistoryState> {
   }) async {
     try {
       final dio = ref.read(apiProvider);
-      await dio.post('/history/progress/$uuid', data: {
+      await dio.post('/progress/videos/$uuid', data: {
         'watched_seconds': watchedSeconds,
         'total_seconds': totalSeconds,
       });
@@ -186,7 +189,7 @@ final resumePointProvider =
     FutureProvider.family<int, String>((ref, uuid) async {
   try {
     final dio = ref.read(apiProvider);
-    final response = await dio.get('/history/resume/$uuid');
+    final response = await dio.get('/progress/videos/$uuid/resume');
     final data = response.data as Map<String, dynamic>?;
     return (data?['data']?['watched_seconds'] as num? ?? 0).toInt();
   } catch (_) {

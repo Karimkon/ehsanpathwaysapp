@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'package:ehsan_pathways/config/app_config.dart';
+import 'package:ehsan_pathways/core/providers/auth_provider.dart';
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/core/services/offline_cache.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_data.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_text.dart';
@@ -340,10 +342,33 @@ final duaCategoryProvider = FutureProvider.family<DuaCategoryData, String>((
 });
 
 // ===========================================================================
-// HIFZ TRACKER (SharedPreferences-based)
+// HIFZ TRACKER (local first, synced to the server when signed in)
 // ===========================================================================
 
 enum HifzStatus { notStarted, inProgress, memorised }
+
+/// How far along a status is, for merging local and server progress.
+int _hifzRank(HifzStatus s) => switch (s) {
+  HifzStatus.notStarted => 0,
+  HifzStatus.inProgress => 1,
+  HifzStatus.memorised => 2,
+};
+
+/// The server's spelling (user_hifz_progress.status).
+String _hifzToWire(HifzStatus s) => switch (s) {
+  HifzStatus.memorised => 'memorised',
+  HifzStatus.inProgress => 'in_progress',
+  HifzStatus.notStarted => 'not_started',
+};
+
+/// Accepts the server's snake_case and the older value this app wrote to
+/// SharedPreferences ('inprogress'), so upgrades do not lose anything.
+HifzStatus hifzFromWire(String? value) => switch (value) {
+  'memorised' => HifzStatus.memorised,
+  'in_progress' => HifzStatus.inProgress,
+  'inprogress' => HifzStatus.inProgress,
+  _ => HifzStatus.notStarted,
+};
 
 class HifzSurah {
   final int no;
@@ -543,52 +568,144 @@ class HifzNotifier extends Notifier<HifzState> {
   }
 
   Future<void> _load() async {
+    // Local first: the screen should never wait on the network to show
+    // progress the device already has.
+    final local = await _readLocal();
+
+    state = HifzState(
+      surahs: _staticSurahs()
+          .map((s) => s.copyWith(status: local[s.no] ?? HifzStatus.notStarted))
+          .toList(),
+      isLoading: false,
+    );
+
+    await _pullFromServer();
+  }
+
+  /// SharedPreferences -> {surah number: status}.
+  Future<Map<int, HifzStatus>> _readLocal() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_prefKey);
-    Map<String, dynamic> progressMap = {};
-    if (saved != null) {
-      try {
-        progressMap = json.decode(saved) as Map<String, dynamic>;
-      } catch (_) {}
-    }
+    if (saved == null) return {};
 
-    final surahs = _staticSurahs().map((s) {
-      final statusStr = progressMap[s.no.toString()] as String?;
-      final status = switch (statusStr) {
-        'memorised' => HifzStatus.memorised,
-        'inprogress' => HifzStatus.inProgress,
-        _ => HifzStatus.notStarted,
+    try {
+      final decoded = json.decode(saved) as Map<String, dynamic>;
+      return {
+        for (final entry in decoded.entries)
+          if (int.tryParse(entry.key) case final int no)
+            no: hifzFromWire(entry.value as String?),
       };
-      return s.copyWith(status: status);
-    }).toList();
+    } catch (_) {
+      // Corrupt entry: treat it as no local progress rather than throwing.
+      return {};
+    }
+  }
 
-    state = HifzState(surahs: surahs, isLoading: false);
+  Future<void> _writeLocal(List<HifzSurah> surahs) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+      _prefKey,
+      json.encode({
+        for (final s in surahs) s.no.toString(): _hifzToWire(s.status),
+      }),
+    );
+  }
+
+  bool get _signedIn =>
+      ref.read(authProvider).status == AuthStatus.authenticated;
+
+  /// Fetch the server's copy and keep whichever side is further along.
+  ///
+  /// Advancing is the only thing a tracker does, so "further along wins"
+  /// cannot lose work: a new phone pulls the whole history down, and a phone
+  /// used offline pushes its work up on the next load.
+  Future<void> _pullFromServer() async {
+    if (!_signedIn) return;
+
+    try {
+      final dio = ref.read(apiProvider);
+      final response = await dio.get('/hifz/progress');
+      final rows = response.data['data'];
+      if (rows is! List) return;
+
+      final remote = <int, HifzStatus>{};
+      for (final row in rows) {
+        if (row is! Map) continue;
+        final no = (row['surah_no'] as num?)?.toInt();
+        if (no == null) continue;
+        remote[no] = hifzFromWire(row['status'] as String?);
+      }
+
+      var localWasAhead = false;
+      final merged = state.surahs.map((s) {
+        final theirs = remote[s.no] ?? HifzStatus.notStarted;
+        if (_hifzRank(theirs) > _hifzRank(s.status)) {
+          return s.copyWith(status: theirs);
+        }
+        if (_hifzRank(s.status) > _hifzRank(theirs)) localWasAhead = true;
+        return s;
+      }).toList();
+
+      state = HifzState(surahs: merged, isLoading: false);
+      await _writeLocal(merged);
+
+      // Anything this device knew that the server did not, send up.
+      if (localWasAhead) await _pushAll(merged);
+    } catch (_) {
+      // Offline, signed out mid-flight, or the server is unhappy: the local
+      // tracker carries on untouched.
+    }
+  }
+
+  /// Send the whole board in one request.
+  Future<void> _pushAll(List<HifzSurah> surahs) async {
+    if (!_signedIn) return;
+
+    try {
+      final dio = ref.read(apiProvider);
+      await dio.post('/hifz/progress/bulk', data: {
+        'progress': [
+          for (final s in surahs)
+            {'surah_no': s.no, 'status': _hifzToWire(s.status)},
+        ],
+      });
+    } catch (_) {
+      // The next load will try again.
+    }
   }
 
   Future<void> setStatus(int surahNo, HifzStatus status) async {
-    final updated = state.surahs.map((s) {
-      if (s.no == surahNo) return s.copyWith(status: status);
-      return s;
-    }).toList();
+    final updated = state.surahs
+        .map((s) => s.no == surahNo ? s.copyWith(status: status) : s)
+        .toList();
     state = HifzState(surahs: updated, isLoading: false);
 
-    // Persist
-    final prefs = await SharedPreferences.getInstance();
-    final map = {
-      for (final s in updated)
-        s.no.toString(): switch (s.status) {
-          HifzStatus.memorised => 'memorised',
-          HifzStatus.inProgress => 'inprogress',
-          HifzStatus.notStarted => 'notstarted',
-        },
-    };
-    await prefs.setString(_prefKey, json.encode(map));
+    await _writeLocal(updated);
+
+    // Mirror it up, without making the tap wait on the network.
+    if (!_signedIn) return;
+    try {
+      final dio = ref.read(apiProvider);
+      await dio.post('/hifz/progress', data: {
+        'surah_no': surahNo,
+        'status': _hifzToWire(status),
+      });
+    } catch (_) {
+      // Saved locally; the next load pushes it.
+    }
   }
 
   Future<void> resetAll() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_prefKey);
-    await _load();
+
+    final cleared = _staticSurahs();
+    state = HifzState(surahs: cleared, isLoading: false);
+
+    // The reset has to reach the server BEFORE anything reloads. The merge
+    // keeps whichever side is further along, so a reset that stayed local
+    // would be undone by the next pull and look like it had not worked.
+    await _pushAll(cleared);
   }
 }
 

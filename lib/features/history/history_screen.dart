@@ -112,7 +112,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     item: item,
                     isDark: isDark,
                     onDelete: () =>
-                        ref.read(historyProvider.notifier).remove(item.id),
+                        ref.read(historyProvider.notifier).remove(item),
                   );
                 },
                 childCount: history.items.length,
