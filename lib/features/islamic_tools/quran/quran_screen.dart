@@ -98,6 +98,11 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                 child: TextField(
                   controller: _searchController,
                   onChanged: (v) => setState(() => _query = v),
+                  onSubmitted: (v) {
+                    if (v.trim().isNotEmpty) {
+                      context.push('/quran-search?q=${Uri.encodeQueryComponent(v.trim())}');
+                    }
+                  },
                   style: AppTheme.ui(
                     size: 15,
                     weight: FontWeight.w500,
@@ -106,7 +111,7 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                   cursorColor: AppColors.goldLight,
                   textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
-                    hintText: 'Search by name, meaning or number',
+                    hintText: 'Search surahs or any word in the Quran',
                     hintStyle: AppTheme.ui(
                       size: 14,
                       weight: FontWeight.w500,
@@ -147,6 +152,31 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
               ),
             ),
           ),
+          // Typing searches surah names below; this row searches every verse.
+          if (!showExtras)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: readingInsets(context, horizontal: 16, top: 12),
+                child: Material(
+                  color: isDark ? AppColors.slateCard : AppColors.emerald50,
+                  borderRadius: BorderRadius.circular(14),
+                  child: ListTile(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    leading: Icon(Icons.manage_search_rounded,
+                        color: isDark ? AppColors.emerald400 : AppColors.emerald700),
+                    title: Text('Search every verse for "${_query.trim()}"',
+                        style: AppTheme.ui(size: 14.5, weight: FontWeight.w600,
+                            color: isDark ? AppColors.onDark : AppColors.ink)),
+                    subtitle: Text('With or without harakat, anywhere in the Quran',
+                        style: AppTheme.ui(size: 12.5,
+                            color: isDark ? AppColors.onDarkMuted : AppColors.muted)),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push(
+                        '/quran-search?q=${Uri.encodeQueryComponent(_query.trim())}'),
+                  ),
+                ),
+              ),
+            ),
           if (showExtras && reading.lastRead != null)
             SliverPadding(
               padding: readingInsets(context, horizontal: 16, top: 16),

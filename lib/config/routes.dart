@@ -35,6 +35,7 @@ import 'package:ehsan_pathways/features/sadaqah/sadaqah_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/islamic_tools_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_reader_screen.dart';
+import 'package:ehsan_pathways/features/islamic_tools/quran/quran_search_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_collection_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_books_screen.dart';
@@ -289,6 +290,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/notes',
         name: 'notes',
         builder: (context, state) => const NotesScreen(),
+      ),
+      // Whole-Quran verse search (server-side, same results as the website).
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/quran-search',
+        name: 'quran-search',
+        builder: (context, state) => QuranSearchScreen(
+          initialQuery: state.uri.queryParameters['q'] ?? '',
+          initialSurah: int.tryParse(state.uri.queryParameters['surah'] ?? ''),
+        ),
       ),
       // Seek Guidance: private, free counselling.
       GoRoute(
