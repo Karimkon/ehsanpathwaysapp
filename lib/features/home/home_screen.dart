@@ -94,7 +94,8 @@ class _HomeContent extends ConsumerWidget {
           // -- Quick Actions -------------------------------------------------
           SliverToBoxAdapter(child: _QuickActions(isDark: isDark)),
 
-          // -- Seek Guidance -------------------------------------------------
+          // -- Ask Ehsan + Seek Guidance -------------------------------------
+          SliverToBoxAdapter(child: _AskBar(isDark: isDark)),
           SliverToBoxAdapter(child: _GuidanceBanner(isDark: isDark)),
 
           // -- Daily Hadith --------------------------------------------------
@@ -1151,6 +1152,51 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
 // ===========================================================================
 // Quick Actions Row
 // ===========================================================================
+
+/// A search-bar-like prompt into Ask Ehsan: the cheapest way in is to look
+/// like the thing people already know how to use.
+class _AskBar extends StatelessWidget {
+  const _AskBar({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Material(
+        color: isDark ? AppColors.slateCard : AppColors.card,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => context.push('/ask'),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: isDark ? AppColors.slateLine : AppColors.sand),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.auto_awesome_rounded,
+                    color: isDark ? AppColors.goldLight : AppColors.goldDeep),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text('Ask Ehsan anything about Islam…',
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: isDark ? AppColors.onDarkMuted : AppColors.muted)),
+                ),
+                Icon(Icons.arrow_forward_rounded,
+                    color: isDark ? AppColors.emerald400 : AppColors.emerald700),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// Free, private counselling: the one place a person can bring a real problem.
 class _GuidanceBanner extends StatelessWidget {

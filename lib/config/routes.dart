@@ -19,6 +19,7 @@ import 'package:ehsan_pathways/features/auth/register_screen.dart';
 import 'package:ehsan_pathways/features/bookmarks/bookmarks_screen.dart';
 import 'package:ehsan_pathways/features/notes/notes_screen.dart';
 import 'package:ehsan_pathways/features/guidance/guidance_screen.dart';
+import 'package:ehsan_pathways/features/ask/ask_screen.dart';
 import 'package:ehsan_pathways/features/pathways/pathways_screen.dart';
 import 'package:ehsan_pathways/features/pathways/pathway_detail_screen.dart';
 import 'package:ehsan_pathways/features/history/history_screen.dart';
@@ -300,6 +301,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           initialQuery: state.uri.queryParameters['q'] ?? '',
           initialSurah: int.tryParse(state.uri.queryParameters['surah'] ?? ''),
         ),
+      ),
+      // Ask Ehsan: free Q&A grounded in the Qur'an and hadith.
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/ask',
+        name: 'ask',
+        builder: (context, state) => AskScreen(initialQuestion: state.uri.queryParameters['q']),
       ),
       // Seek Guidance: private, free counselling.
       GoRoute(
