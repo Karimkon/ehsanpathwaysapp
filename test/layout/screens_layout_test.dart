@@ -14,6 +14,7 @@ import 'package:ehsan_pathways/features/islamic_tools/names/asma_ul_husna_screen
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_screen.dart';
 import 'package:ehsan_pathways/features/prayer/prayer_times_screen.dart';
 import 'package:ehsan_pathways/features/tasbih/tasbih_screen.dart';
+import 'package:ehsan_pathways/features/guidance/guidance_screen.dart';
 
 /// Renders the redesigned screens at the sizes App Review uses, in both
 /// themes, and fails on any layout overflow or build exception. The test font
@@ -39,6 +40,8 @@ void main() {
     "Asma'ul Husna": () => const AsmaUlHusnaScreen(),
     'Hijri Calendar': () => const HijriCalendarScreen(),
     'Tasbih': () => const TasbihScreen(),
+    'Seek Guidance': () => const GuidanceScreen(),
+    'Guidance form (signed out)': () => const GuidanceFormScreen(initialTopic: 'struggles'),
   };
 
   for (final screen in screens.entries) {

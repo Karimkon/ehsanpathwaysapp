@@ -18,6 +18,7 @@ import 'package:ehsan_pathways/features/auth/login_screen.dart';
 import 'package:ehsan_pathways/features/auth/register_screen.dart';
 import 'package:ehsan_pathways/features/bookmarks/bookmarks_screen.dart';
 import 'package:ehsan_pathways/features/notes/notes_screen.dart';
+import 'package:ehsan_pathways/features/guidance/guidance_screen.dart';
 import 'package:ehsan_pathways/features/pathways/pathways_screen.dart';
 import 'package:ehsan_pathways/features/pathways/pathway_detail_screen.dart';
 import 'package:ehsan_pathways/features/history/history_screen.dart';
@@ -288,6 +289,29 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/notes',
         name: 'notes',
         builder: (context, state) => const NotesScreen(),
+      ),
+      // Seek Guidance: private, free counselling.
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/guidance',
+        name: 'guidance',
+        builder: (context, state) => const GuidanceScreen(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'new',
+            name: 'guidance-new',
+            builder: (context, state) =>
+                GuidanceFormScreen(initialTopic: state.uri.queryParameters['topic']),
+          ),
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'r/:uuid',
+            name: 'guidance-thread',
+            builder: (context, state) =>
+                GuidanceThreadScreen(uuid: state.pathParameters['uuid']!),
+          ),
+        ],
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

@@ -94,6 +94,9 @@ class _HomeContent extends ConsumerWidget {
           // -- Quick Actions -------------------------------------------------
           SliverToBoxAdapter(child: _QuickActions(isDark: isDark)),
 
+          // -- Seek Guidance -------------------------------------------------
+          SliverToBoxAdapter(child: _GuidanceBanner(isDark: isDark)),
+
           // -- Daily Hadith --------------------------------------------------
           SliverToBoxAdapter(child: _DailyHadithCard(isDark: isDark)),
 
@@ -1148,6 +1151,66 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
 // ===========================================================================
 // Quick Actions Row
 // ===========================================================================
+
+/// Free, private counselling: the one place a person can bring a real problem.
+class _GuidanceBanner extends StatelessWidget {
+  const _GuidanceBanner({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Material(
+        borderRadius: BorderRadius.circular(18),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => context.push('/guidance'),
+          child: Ink(
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.emerald900, AppColors.emerald700],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.support_agent_rounded, color: AppColors.goldLight),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Seek Guidance',
+                          style: GoogleFonts.lora(
+                              fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white)),
+                      const SizedBox(height: 2),
+                      Text('Marriage, family, faith, struggles. Private and free.',
+                          style: TextStyle(
+                              fontSize: 13, color: Colors.white.withValues(alpha: 0.82))),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right_rounded, color: Colors.white),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _QuickActions extends StatelessWidget {
   const _QuickActions({required this.isDark});

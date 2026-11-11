@@ -1,0 +1,40 @@
+{
+    "data": {
+        "uuid": "6b9afe0c-e9ab-4f7d-9ded-63295839e0bf",
+        "reference": "G-KNAVK3",
+        "topic": "struggles",
+        "topic_label": "Personal struggles",
+        "response_mode": "discussion",
+        "status": "assigned",
+        "status_label": "With an adviser",
+        "concern": "I have felt hopeless since my father died last year.",
+        "awaiting_adviser": true,
+        "adviser_name": "Hassan",
+        "referral_note": "Please also see a grief counsellor.",
+        "created_at": "2026-11-11T17:21:36+00:00",
+        "last_activity_at": "2026-11-11T17:21:36+00:00",
+        "messages": [
+            {
+                "id": 1,
+                "from_adviser": true,
+                "author": "Hassan",
+                "body": "Inna lillahi wa inna ilayhi raji`un.",
+                "created_at": "2026-11-11T17:21:36+00:00"
+            },
+            {
+                "id": 2,
+                "from_adviser": true,
+                "author": "Hassan",
+                "body": "Please also see a grief counsellor.",
+                "created_at": "2026-11-11T17:21:36+00:00"
+            },
+            {
+                "id": 3,
+                "from_adviser": false,
+                "author": "You",
+                "body": "JazakAllah, one more question",
+                "created_at": "2026-11-11T17:21:36+00:00"
+            }
+        ]
+    }
+}
