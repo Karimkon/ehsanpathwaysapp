@@ -96,6 +96,7 @@ class _HomeContent extends ConsumerWidget {
 
           // -- Ask Ehsan + Seek Guidance -------------------------------------
           SliverToBoxAdapter(child: _AskBar(isDark: isDark)),
+          SliverToBoxAdapter(child: _DailyDeedBanner(isDark: isDark)),
           SliverToBoxAdapter(child: _GuidanceBanner(isDark: isDark)),
 
           // -- Daily Hadith --------------------------------------------------
@@ -1152,6 +1153,52 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
 // ===========================================================================
 // Quick Actions Row
 // ===========================================================================
+
+/// Today's two-minute deed: one verse, one dhikr, one du'a.
+class _DailyDeedBanner extends StatelessWidget {
+  const _DailyDeedBanner({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Material(
+        color: isDark ? AppColors.emerald950 : AppColors.emerald50,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => context.push('/daily'),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const Text('🌱', style: TextStyle(fontSize: 28)),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Today's two minutes",
+                          style: GoogleFonts.plusJakartaSans(
+                              fontSize: 15, fontWeight: FontWeight.w800, color: isDark ? Colors.white : AppColors.ink)),
+                      const SizedBox(height: 2),
+                      Text("One verse, one dhikr, one du'a",
+                          style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13, color: isDark ? AppColors.onDarkMuted : AppColors.muted)),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, color: isDark ? AppColors.emerald400 : AppColors.emerald700),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// A search-bar-like prompt into Ask Ehsan: the cheapest way in is to look
 /// like the thing people already know how to use.

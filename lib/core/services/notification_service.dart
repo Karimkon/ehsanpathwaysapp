@@ -318,6 +318,68 @@ class NotificationService {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
+  // Daily deed reminder, after a prayer the user chooses
+  // ─────────────────────────────────────────────────────────────────────────
+
+  static const _dailyDeedBaseId = 250; // 250–263: the next 14 days
+
+  /// Remind the user of the daily deed [minutesAfter] the chosen prayer, on
+  /// the user's own prayer times, for the next 14 days. A cue tied to an act
+  /// already done (the prayer) is what makes a habit stick. Pass `after: null`
+  /// to switch it off. Called again on every app start to roll the window on.
+  Future<void> scheduleDailyDeedReminders({
+    required Prayer? after,
+    required double? latitude,
+    required double? longitude,
+    required PrayerCalculationMethod method,
+    String madhab = 'shafi',
+    int minutesAfter = 20,
+  }) async {
+    for (var i = 0; i < 14; i++) {
+      await _plugin.cancel(_dailyDeedBaseId + i);
+    }
+    if (after == null || latitude == null || longitude == null) return;
+
+    final params = method.params;
+    if (madhab == 'hanafi') params.madhab = Madhab.hanafi;
+    final coords = Coordinates(latitude, longitude);
+    final now = DateTime.now();
+    final mode = await canScheduleExactAlarms()
+        ? AndroidScheduleMode.exactAllowWhileIdle
+        : AndroidScheduleMode.inexactAllowWhileIdle;
+
+    for (var day = 0; day < 14; day++) {
+      final times = PrayerTimes(coords, DateComponents.from(now.add(Duration(days: day))), params);
+      final prayerTime = times.timeForPrayer(after);
+      if (prayerTime == null) continue;
+      final at = prayerTime.toLocal().add(Duration(minutes: minutesAfter));
+      if (at.isBefore(now)) continue;
+
+      await _plugin.zonedSchedule(
+        _dailyDeedBaseId + day,
+        "Today's two minutes 🌱",
+        "One verse, one dhikr, one du'a. The most beloved deeds are the consistent ones.",
+        tz.TZDateTime.from(at, tz.local),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            _channelReminder,
+            'Learning Reminders',
+            channelDescription: 'Daily learning reminders',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+            icon: '@mipmap/ic_launcher',
+            color: AppColors.emerald700,
+          ),
+          iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: false),
+        ),
+        payload: '/daily',
+        androidScheduleMode: mode,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   // Jumah (Friday) reminder
   // ─────────────────────────────────────────────────────────────────────────
 

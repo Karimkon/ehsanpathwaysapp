@@ -56,6 +56,7 @@ import 'package:ehsan_pathways/features/islamic_tools/calendar/hijri_calendar_sc
 import 'package:ehsan_pathways/features/islamic_tools/names/asma_ul_husna_screen.dart';
 import 'package:ehsan_pathways/features/videos/category_videos_screen.dart';
 import 'package:ehsan_pathways/features/impact/impact_screen.dart';
+import 'package:ehsan_pathways/features/daily/daily_deed_screen.dart';
 
 /// Holds the initial route to open on cold start.
 /// Overridden in main() after async-checking SharedPreferences.
@@ -302,6 +303,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           initialQuery: state.uri.queryParameters['q'] ?? '',
           initialSurah: int.tryParse(state.uri.queryParameters['surah'] ?? ''),
         ),
+      ),
+      // The two-minute daily deed (reward report, phase 2).
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/daily',
+        name: 'daily',
+        builder: (context, state) => const DailyDeedScreen(),
       ),
       // My Impact: what the user's shares reached, and their intention.
       GoRoute(

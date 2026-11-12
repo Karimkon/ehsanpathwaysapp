@@ -15,6 +15,7 @@ import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/features/arabic/arabic_course_detail_screen.dart';
+import 'package:ehsan_pathways/features/daily/daily_deed_screen.dart';
 import 'package:ehsan_pathways/features/arabic/arabic_screen.dart';
 import 'package:ehsan_pathways/features/articles/article_detail_screen.dart';
 import 'package:ehsan_pathways/features/articles/articles_screen.dart';
@@ -99,6 +100,8 @@ final _routes = <(RegExp, String)>[
   (RegExp(r'^/hifz/progress$'), 'hifz_progress'),
   (RegExp(r'^/guidance$'), 'guidance_mine'),
   (RegExp(r'^/me/impact$'), 'impact'),
+  (RegExp(r'^/daily-deed$'), 'daily_deed'),
+  (RegExp(r'^/daily-deed/(verse|dhikr|dua)$'), 'daily_deed_mark'),
   (RegExp(r'^/auth/user$'), 'auth_user'),
 ];
 
@@ -234,6 +237,7 @@ void main() {
     ('History (none yet)', () => const HistoryScreen(), [], {'history': 'history_empty'}),
     ('Bookmarks', () => const BookmarksScreen(), ['Tawheed explained', 'Patience in Islam'], {}),
     ('Bookmarks (none yet)', () => const BookmarksScreen(), [], {'bookmarks': 'bookmarks_empty'}),
+    ('Daily deed', () => const DailyDeedScreen(), ['1 of 3 done today', 'Sahih al-Bukhari 6307', 'Remind me', 'After Fajr'], {}),
     ('Library', () => const LibraryScreen(), ['Sahih al-Bukhari'], {'library_books': 'live:library_books'}),
     ('Hadith books', () => const HadithBooksScreen(), ['Sahih al-Bukhari'], {}),
     ('Duas', () => const DuaScreen(), ['Morning Adhkar'], {}),
@@ -269,6 +273,17 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
     expect(api.sent, contains('POST /pathways/foundations/enroll'));
+    expect(find.textContaining('Could not'), findsNothing);
+  });
+
+  testWidgets("Ticking the daily du'a posts it with the phone's date", (tester) async {
+    final api = await _open(tester, const DailyDeedScreen());
+    await _scrollTo(tester, "I made this du'a");
+    await tester.tap(find.text("I made this du'a"));
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(api.sent, contains('POST /daily-deed/dua'));
     expect(find.textContaining('Could not'), findsNothing);
   });
 }
