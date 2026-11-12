@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 /// Seek Guidance: private, free counselling answered by trusted advisers.
 ///
@@ -50,11 +51,11 @@ class GuidanceMessage {
   });
 
   factory GuidanceMessage.fromJson(Map<String, dynamic> j) => GuidanceMessage(
-        id: (j['id'] as num?)?.toInt() ?? 0,
+        id: (jNum(j['id']))?.toInt() ?? 0,
         fromAdviser: j['from_adviser'] == true,
-        author: j['author'] as String? ?? '',
-        body: j['body'] as String? ?? '',
-        createdAt: DateTime.tryParse(j['created_at'] as String? ?? '')?.toLocal() ?? DateTime.now(),
+        author: jStr(j['author']) ?? '',
+        body: jStr(j['body']) ?? '',
+        createdAt: DateTime.tryParse(jStr(j['created_at']) ?? '')?.toLocal() ?? DateTime.now(),
       );
 }
 
@@ -99,18 +100,18 @@ class GuidanceRequest {
   }
 
   factory GuidanceRequest.fromJson(Map<String, dynamic> j) => GuidanceRequest(
-        uuid: j['uuid'] as String? ?? '',
-        reference: j['reference'] as String? ?? '',
-        topic: j['topic'] as String? ?? 'other',
-        topicLabel: j['topic_label'] as String? ?? '',
-        responseMode: j['response_mode'] as String? ?? 'written',
-        status: j['status'] as String? ?? 'new',
-        statusLabel: j['status_label'] as String? ?? '',
-        concern: j['concern'] as String? ?? '',
+        uuid: jStr(j['uuid']) ?? '',
+        reference: jStr(j['reference']) ?? '',
+        topic: jStr(j['topic']) ?? 'other',
+        topicLabel: jStr(j['topic_label']) ?? '',
+        responseMode: jStr(j['response_mode']) ?? 'written',
+        status: jStr(j['status']) ?? 'new',
+        statusLabel: jStr(j['status_label']) ?? '',
+        concern: jStr(j['concern']) ?? '',
         awaitingAdviser: j['awaiting_adviser'] == true,
-        adviserName: j['adviser_name'] as String?,
-        referralNote: j['referral_note'] as String?,
-        createdAt: DateTime.tryParse(j['created_at'] as String? ?? '')?.toLocal() ?? DateTime.now(),
+        adviserName: jStr(j['adviser_name']),
+        referralNote: jStr(j['referral_note']),
+        createdAt: DateTime.tryParse(jStr(j['created_at']) ?? '')?.toLocal() ?? DateTime.now(),
         messages: ((j['messages'] as List?) ?? const [])
             .whereType<Map<String, dynamic>>()
             .map(GuidanceMessage.fromJson)
@@ -128,7 +129,7 @@ String guidanceError(Object e) {
         final first = errors.values.first;
         if (first is List && first.isNotEmpty) return first.first.toString();
       }
-      if (data['message'] is String) return data['message'] as String;
+      if (data['message'] is String) return (jStr(data['message']) ?? '');
     }
     if (e.response?.statusCode == 429) return 'Too many requests. Please try again later.';
     if (e.response == null) return 'No connection. Check your internet and try again.';

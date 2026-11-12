@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/core/services/auth_service.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -39,7 +41,7 @@ String _timeAgo(String? raw) {
 // ---------------------------------------------------------------------------
 
 final _contentServiceProvider =
-    Provider<ContentService>((ref) => ContentService());
+    Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 // Identifies a comment set by type + id
 typedef _CommentKey = ({String type, int id});
@@ -108,9 +110,9 @@ class _CommentNotifier extends StateNotifier<_CommentState> {
       state = state.copyWith(
         comments: comments,
         isLoading: false,
-        currentPage: (meta['current_page'] as int?) ?? 1,
-        lastPage: (meta['last_page'] as int?) ?? 1,
-        total: (meta['total'] as int?) ?? comments.length,
+        currentPage: (jInt(meta['current_page'])) ?? 1,
+        lastPage: (jInt(meta['last_page'])) ?? 1,
+        total: (jInt(meta['total'])) ?? comments.length,
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -133,8 +135,8 @@ class _CommentNotifier extends StateNotifier<_CommentState> {
       state = state.copyWith(
         comments: [...state.comments, ...newComments],
         isLoadingMore: false,
-        currentPage: (meta['current_page'] as int?) ?? nextPage,
-        lastPage: (meta['last_page'] as int?) ?? state.lastPage,
+        currentPage: (jInt(meta['current_page'])) ?? nextPage,
+        lastPage: (jInt(meta['last_page'])) ?? state.lastPage,
       );
     } catch (e) {
       state = state.copyWith(isLoadingMore: false);
@@ -179,7 +181,7 @@ class _CommentNotifier extends StateNotifier<_CommentState> {
       await _service.deleteComment(commentId, token);
       state = state.copyWith(
         comments: state.comments.where((c) {
-          final id = c['id'] as int?;
+          final id = jInt(c['id']);
           return id != commentId;
         }).toList(),
         total: (state.total - 1).clamp(0, 9999),
@@ -553,9 +555,9 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
           Column(
             children: [
               ...commentState.comments.map((comment) {
-                final commentId = comment['id'] as int?;
+                final commentId = jInt(comment['id']);
                 final isOwn = currentUserId != null &&
-                    (comment['user_id'] as int?) == currentUserId;
+                    (jInt(comment['user_id'])) == currentUserId;
                 final replies =
                     comment['replies'] as List<dynamic>? ?? [];
 
@@ -582,9 +584,9 @@ class _CommentSectionState extends ConsumerState<CommentSection> {
                     // Replies (indented)
                     ...replies.map((r) {
                       final reply = r as Map<String, dynamic>;
-                      final replyId = reply['id'] as int?;
+                      final replyId = jInt(reply['id']);
                       final isOwnReply = currentUserId != null &&
-                          (reply['user_id'] as int?) == currentUserId;
+                          (jInt(reply['user_id'])) == currentUserId;
                       return _CommentTile(
                         comment: reply,
                         isDark: isDark,
@@ -657,9 +659,9 @@ class _CommentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = comment['user'] as Map<String, dynamic>?;
-    final authorName = user?['name'] as String? ?? 'Anonymous';
-    final body = comment['body'] as String? ?? '';
-    final createdAt = comment['created_at'] as String?;
+    final authorName = jStr(user?['name']) ?? 'Anonymous';
+    final body = jStr(comment['body']) ?? '';
+    final createdAt = jStr(comment['created_at']);
     final initial =
         authorName.isNotEmpty ? authorName[0].toUpperCase() : 'A';
 

@@ -12,6 +12,7 @@ import 'package:ehsan_pathways/features/prayer/prayer_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/reading_width.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ehsan_pathways/config/theme.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 const _green = AppColors.emerald700;
 const _greenDark = AppColors.emerald800;
@@ -56,14 +57,14 @@ class _PrayerTimesScreenState extends ConsumerState<PrayerTimesScreen> {
 
     final settings = await PrayerTimesService.loadSettings();
     await PrayerTimesService.saveSettings(
-      enabled: settings['enabled'] as bool? ?? false,
+      enabled: jBool(settings['enabled']) ?? false,
       method: selected,
       prayerToggles: {
-        Prayer.fajr: settings['notify_fajr'] as bool? ?? true,
-        Prayer.dhuhr: settings['notify_dhuhr'] as bool? ?? true,
-        Prayer.asr: settings['notify_asr'] as bool? ?? true,
-        Prayer.maghrib: settings['notify_maghrib'] as bool? ?? true,
-        Prayer.isha: settings['notify_isha'] as bool? ?? true,
+        Prayer.fajr: jBool(settings['notify_fajr']) ?? true,
+        Prayer.dhuhr: jBool(settings['notify_dhuhr']) ?? true,
+        Prayer.asr: jBool(settings['notify_asr']) ?? true,
+        Prayer.maghrib: jBool(settings['notify_maghrib']) ?? true,
+        Prayer.isha: jBool(settings['notify_isha']) ?? true,
       },
       lat: data.latitude,
       lng: data.longitude,
@@ -116,14 +117,14 @@ class _PrayerTimesScreenState extends ConsumerState<PrayerTimesScreen> {
     // Adopt the region's customary method and Asr school.
     final settings = await PrayerTimesService.loadSettings();
     await PrayerTimesService.saveSettings(
-      enabled: settings['enabled'] as bool? ?? false,
+      enabled: jBool(settings['enabled']) ?? false,
       method: city.method,
       prayerToggles: {
-        Prayer.fajr: settings['notify_fajr'] as bool? ?? true,
-        Prayer.dhuhr: settings['notify_dhuhr'] as bool? ?? true,
-        Prayer.asr: settings['notify_asr'] as bool? ?? true,
-        Prayer.maghrib: settings['notify_maghrib'] as bool? ?? true,
-        Prayer.isha: settings['notify_isha'] as bool? ?? true,
+        Prayer.fajr: jBool(settings['notify_fajr']) ?? true,
+        Prayer.dhuhr: jBool(settings['notify_dhuhr']) ?? true,
+        Prayer.asr: jBool(settings['notify_asr']) ?? true,
+        Prayer.maghrib: jBool(settings['notify_maghrib']) ?? true,
+        Prayer.isha: jBool(settings['notify_isha']) ?? true,
       },
     );
     await PrayerTimesService.saveMadhab(city.hanafi ? 'hanafi' : 'shafi');

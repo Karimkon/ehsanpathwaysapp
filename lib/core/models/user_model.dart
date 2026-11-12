@@ -1,3 +1,4 @@
+import 'package:ehsan_pathways/core/json_read.dart';
 /// Represents the authenticated user returned by the API.
 class UserModel {
   final int id;
@@ -16,12 +17,12 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      avatar: json['avatar'] as String?,
+      id: (jInt(json['id']) ?? 0),
+      name: (jStr(json['name']) ?? ''),
+      email: (jStr(json['email']) ?? ''),
+      avatar: jStr(json['avatar']),
       createdAt: json['created_at'] != null
-          ? DateTime.tryParse(json['created_at'] as String)
+          ? DateTime.tryParse((jStr(json['created_at']) ?? ''))
           : null,
     );
   }

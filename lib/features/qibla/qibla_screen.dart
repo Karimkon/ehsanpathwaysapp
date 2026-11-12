@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
 import 'package:ehsan_pathways/features/prayer/prayer_times_screen.dart';
 import 'package:ehsan_pathways/config/theme.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 const _green = AppColors.emerald700;
 const _greenDark = AppColors.emerald800;
@@ -48,9 +49,9 @@ class _QiblaScreenState extends State<QiblaScreen> {
 
     // Prefer a saved location; otherwise request GPS.
     final settings = await PrayerTimesService.loadSettings();
-    double? lat = settings['lat'] as double?;
-    double? lng = settings['lng'] as double?;
-    String label = settings['city'] as String? ?? '';
+    double? lat = jDouble(settings['lat']);
+    double? lng = jDouble(settings['lng']);
+    String label = jStr(settings['city']) ?? '';
 
     if (lat == null || lng == null) {
       final pos = await PrayerTimesService.getCurrentPosition()

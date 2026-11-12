@@ -5,17 +5,19 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Providers
 // ---------------------------------------------------------------------------
 
-final _contentServiceProvider = Provider<ContentService>((ref) => ContentService());
+final _contentServiceProvider = Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 class _ArabicFilter {
   final int page;
@@ -266,7 +268,7 @@ class _CourseCard extends StatelessWidget {
   final VoidCallback onTap;
 
   Color get _levelColor {
-    switch ((course['level'] as String? ?? '').toLowerCase()) {
+    switch ((jStr(course['level']) ?? '').toLowerCase()) {
       case 'beginner':
         return AppColors.emerald700;
       case 'elementary':
@@ -279,7 +281,7 @@ class _CourseCard extends StatelessWidget {
   }
 
   BadgeVariant get _levelVariant {
-    switch ((course['level'] as String? ?? '').toLowerCase()) {
+    switch ((jStr(course['level']) ?? '').toLowerCase()) {
       case 'beginner':
         return BadgeVariant.green;
       case 'elementary':
@@ -293,10 +295,10 @@ class _CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = course['title'] as String? ?? '';
-    final description = course['description'] as String? ?? '';
-    final level = course['level'] as String? ?? '';
-    final lessonCount = course['lesson_count'] as int? ?? 0;
+    final title = jStr(course['title']) ?? '';
+    final description = jStr(course['description']) ?? '';
+    final level = jStr(course['level']) ?? '';
+    final lessonCount = jInt(course['lesson_count']) ?? 0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),

@@ -3,13 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:ehsan_pathways/config/theme.dart';
+import 'package:ehsan_pathways/core/providers/auth_provider.dart';
+import 'package:ehsan_pathways/core/services/guided_share.dart';
 import 'package:ehsan_pathways/features/pathways/pathway_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
-import 'package:ehsan_pathways/config/theme.dart';
 
 const Color _green = AppColors.emerald700;
-const Color _gold = AppColors.gold;
 
+/// A pathway: its stages, each stage's lessons, and the user's progress.
+///
+/// Lessons open the real video, article or podcast. A signed-in user starts
+/// the pathway and marks lessons done; progress is stored on the server, so
+/// it is the same on the website and survives a reinstall.
 class PathwayDetailScreen extends ConsumerWidget {
   const PathwayDetailScreen({super.key, required this.slug});
 
@@ -21,132 +27,170 @@ class PathwayDetailScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.slate : AppColors.cream,
+      backgroundColor: isDark ? AppColors.slate : AppColors.cream,
       body: detailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => EmptyState(
-          icon: Icons.error_outline_rounded,
-          title: 'Failed to load pathway',
-          subtitle: error.toString(),
-          actionLabel: 'Retry',
-          onAction: () => ref.invalidate(pathwayDetailProvider(slug)),
+        error: (error, _) => SafeArea(
+          child: EmptyState(
+            icon: Icons.wifi_off_rounded,
+            title: 'Could not open this pathway',
+            subtitle: 'Please check your connection and try again.',
+            actionLabel: 'Retry',
+            onAction: () => ref.invalidate(pathwayDetailProvider(slug)),
+          ),
         ),
-        data: (detail) => _PathwayDetailBody(detail: detail, isDark: isDark),
+        data: (detail) => _Body(slug: slug, detail: detail, isDark: isDark),
       ),
     );
   }
 }
 
-class _PathwayDetailBody extends StatelessWidget {
-  const _PathwayDetailBody({required this.detail, required this.isDark});
+class _Body extends ConsumerStatefulWidget {
+  const _Body({required this.slug, required this.detail, required this.isDark});
 
+  final String slug;
   final PathwayDetail detail;
   final bool isDark;
 
-  Color get _levelColor {
-    switch (detail.pathway.difficultyLevel?.toLowerCase()) {
-      case 'beginner':
-        return AppColors.emerald500;
-      case 'intermediate':
-        return AppColors.sapphire;
-      case 'advanced':
-        return AppColors.amethyst;
-      default:
-        return _green;
+  @override
+  ConsumerState<_Body> createState() => _BodyState();
+}
+
+class _BodyState extends ConsumerState<_Body> {
+  bool _busy = false;
+  int? _completing;
+
+  Color get _levelColor => switch (widget.detail.pathway.difficultyLevel?.toLowerCase()) {
+        'intermediate' => AppColors.sapphire,
+        'advanced' => AppColors.amethyst,
+        _ => AppColors.emerald500,
+      };
+
+  bool get _signedIn => ref.read(authProvider).status == AuthStatus.authenticated;
+
+  Future<void> _start() async {
+    if (!_signedIn) {
+      context.push('/login');
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await ref.read(pathwayActionsProvider).enroll(widget.slug);
+    } catch (_) {
+      _toast('Could not start the pathway. Please try again.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
   }
 
+  Future<void> _complete(PathwayLesson lesson) async {
+    setState(() => _completing = lesson.id);
+    try {
+      await ref.read(pathwayActionsProvider).complete(widget.slug, lesson.id);
+    } catch (_) {
+      _toast('Could not save. Please try again.');
+    } finally {
+      if (mounted) setState(() => _completing = null);
+    }
+  }
+
+  void _open(PathwayLesson lesson) {
+    final route = lesson.route;
+    if (route != null) {
+      context.push(route);
+    } else {
+      _toast('Open this reading on ehsanpathways.com.');
+    }
+  }
+
+  void _toast(String m) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+
   @override
   Widget build(BuildContext context) {
+    final detail = widget.detail;
     final pathway = detail.pathway;
+    final d = widget.isDark;
+    final ink = d ? Colors.white : AppColors.ink;
+    final muted = d ? AppColors.onDarkMuted : AppColors.muted;
+    final lessonCount = detail.stages.fold<int>(0, (n, s) => n + s.lessons.length);
+    final hours = pathway.estimatedHours;
 
     return CustomScrollView(
       slivers: [
-        // -- Hero header --
         SliverAppBar(
-          expandedHeight: 220,
+          expandedHeight: 230,
           pinned: true,
-          backgroundColor: isDark ? AppColors.slate : Colors.white,
+          backgroundColor: d ? AppColors.slate : Colors.white,
           leading: IconButton(
             icon: Container(
               width: 36,
               height: 36,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black.withValues(alpha: 0.35),
-              ),
-              child: const Icon(Icons.arrow_back_rounded,
-                  color: Colors.white, size: 20),
+              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withValues(alpha: 0.35)),
+              child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
             ),
             onPressed: () => context.pop(),
           ),
+          actions: [
+            IconButton(
+              tooltip: 'Share this pathway',
+              icon: const Icon(Icons.ios_share_rounded, color: Colors.white),
+              onPressed: () => GuidedShare.share(
+                context,
+                type: 'pathway',
+                key: widget.slug,
+                fallbackPath: '/pathways/${widget.slug}',
+                subject: pathway.title,
+                text: (url) => 'Learn "${pathway.title}" with me on Ehsan Pathways\n$url',
+              ),
+            ),
+          ],
           flexibleSpace: FlexibleSpaceBar(
-            background: Container(
+            background: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    _levelColor.withValues(alpha: 0.9),
-                    _levelColor.withValues(alpha: 0.6),
-                    AppColors.emerald950,
-                  ],
+                  colors: [_levelColor.withValues(alpha: 0.9), _levelColor.withValues(alpha: 0.6), AppColors.emerald950],
                 ),
               ),
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 50, 24, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      // Level badge
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          pathway.levelLabel,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(24, 56, 24, 20),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
                           ),
+                          child: Text(pathway.levelLabel,
+                              style: GoogleFonts.plusJakartaSans(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      Text(
-                        pathway.title,
-                        style: GoogleFonts.lora(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          height: 1.2,
+                        const SizedBox(height: 10),
+                        Text(
+                          pathway.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.lora(fontSize: 26, fontWeight: FontWeight.w700, color: Colors.white, height: 1.2),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Stats row
-                      Row(
-                        children: [
-                          _HeaderStat(
-                            icon: Icons.layers_rounded,
-                            label: '${pathway.totalItems} items',
-                          ),
-                          const SizedBox(width: 16),
-                          if (pathway.estimatedHours != null)
-                            _HeaderStat(
-                              icon: Icons.schedule_rounded,
-                              label: '~${pathway.estimatedHours}h',
-                            ),
-                        ],
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 16,
+                          runSpacing: 4,
+                          children: [
+                            _HeaderStat(icon: Icons.layers_rounded, label: '${detail.stages.length} ${detail.stages.length == 1 ? 'stage' : 'stages'}'),
+                            _HeaderStat(icon: Icons.play_lesson_rounded, label: '$lessonCount ${lessonCount == 1 ? 'lesson' : 'lessons'}'),
+                            if (hours != null && hours > 0)
+                              _HeaderStat(icon: Icons.schedule_rounded, label: '~${hours == hours.roundToDouble() ? hours.toInt() : hours}h'),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -154,164 +198,75 @@ class _PathwayDetailBody extends StatelessWidget {
           ),
         ),
 
-        // -- Progress bar --
-        if (detail.isEnrolled)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.slateCard : Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.trending_up_rounded,
-                            size: 18, color: _green),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Your Progress',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: isDark
-                                ? Colors.white
-                                : AppColors.ink,
-                          ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          '${detail.progressPercentage.toStringAsFixed(0)}%',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            color: _green,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: LinearProgressIndicator(
-                        value: detail.progressPercentage / 100,
-                        backgroundColor: isDark
-                            ? Colors.white.withValues(alpha: 0.08)
-                            : AppColors.sand,
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(_green),
-                        minHeight: 8,
+        // Start, or progress.
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: detail.isEnrolled
+                ? _ProgressCard(detail: detail, total: lessonCount, isDark: d)
+                : SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: _busy || lessonCount == 0 ? null : _start,
+                      icon: _busy
+                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : const Icon(Icons.play_arrow_rounded),
+                      label: Text(lessonCount == 0 ? 'Lessons coming soon' : 'Start this pathway'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: _green,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '${detail.completedItems} of ${pathway.totalItems} completed',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        color: isDark
-                            ? AppColors.onDarkSubtle
-                            : AppColors.subtle,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
           ),
+        ),
 
-        // -- Description --
-        if (pathway.description != null && pathway.description!.isNotEmpty)
+        if (pathway.description != null && pathway.description!.trim().isNotEmpty && pathway.description != pathway.title)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'About',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color:
-                          isDark ? Colors.white : AppColors.ink,
-                    ),
-                  ),
+                  Text('About', style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.w800, color: ink)),
                   const SizedBox(height: 8),
-                  Text(
-                    pathway.description!,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      color: isDark
-                          ? AppColors.onDarkMuted
-                          : AppColors.muted,
-                      height: 1.65,
-                    ),
-                  ),
+                  Text(pathway.description!, style: GoogleFonts.plusJakartaSans(fontSize: 14, color: muted, height: 1.65)),
                 ],
               ),
             ),
           ),
 
-        // -- Stages --
-        if (detail.stages.isNotEmpty) ...[
-          SliverToBoxAdapter(
+        if (detail.stages.isEmpty || lessonCount == 0)
+          const SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-              child: Text(
-                'Stages',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : AppColors.ink,
-                ),
-              ),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-            sliver: SliverList.builder(
-              itemCount: detail.stages.length,
-              itemBuilder: (context, index) {
-                final stage = detail.stages[index];
-                final isCompleted =
-                    index < detail.completedItems;
-                final isCurrent = index == detail.completedItems;
-
-                return _StageItem(
-                  stage: stage,
-                  index: index,
-                  isLast: index == detail.stages.length - 1,
-                  isCompleted: isCompleted,
-                  isCurrent: isCurrent,
-                  isDark: isDark,
-                  levelColor: _levelColor,
-                );
-              },
-            ),
-          ),
-        ],
-
-        if (detail.stages.isEmpty)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(40),
+              padding: EdgeInsets.all(32),
               child: EmptyState(
                 icon: Icons.layers_outlined,
-                title: 'No stages defined',
-                subtitle: 'This pathway is still being set up.',
+                title: 'Lessons are being prepared',
+                subtitle: 'This pathway has no lessons yet. Check back soon, in sha Allah.',
                 compact: true,
               ),
+            ),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
+            sliver: SliverList.builder(
+              itemCount: detail.stages.length,
+              itemBuilder: (context, i) {
+                final stage = detail.stages[i];
+                return _StageCard(
+                  stage: stage,
+                  number: i + 1,
+                  isDark: d,
+                  accent: _levelColor,
+                  enrolled: detail.isEnrolled,
+                  completing: _completing,
+                  onOpen: _open,
+                  onComplete: _complete,
+                );
+              },
             ),
           ),
       ],
@@ -319,9 +274,215 @@ class _PathwayDetailBody extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Header stat chip
-// ---------------------------------------------------------------------------
+class _ProgressCard extends StatelessWidget {
+  const _ProgressCard({required this.detail, required this.total, required this.isDark});
+
+  final PathwayDetail detail;
+  final int total;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final pct = detail.progressPercentage.clamp(0, 100).toDouble();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.slateCard : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.trending_up_rounded, size: 18, color: _green),
+              const SizedBox(width: 8),
+              Text(pct >= 100 ? 'Completed, alhamdulillah' : 'Your progress',
+                  style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w700, color: isDark ? Colors.white : AppColors.ink)),
+              const Spacer(),
+              Text('${pct.toStringAsFixed(0)}%',
+                  style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.w800, color: isDark ? AppColors.emerald400 : _green)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: pct / 100,
+              minHeight: 8,
+              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.sand,
+              valueColor: const AlwaysStoppedAnimation<Color>(_green),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text('${detail.completedItems} of $total lessons done',
+              style: GoogleFonts.plusJakartaSans(fontSize: 12, color: isDark ? AppColors.onDarkSubtle : AppColors.subtle)),
+        ],
+      ),
+    );
+  }
+}
+
+class _StageCard extends StatelessWidget {
+  const _StageCard({
+    required this.stage,
+    required this.number,
+    required this.isDark,
+    required this.accent,
+    required this.enrolled,
+    required this.completing,
+    required this.onOpen,
+    required this.onComplete,
+  });
+
+  final PathwayStage stage;
+  final int number;
+  final bool isDark;
+  final Color accent;
+  final bool enrolled;
+  final int? completing;
+  final void Function(PathwayLesson) onOpen;
+  final void Function(PathwayLesson) onComplete;
+
+  @override
+  Widget build(BuildContext context) {
+    final ink = isDark ? Colors.white : AppColors.ink;
+    final muted = isDark ? AppColors.onDarkMuted : AppColors.muted;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.slateCard : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: stage.isComplete ? _green.withValues(alpha: 0.4) : (isDark ? AppColors.slateLine : AppColors.sand)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 14,
+                  backgroundColor: stage.isComplete ? _green : accent.withValues(alpha: 0.15),
+                  child: stage.isComplete
+                      ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+                      : Text('$number', style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w800, color: accent)),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(stage.title, style: GoogleFonts.plusJakartaSans(fontSize: 15, fontWeight: FontWeight.w800, color: ink)),
+                      if (stage.description != null && stage.description!.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(stage.description!, style: GoogleFonts.plusJakartaSans(fontSize: 13, height: 1.4, color: muted)),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (stage.lessons.isEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(54, 4, 14, 14),
+              child: Text('Lessons for this stage are coming soon.', style: GoogleFonts.plusJakartaSans(fontSize: 13, color: muted)),
+            )
+          else
+            ...stage.lessons.map((lesson) => _LessonRow(
+                  lesson: lesson,
+                  isDark: isDark,
+                  enrolled: enrolled,
+                  saving: completing == lesson.id,
+                  onOpen: () => onOpen(lesson),
+                  onComplete: () => onComplete(lesson),
+                )),
+          const SizedBox(height: 6),
+        ],
+      ),
+    );
+  }
+}
+
+class _LessonRow extends StatelessWidget {
+  const _LessonRow({
+    required this.lesson,
+    required this.isDark,
+    required this.enrolled,
+    required this.saving,
+    required this.onOpen,
+    required this.onComplete,
+  });
+
+  final PathwayLesson lesson;
+  final bool isDark;
+  final bool enrolled;
+  final bool saving;
+  final VoidCallback onOpen;
+  final VoidCallback onComplete;
+
+  IconData get _icon => switch (lesson.type) {
+        'video' => Icons.play_circle_outline_rounded,
+        'article' => Icons.article_outlined,
+        'podcast' => Icons.headphones_rounded,
+        'khutbah' => Icons.mic_none_rounded,
+        _ => Icons.menu_book_outlined,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final ink = isDark ? Colors.white : AppColors.ink;
+    final muted = isDark ? AppColors.onDarkMuted : AppColors.muted;
+
+    return InkWell(
+      onTap: onOpen,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(54, 8, 6, 8),
+        child: Row(
+          children: [
+            Icon(_icon, size: 20, color: muted),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(lesson.title,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: lesson.completed ? muted : ink,
+                      )),
+                  Text(
+                    [lesson.typeLabel, if (lesson.minutes != null) '${lesson.minutes} min'].join(' · '),
+                    style: GoogleFonts.plusJakartaSans(fontSize: 12, color: muted),
+                  ),
+                ],
+              ),
+            ),
+            if (enrolled)
+              saving
+                  ? const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
+                    )
+                  : IconButton(
+                      tooltip: lesson.completed ? 'Done' : 'Mark as done',
+                      onPressed: lesson.completed ? null : onComplete,
+                      icon: Icon(
+                        lesson.completed ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                        color: lesson.completed ? _green : muted,
+                      ),
+                    ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class _HeaderStat extends StatelessWidget {
   const _HeaderStat({required this.icon, required this.label});
@@ -336,192 +497,9 @@ class _HeaderStat extends StatelessWidget {
       children: [
         Icon(icon, size: 14, color: Colors.white70),
         const SizedBox(width: 4),
-        Text(
-          label,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Colors.white.withValues(alpha: 0.85),
-          ),
-        ),
+        Text(label,
+            style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white.withValues(alpha: 0.85))),
       ],
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Stage timeline item
-// ---------------------------------------------------------------------------
-
-class _StageItem extends StatelessWidget {
-  const _StageItem({
-    required this.stage,
-    required this.index,
-    required this.isLast,
-    required this.isCompleted,
-    required this.isCurrent,
-    required this.isDark,
-    required this.levelColor,
-  });
-
-  final PathwayStage stage;
-  final int index;
-  final bool isLast;
-  final bool isCompleted;
-  final bool isCurrent;
-  final bool isDark;
-  final Color levelColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Timeline indicator
-          SizedBox(
-            width: 40,
-            child: Column(
-              children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isCompleted
-                        ? _green
-                        : isCurrent
-                            ? levelColor
-                            : isDark
-                                ? AppColors.slateRaised
-                                : AppColors.sand,
-                    border: isCurrent
-                        ? Border.all(color: levelColor, width: 2)
-                        : null,
-                  ),
-                  child: Center(
-                    child: isCompleted
-                        ? const Icon(Icons.check_rounded,
-                            size: 16, color: Colors.white)
-                        : Text(
-                            '${index + 1}',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: isCurrent
-                                  ? Colors.white
-                                  : isDark
-                                      ? Colors.white38
-                                      : AppColors.subtle,
-                            ),
-                          ),
-                  ),
-                ),
-                if (!isLast)
-                  Expanded(
-                    child: Container(
-                      width: 2,
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      color: isCompleted
-                          ? _green.withValues(alpha: 0.3)
-                          : isDark
-                              ? Colors.white.withValues(alpha: 0.06)
-                              : AppColors.sand,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Content
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.only(bottom: isLast ? 0 : 12),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: isCurrent
-                    ? levelColor.withValues(alpha: isDark ? 0.1 : 0.05)
-                    : isDark
-                        ? AppColors.slateCard
-                        : Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: isCurrent
-                    ? Border.all(
-                        color: levelColor.withValues(alpha: 0.3))
-                    : null,
-                boxShadow: isCurrent
-                    ? null
-                    : [
-                        BoxShadow(
-                          color: Colors.black
-                              .withValues(alpha: isDark ? 0.15 : 0.03),
-                          blurRadius: 8,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          stage.title,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: isDark
-                                ? Colors.white
-                                : AppColors.ink,
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
-                        ),
-                      ),
-                      if (stage.contentType.isNotEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: levelColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            stage.contentType,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: levelColor,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  if (stage.description != null &&
-                      stage.description!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      stage.description!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        color: isDark
-                            ? AppColors.onDarkMuted
-                            : AppColors.muted,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

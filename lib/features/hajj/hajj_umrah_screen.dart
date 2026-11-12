@@ -3,18 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Provider
 // ---------------------------------------------------------------------------
 
 final _contentServiceProvider =
-    Provider<ContentService>((ref) => ContentService());
+    Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 final hajjGuidesProvider =
     FutureProvider<Map<String, dynamic>>((ref) async {
@@ -167,7 +169,7 @@ class _HajjUmrahScreenState extends ConsumerState<HajjUmrahScreen>
             final allGuides = (data['data'] as List<dynamic>? ?? [])
                 .cast<Map<String, dynamic>>();
             final filtered = allGuides.where((g) {
-              final type = (g['guide_type'] as String? ?? '').toLowerCase();
+              final type = (jStr(g['guide_type']) ?? '').toLowerCase();
               return _selectedTab == 0
                   ? type == 'hajj'
                   : type == 'umrah';
@@ -220,11 +222,11 @@ class _GuideCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = guide['title'] as String? ?? '';
-    final description = guide['description'] as String? ?? '';
-    final guideType = guide['guide_type'] as String? ?? '';
-    final sectionCount = guide['section_count'] as int? ?? 0;
-    final year = guide['year'] as int?;
+    final title = jStr(guide['title']) ?? '';
+    final description = jStr(guide['description']) ?? '';
+    final guideType = jStr(guide['guide_type']) ?? '';
+    final sectionCount = jInt(guide['section_count']) ?? 0;
+    final year = jInt(guide['year']);
 
     final isHajj = guideType.toLowerCase() == 'hajj';
     final accentColor =

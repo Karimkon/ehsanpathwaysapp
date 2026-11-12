@@ -1,3 +1,4 @@
+import 'package:ehsan_pathways/core/json_read.dart';
 /// Holds user engagement statistics fetched from /user/stats.
 class UserStatsModel {
   final int videosWatched;
@@ -14,10 +15,10 @@ class UserStatsModel {
 
   factory UserStatsModel.fromJson(Map<String, dynamic> json) {
     return UserStatsModel(
-      videosWatched: json['videos_watched'] as int? ?? 0,
-      bookmarks: json['bookmarks'] as int? ?? 0,
-      notes: json['notes'] as int? ?? 0,
-      pathwaysEnrolled: json['pathways_enrolled'] as int? ?? 0,
+      videosWatched: jInt(json['videos_watched']) ?? 0,
+      bookmarks: jInt(json['bookmarks']) ?? 0,
+      notes: jInt(json['notes']) ?? 0,
+      pathwaysEnrolled: jInt(json['pathways_enrolled']) ?? 0,
     );
   }
 

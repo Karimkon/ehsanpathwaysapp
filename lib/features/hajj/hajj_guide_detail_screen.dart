@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Provider
 // ---------------------------------------------------------------------------
 
 final _contentServiceProvider =
-    Provider<ContentService>((ref) => ContentService());
+    Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 final hajjGuideDetailProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, slug) async {
@@ -90,8 +92,8 @@ class _GuideDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = guide['title'] as String? ?? '';
-    final guideType = guide['guide_type'] as String? ?? '';
+    final title = jStr(guide['title']) ?? '';
+    final guideType = jStr(guide['guide_type']) ?? '';
     final sections = guide['sections'] as List<dynamic>? ?? [];
     final isHajj = guideType.toLowerCase() == 'hajj';
     final accentColor =
@@ -220,10 +222,10 @@ class _SectionExpansionTileState extends State<_SectionExpansionTile> {
   @override
   Widget build(BuildContext context) {
     final sectionTitle =
-        widget.section['title'] as String? ?? 'Section ${widget.index + 1}';
-    final content = widget.section['content'] as String? ?? '';
+        jStr(widget.section['title']) ?? 'Section ${widget.index + 1}';
+    final content = jStr(widget.section['content']) ?? '';
     final sortOrder =
-        widget.section['sort_order'] as int? ?? (widget.index + 1);
+        jInt(widget.section['sort_order']) ?? (widget.index + 1);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),

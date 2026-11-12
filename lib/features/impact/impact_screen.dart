@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 Color _card(bool d) => d ? AppColors.slateCard : AppColors.card;
 Color _line(bool d) => d ? AppColors.slateLine : AppColors.sand;
@@ -23,10 +24,10 @@ class SharedItem {
   });
 
   factory SharedItem.fromJson(Map<String, dynamic> j) => SharedItem(
-        type: j['type'] as String? ?? '',
-        title: j['title'] as String? ?? '',
-        reached: (j['reached'] as num?)?.toInt() ?? 0,
-        started: (j['started'] as num?)?.toInt() ?? 0,
+        type: jStr(j['type']) ?? '',
+        title: jStr(j['title']) ?? '',
+        reached: (jNum(j['reached']))?.toInt() ?? 0,
+        started: (jNum(j['started']))?.toInt() ?? 0,
       );
 
   final String type;
@@ -64,14 +65,14 @@ class Impact {
     final intentions = (j['intentions'] as List? ?? const []).cast<Map<String, dynamic>>();
     final general = intentions.where((i) => i['context_type'] == 'general');
     return Impact(
-      reached: (j['reached'] as num?)?.toInt() ?? 0,
-      started: (j['started'] as num?)?.toInt() ?? 0,
-      shared: (j['shared'] as num?)?.toInt() ?? 0,
+      reached: (jNum(j['reached']))?.toInt() ?? 0,
+      started: (jNum(j['started']))?.toInt() ?? 0,
+      shared: (jNum(j['shared']))?.toInt() ?? 0,
       items: (j['links'] as List? ?? const [])
           .cast<Map<String, dynamic>>()
           .map(SharedItem.fromJson)
           .toList(),
-      intention: general.isEmpty ? null : general.first['text'] as String?,
+      intention: general.isEmpty ? null : jStr(general.first['text']),
       presets: (j['presets'] as List? ?? const []).cast<String>(),
     );
   }

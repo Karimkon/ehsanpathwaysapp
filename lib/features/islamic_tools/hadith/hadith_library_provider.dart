@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 /// One of the ten collections.
 class HadithBook {
@@ -25,13 +26,13 @@ class HadithBook {
   final int chapterCount;
 
   factory HadithBook.fromJson(Map<String, dynamic> j) => HadithBook(
-    slug: j['slug'] as String,
-    name: j['name'] as String? ?? '',
-    arabicName: j['arabic_name'] as String?,
-    compiler: j['compiler'] as String?,
-    description: j['description'] as String?,
-    hadithCount: (j['hadith_count'] as num?)?.toInt() ?? 0,
-    chapterCount: (j['chapter_count'] as num?)?.toInt() ?? 0,
+    slug: (jStr(j['slug']) ?? ''),
+    name: jStr(j['name']) ?? '',
+    arabicName: jStr(j['arabic_name']),
+    compiler: jStr(j['compiler']),
+    description: jStr(j['description']),
+    hadithCount: (jNum(j['hadith_count']))?.toInt() ?? 0,
+    chapterCount: (jNum(j['chapter_count']))?.toInt() ?? 0,
   );
 }
 
@@ -49,10 +50,10 @@ class HadithChapter {
   final int hadithCount;
 
   factory HadithChapter.fromJson(Map<String, dynamic> j) => HadithChapter(
-    number: (j['number'] as num).toInt(),
-    name: j['name'] as String?,
-    arabicName: j['arabic_name'] as String?,
-    hadithCount: (j['hadith_count'] as num?)?.toInt() ?? 0,
+    number: ((jNum(j['number']) ?? 0)).toInt(),
+    name: jStr(j['name']),
+    arabicName: jStr(j['arabic_name']),
+    hadithCount: (jNum(j['hadith_count']))?.toInt() ?? 0,
   );
 }
 
@@ -87,8 +88,8 @@ class Hadith {
       // accepted too so either shape deserialises.
       arabicText: (j['arabic'] ?? j['arabic_text']) as String?,
       englishText: (j['english'] ?? j['english_text']) as String?,
-      grade: j['grade'] as String?,
-      gradeSource: j['grade_source'] as String?,
+      grade: jStr(j['grade']),
+      gradeSource: jStr(j['grade_source']),
       chapterName: (chapter?['name'] ?? j['chapter_name']) as String?,
       bookName: (book?['name'] ?? j['book_name']) as String?,
       bookSlug: (book?['slug'] ?? j['book_slug']) as String?,
@@ -215,10 +216,10 @@ class HadithListNotifier extends StateNotifier<AsyncValue<HadithPage>> {
       items: (body['data'] as List)
           .map((e) => Hadith.fromJson(e as Map<String, dynamic>))
           .toList(growable: false),
-      currentPage: (meta['current_page'] as num).toInt(),
-      lastPage: (meta['last_page'] as num).toInt(),
-      total: (meta['total'] as num).toInt(),
-      hasMore: meta['has_more'] as bool? ?? false,
+      currentPage: ((jNum(meta['current_page']) ?? 0)).toInt(),
+      lastPage: ((jNum(meta['last_page']) ?? 0)).toInt(),
+      total: ((jNum(meta['total']) ?? 0)).toInt(),
+      hasMore: jBool(meta['has_more']) ?? false,
     );
   }
 }

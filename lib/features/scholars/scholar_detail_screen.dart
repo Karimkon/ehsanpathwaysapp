@@ -444,7 +444,11 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // The header must be exactly its extent: a bare TabBar is 49px against a
+    // declared 56, which Flutter rejects as invalid sliver geometry.
     return Container(
+      height: maxExtent,
+      alignment: Alignment.bottomCenter,
       color: isDark ? AppColors.slate : AppTheme.surfaceLight,
       child: TabBar(
         controller: tabController,

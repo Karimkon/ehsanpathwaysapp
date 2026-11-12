@@ -1,6 +1,7 @@
 import 'package:adhan/adhan.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 /// Calculation methods available to users.
 enum PrayerCalculationMethod {
@@ -201,7 +202,7 @@ class PrayerTimesService {
         name: 'Fajr',
         arabicName: 'الفجر',
         time: times.fajr,
-        notifyEnabled: settings['notify_fajr'] as bool? ?? true,
+        notifyEnabled: jBool(settings['notify_fajr']) ?? true,
       ),
       PrayerEntry(
         prayer: Prayer.sunrise,
@@ -215,28 +216,28 @@ class PrayerTimesService {
         name: 'Dhuhr',
         arabicName: 'الظهر',
         time: times.dhuhr,
-        notifyEnabled: settings['notify_dhuhr'] as bool? ?? true,
+        notifyEnabled: jBool(settings['notify_dhuhr']) ?? true,
       ),
       PrayerEntry(
         prayer: Prayer.asr,
         name: 'Asr',
         arabicName: 'العصر',
         time: times.asr,
-        notifyEnabled: settings['notify_asr'] as bool? ?? true,
+        notifyEnabled: jBool(settings['notify_asr']) ?? true,
       ),
       PrayerEntry(
         prayer: Prayer.maghrib,
         name: 'Maghrib',
         arabicName: 'المغرب',
         time: times.maghrib,
-        notifyEnabled: settings['notify_maghrib'] as bool? ?? true,
+        notifyEnabled: jBool(settings['notify_maghrib']) ?? true,
       ),
       PrayerEntry(
         prayer: Prayer.isha,
         name: 'Isha',
         arabicName: 'العشاء',
         time: times.isha,
-        notifyEnabled: settings['notify_isha'] as bool? ?? true,
+        notifyEnabled: jBool(settings['notify_isha']) ?? true,
       ),
     ];
   }

@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ehsan_pathways/config/app_config.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
+import 'package:ehsan_pathways/core/services/api_service.dart';
 
 // ---------------------------------------------------------------
 // Data Models  (match the Laravel HomeController JSON exactly)
@@ -22,10 +23,10 @@ class ScholarSummary {
 
   factory ScholarSummary.fromJson(Map<String, dynamic> json) {
     return ScholarSummary(
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      photoUrl: json['photo_url'] as String?,
-      videoCount: json['video_count'] as int?,
+      slug: jStr(json['slug']) ?? '',
+      name: jStr(json['name']) ?? '',
+      photoUrl: jStr(json['photo_url']),
+      videoCount: jInt(json['video_count']),
     );
   }
 }
@@ -38,8 +39,8 @@ class _ScholarRef {
 
   factory _ScholarRef.fromJson(Map<String, dynamic> json) {
     return _ScholarRef(
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      slug: jStr(json['slug']) ?? '',
+      name: jStr(json['name']) ?? '',
     );
   }
 }
@@ -63,11 +64,11 @@ class FeaturedVideo {
 
   factory FeaturedVideo.fromJson(Map<String, dynamic> json) {
     return FeaturedVideo(
-      uuid: json['uuid'] as String? ?? '',
-      slug: json['slug'] as String? ?? '',
-      title: json['title'] as String? ?? 'Untitled',
-      thumbnailUrl: json['thumbnail_url'] as String?,
-      durationSeconds: json['duration_seconds'] as int?,
+      uuid: jStr(json['uuid']) ?? '',
+      slug: jStr(json['slug']) ?? '',
+      title: jStr(json['title']) ?? 'Untitled',
+      thumbnailUrl: jStr(json['thumbnail_url']),
+      durationSeconds: jInt(json['duration_seconds']),
       scholar: _ScholarRef.fromJson(json['scholar'] as Map<String, dynamic>),
     );
   }
@@ -99,11 +100,11 @@ class VideoSummary {
 
   factory VideoSummary.fromJson(Map<String, dynamic> json) {
     return VideoSummary(
-      uuid: json['uuid'] as String? ?? '',
-      slug: json['slug'] as String? ?? '',
-      title: json['title'] as String? ?? 'Untitled',
-      thumbnailUrl: json['thumbnail_url'] as String?,
-      durationSeconds: json['duration_seconds'] as int?,
+      uuid: jStr(json['uuid']) ?? '',
+      slug: jStr(json['slug']) ?? '',
+      title: jStr(json['title']) ?? 'Untitled',
+      thumbnailUrl: jStr(json['thumbnail_url']),
+      durationSeconds: jInt(json['duration_seconds']),
       scholar: _ScholarRef.fromJson(json['scholar'] as Map<String, dynamic>),
     );
   }
@@ -133,10 +134,10 @@ class ArticleSummary {
 
   factory ArticleSummary.fromJson(Map<String, dynamic> json) {
     return ArticleSummary(
-      slug: json['slug'] as String? ?? '',
-      title: json['title'] as String? ?? 'Untitled',
-      featuredImageUrl: json['featured_image_url'] as String?,
-      readingTimeMinutes: json['reading_time_minutes'] as int?,
+      slug: jStr(json['slug']) ?? '',
+      title: jStr(json['title']) ?? 'Untitled',
+      featuredImageUrl: jStr(json['featured_image_url']),
+      readingTimeMinutes: jInt(json['reading_time_minutes']),
       scholar: _ScholarRef.fromJson(json['scholar'] as Map<String, dynamic>),
     );
   }
@@ -159,10 +160,10 @@ class PodcastSummary {
 
   factory PodcastSummary.fromJson(Map<String, dynamic> json) {
     return PodcastSummary(
-      slug: json['slug'] as String? ?? '',
-      title: json['title'] as String? ?? 'Untitled',
-      coverImageUrl: json['cover_image_url'] as String?,
-      durationSeconds: json['duration_seconds'] as int?,
+      slug: jStr(json['slug']) ?? '',
+      title: jStr(json['title']) ?? 'Untitled',
+      coverImageUrl: jStr(json['cover_image_url']),
+      durationSeconds: jInt(json['duration_seconds']),
       scholar: _ScholarRef.fromJson(json['scholar'] as Map<String, dynamic>),
     );
   }
@@ -188,9 +189,9 @@ class CategorySummary {
 
   factory CategorySummary.fromJson(Map<String, dynamic> json) {
     return CategorySummary(
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      icon: json['icon'] as String?,
+      slug: jStr(json['slug']) ?? '',
+      name: jStr(json['name']) ?? '',
+      icon: jStr(json['icon']),
     );
   }
 }
@@ -246,20 +247,8 @@ class HomeData {
 // Dio Client Provider
 // ---------------------------------------------------------------
 
-final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio(BaseOptions(
-    baseUrl: AppConfig.apiBaseUrl,
-    connectTimeout: Duration(milliseconds: AppConfig.connectTimeout),
-    receiveTimeout: Duration(milliseconds: AppConfig.receiveTimeout),
-    sendTimeout: Duration(milliseconds: AppConfig.sendTimeout),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  ));
-
-  return dio;
-});
+/// The shared client: one base URL, and the sign-in token on every request.
+final dioProvider = Provider<Dio>((ref) => ref.watch(apiProvider));
 
 // ---------------------------------------------------------------
 // Home Data Provider
@@ -318,7 +307,7 @@ final homeDataProvider = FutureProvider.autoDispose<HomeData>((ref) async {
   for (final v in videosList) {
     final cat = v['category'] as Map<String, dynamic>?;
     if (cat != null) {
-      final slug = cat['slug'] as String? ?? '';
+      final slug = jStr(cat['slug']) ?? '';
       if (slug.isNotEmpty && seenCategorySlugs.add(slug)) {
         categories.add(CategorySummary.fromJson(cat));
       }

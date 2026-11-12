@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ehsan_pathways/config/app_config.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
+import 'package:ehsan_pathways/core/services/api_service.dart';
 
 // ---------------------------------------------------------------------------
 // Models
@@ -19,9 +20,9 @@ class PodcastScholar {
 
   factory PodcastScholar.fromJson(Map<String, dynamic> json) {
     return PodcastScholar(
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? 'Unknown',
-      avatarUrl: json['avatar_url'] as String?,
+      slug: jStr(json['slug']) ?? '',
+      name: jStr(json['name']) ?? 'Unknown',
+      avatarUrl: jStr(json['avatar_url']),
     );
   }
 }
@@ -37,8 +38,8 @@ class PodcastSeries {
 
   factory PodcastSeries.fromJson(Map<String, dynamic> json) {
     return PodcastSeries(
-      slug: json['slug'] as String? ?? '',
-      title: json['title'] as String? ?? '',
+      slug: jStr(json['slug']) ?? '',
+      title: jStr(json['title']) ?? '',
     );
   }
 }
@@ -85,14 +86,14 @@ class Podcast {
 
   factory Podcast.fromJson(Map<String, dynamic> json) {
     return Podcast(
-      slug: json['slug'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      description: json['description'] as String?,
-      coverImageUrl: json['cover_image_url'] as String?,
-      audioUrl: json['audio_url'] as String?,
-      durationSeconds: (json['duration_seconds'] as num?)?.toInt() ?? 0,
-      episodeNumber: (json['episode_number'] as num?)?.toInt(),
-      publishedAt: json['published_at'] as String?,
+      slug: jStr(json['slug']) ?? '',
+      title: jStr(json['title']) ?? '',
+      description: jStr(json['description']),
+      coverImageUrl: jStr(json['cover_image_url']),
+      audioUrl: jStr(json['audio_url']),
+      durationSeconds: (jNum(json['duration_seconds']))?.toInt() ?? 0,
+      episodeNumber: (jNum(json['episode_number']))?.toInt(),
+      publishedAt: jStr(json['published_at']),
       scholar: json['scholar'] != null
           ? PodcastScholar.fromJson(json['scholar'] as Map<String, dynamic>)
           : null,
@@ -129,9 +130,9 @@ class PaginatedPodcasts {
               ?.map((e) => Podcast.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      currentPage: (meta['current_page'] as num?)?.toInt() ?? 1,
-      lastPage: (meta['last_page'] as num?)?.toInt() ?? 1,
-      total: (meta['total'] as num?)?.toInt() ?? 0,
+      currentPage: (jNum(meta['current_page']))?.toInt() ?? 1,
+      lastPage: (jNum(meta['last_page']))?.toInt() ?? 1,
+      total: (jNum(meta['total']))?.toInt() ?? 0,
     );
   }
 }
@@ -175,17 +176,8 @@ class PodcastFilter {
 // Dio provider
 // ---------------------------------------------------------------------------
 
-final _dioProvider = Provider<Dio>((ref) {
-  return Dio(BaseOptions(
-    baseUrl: AppConfig.apiBaseUrl,
-    connectTimeout: Duration(milliseconds: AppConfig.connectTimeout),
-    receiveTimeout: Duration(milliseconds: AppConfig.receiveTimeout),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  ));
-});
+/// The shared client: one base URL, and the sign-in token on every request.
+final _dioProvider = Provider<Dio>((ref) => ref.watch(apiProvider));
 
 // ---------------------------------------------------------------------------
 // Providers

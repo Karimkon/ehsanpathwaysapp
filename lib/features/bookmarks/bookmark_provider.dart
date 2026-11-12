@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Models
@@ -29,12 +30,12 @@ class BookmarkItem {
 
   factory BookmarkItem.fromJson(Map<String, dynamic> json) {
     return BookmarkItem(
-      uuid: json['uuid'] as String?,
-      slug: json['slug'] as String?,
-      title: json['title'] as String? ?? json['name'] as String? ?? 'Untitled',
+      uuid: jStr(json['uuid']),
+      slug: jStr(json['slug']),
+      title: jStr(json['title']) ?? jStr(json['name']) ?? 'Untitled',
       thumbnailUrl: (json['thumbnail_url'] ?? json['photo_url']) as String?,
-      durationSeconds: json['duration_seconds'] as int?,
-      difficultyLevel: json['difficulty_level'] as String?,
+      durationSeconds: jInt(json['duration_seconds']),
+      difficultyLevel: jStr(json['difficulty_level']),
     );
   }
 }
@@ -58,11 +59,11 @@ class Bookmark {
 
   factory Bookmark.fromJson(Map<String, dynamic> json) {
     return Bookmark(
-      id: json['id'] as int,
-      type: json['type'] as String? ?? 'video',
-      folder: json['folder'] as String?,
-      notes: json['notes'] as String?,
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ??
+      id: (jInt(json['id']) ?? 0),
+      type: jStr(json['type']) ?? 'video',
+      folder: jStr(json['folder']),
+      notes: jStr(json['notes']),
+      createdAt: DateTime.tryParse(jStr(json['created_at']) ?? '') ??
           DateTime.now(),
       item: BookmarkItem.fromJson(json['item'] as Map<String, dynamic>? ?? {}),
     );
@@ -158,8 +159,8 @@ class BookmarkListNotifier extends Notifier<BookmarkListState> {
       state = state.copyWith(
         bookmarks: page == 1 ? items : [...state.bookmarks, ...items],
         isLoading: false,
-        currentPage: meta['current_page'] as int? ?? page,
-        lastPage: meta['last_page'] as int? ?? 1,
+        currentPage: jInt(meta['current_page']) ?? page,
+        lastPage: jInt(meta['last_page']) ?? 1,
       );
     } on DioException catch (e) {
       state = state.copyWith(
@@ -188,7 +189,7 @@ class BookmarkListNotifier extends Notifier<BookmarkListState> {
           ? jsonDecode(response.data as String) as Map<String, dynamic>
           : response.data as Map<String, dynamic>;
 
-      final bookmarked = body['bookmarked'] as bool? ?? false;
+      final bookmarked = jBool(body['bookmarked']) ?? false;
 
       // Refresh list
       await fetchBookmarks(type: state.filterType);
@@ -229,7 +230,7 @@ final isBookmarkedProvider =
     final body = response.data is String
         ? jsonDecode(response.data as String) as Map<String, dynamic>
         : response.data as Map<String, dynamic>;
-    return body['bookmarked'] as bool? ?? false;
+    return jBool(body['bookmarked']) ?? false;
   } catch (_) {
     return false;
   }

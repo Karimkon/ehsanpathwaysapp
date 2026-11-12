@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ehsan_pathways/config/app_config.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
+import 'package:ehsan_pathways/core/services/api_service.dart';
 
 // ---------------------------------------------------------------------------
 // Models
@@ -19,9 +20,9 @@ class VideoScholar {
 
   factory VideoScholar.fromJson(Map<String, dynamic> json) {
     return VideoScholar(
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? 'Unknown',
-      avatarUrl: json['avatar_url'] as String?,
+      slug: jStr(json['slug']) ?? '',
+      name: jStr(json['name']) ?? 'Unknown',
+      avatarUrl: jStr(json['avatar_url']),
     );
   }
 }
@@ -34,8 +35,8 @@ class VideoCategory {
 
   factory VideoCategory.fromJson(Map<String, dynamic> json) {
     return VideoCategory(
-      slug: json['slug'] as String?,
-      name: json['name'] as String? ?? '',
+      slug: jStr(json['slug']),
+      name: jStr(json['name']) ?? '',
     );
   }
 }
@@ -48,8 +49,8 @@ class VideoTag {
 
   factory VideoTag.fromJson(Map<String, dynamic> json) {
     return VideoTag(
-      name: json['name'] as String? ?? '',
-      slug: json['slug'] as String? ?? '',
+      name: jStr(json['name']) ?? '',
+      slug: jStr(json['slug']) ?? '',
     );
   }
 }
@@ -85,14 +86,14 @@ class Video {
 
   factory Video.fromJson(Map<String, dynamic> json) {
     return Video(
-      id: (json['id'] as num?)?.toInt(),
-      uuid: json['uuid'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      description: json['description'] as String?,
-      thumbnailUrl: json['thumbnail_url'] as String?,
-      youtubeUrl: json['youtube_url'] as String? ?? json['video_url'] as String?,
-      durationFormatted: json['duration_formatted'] as String?,
-      viewCount: (json['view_count'] as num?)?.toInt() ?? 0,
+      id: (jNum(json['id']))?.toInt(),
+      uuid: jStr(json['uuid']) ?? '',
+      title: jStr(json['title']) ?? '',
+      description: jStr(json['description']),
+      thumbnailUrl: jStr(json['thumbnail_url']),
+      youtubeUrl: jStr(json['youtube_url']) ?? jStr(json['video_url']),
+      durationFormatted: jStr(json['duration_formatted']),
+      viewCount: (jNum(json['view_count']))?.toInt() ?? 0,
       scholar: json['scholar'] != null
           ? VideoScholar.fromJson(json['scholar'] as Map<String, dynamic>)
           : null,
@@ -133,9 +134,9 @@ class PaginatedVideos {
               ?.map((e) => Video.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      currentPage: (meta['current_page'] as num?)?.toInt() ?? 1,
-      lastPage: (meta['last_page'] as num?)?.toInt() ?? 1,
-      total: (meta['total'] as num?)?.toInt() ?? 0,
+      currentPage: (jNum(meta['current_page']))?.toInt() ?? 1,
+      lastPage: (jNum(meta['last_page']))?.toInt() ?? 1,
+      total: (jNum(meta['total']))?.toInt() ?? 0,
     );
   }
 }
@@ -160,7 +161,7 @@ class VideoFeedPage {
 
   factory VideoFeedPage.fromJson(Map<String, dynamic> json) {
     final meta = json['meta'] as Map<String, dynamic>? ?? const {};
-    final cursor = meta['next_cursor'] as String?;
+    final cursor = jStr(meta['next_cursor']);
 
     return VideoFeedPage(
       data: (json['data'] as List<dynamic>?)
@@ -170,7 +171,7 @@ class VideoFeedPage {
       nextCursor: cursor,
       // Trust the cursor over the flag: no cursor means there is nowhere to go
       // even if the server said otherwise.
-      hasMore: (meta['has_more'] as bool? ?? false) && cursor != null,
+      hasMore: (jBool(meta['has_more']) ?? false) && cursor != null,
     );
   }
 }
@@ -214,17 +215,8 @@ class VideoFilter {
 // Dio provider
 // ---------------------------------------------------------------------------
 
-final _dioProvider = Provider<Dio>((ref) {
-  return Dio(BaseOptions(
-    baseUrl: AppConfig.apiBaseUrl,
-    connectTimeout: Duration(milliseconds: AppConfig.connectTimeout),
-    receiveTimeout: Duration(milliseconds: AppConfig.receiveTimeout),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  ));
-});
+/// The shared client: one base URL, and the sign-in token on every request.
+final _dioProvider = Provider<Dio>((ref) => ref.watch(apiProvider));
 
 // ---------------------------------------------------------------------------
 // Providers

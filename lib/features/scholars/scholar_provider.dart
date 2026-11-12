@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ehsan_pathways/config/app_config.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
+import 'package:ehsan_pathways/core/services/api_service.dart';
 
 // ---------------------------------------------------------------------------
 // Scholar Model
@@ -32,14 +33,14 @@ class Scholar {
 
   factory Scholar.fromJson(Map<String, dynamic> json) {
     return Scholar(
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? 'Unknown',
-      title: json['title'] as String?,
-      bio: json['bio'] as String?,
-      photoUrl: json['photo_url'] as String?,
-      videoCount: (json['video_count'] as num?)?.toInt() ?? 0,
-      articleCount: (json['article_count'] as num?)?.toInt() ?? 0,
-      podcastCount: (json['podcast_count'] as num?)?.toInt() ?? 0,
+      slug: jStr(json['slug']) ?? '',
+      name: jStr(json['name']) ?? 'Unknown',
+      title: jStr(json['title']),
+      bio: jStr(json['bio']),
+      photoUrl: jStr(json['photo_url']),
+      videoCount: (jNum(json['video_count']))?.toInt() ?? 0,
+      articleCount: (jNum(json['article_count']))?.toInt() ?? 0,
+      podcastCount: (jNum(json['podcast_count']))?.toInt() ?? 0,
     );
   }
 }
@@ -66,10 +67,10 @@ class ScholarContentItem {
   factory ScholarContentItem.fromJson(Map<String, dynamic> json) {
     return ScholarContentItem(
       identifier: (json['uuid'] ?? json['slug'] ?? '') as String,
-      title: json['title'] as String? ?? '',
+      title: jStr(json['title']) ?? '',
       imageUrl: (json['thumbnail_url'] ?? json['featured_image_url'] ?? json['cover_image_url']) as String?,
-      duration: json['duration_formatted'] as String?,
-      type: json['type'] as String? ?? 'video',
+      duration: jStr(json['duration_formatted']),
+      type: jStr(json['type']) ?? 'video',
     );
   }
 }
@@ -78,17 +79,8 @@ class ScholarContentItem {
 // Dio provider
 // ---------------------------------------------------------------------------
 
-final _dioProvider = Provider<Dio>((ref) {
-  return Dio(BaseOptions(
-    baseUrl: AppConfig.apiBaseUrl,
-    connectTimeout: Duration(milliseconds: AppConfig.connectTimeout),
-    receiveTimeout: Duration(milliseconds: AppConfig.receiveTimeout),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  ));
-});
+/// The shared client: one base URL, and the sign-in token on every request.
+final _dioProvider = Provider<Dio>((ref) => ref.watch(apiProvider));
 
 // ---------------------------------------------------------------------------
 // Providers

@@ -60,9 +60,16 @@ class PathwaysScreen extends ConsumerWidget {
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(24, 40, 24, 20),
-                    child: Column(
+                    // Scales down instead of overflowing when the phone's
+                    // text size is set larger than default.
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.bottomLeft,
+                      child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -99,6 +106,8 @@ class PathwaysScreen extends ConsumerWidget {
                           ),
                         ),
                       ],
+                    ),
+                    ),
                     ),
                   ),
                 ),
@@ -341,7 +350,7 @@ class _PathwayCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                  if (pathway.estimatedHours != null) ...[
+                  if (pathway.hoursLabel != null) ...[
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -352,7 +361,7 @@ class _PathwayCard extends StatelessWidget {
                                 : AppColors.subtle),
                         const SizedBox(width: 4),
                         Text(
-                          '~${pathway.estimatedHours}h estimated',
+                          '~${pathway.hoursLabel} estimated',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

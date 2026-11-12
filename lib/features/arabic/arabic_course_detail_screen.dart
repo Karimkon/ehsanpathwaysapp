@@ -3,18 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:ehsan_pathways/core/providers/auth_provider.dart';
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Providers
 // ---------------------------------------------------------------------------
 
 final _contentServiceProvider =
-    Provider<ContentService>((ref) => ContentService());
+    Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 final arabicCourseDetailProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, slug) async {
@@ -29,9 +32,31 @@ final arabicLessonProvider =
   return service.fetchArabicLesson(args.courseSlug, args.lessonId);
 });
 
-// Tracks completed lesson IDs (in-memory, per session)
+// Lessons ticked in this session, shown at once; the server copy (from the
+// course detail's completed_lesson_ids) is what survives a restart.
 final _completedLessonsProvider =
     StateProvider.family<Set<int>, String>((ref, courseSlug) => {});
+
+/// Tick a lesson now and save it to the server. Before this, completion lived
+/// only in memory and vanished when the app closed.
+Future<void> _markLessonDone(WidgetRef ref, BuildContext context, String courseSlug, int lessonId) async {
+  final local = ref.read(_completedLessonsProvider(courseSlug).notifier);
+  local.state = {...local.state, lessonId};
+
+  if (ref.read(authProvider).status != AuthStatus.authenticated) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Sign in to keep your progress across devices.')),
+    );
+    return;
+  }
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    await ref.read(apiProvider).post('/arabic/courses/$courseSlug/lessons/$lessonId/complete');
+    ref.invalidate(arabicCourseDetailProvider(courseSlug));
+  } catch (_) {
+    messenger.showSnackBar(const SnackBar(content: Text('Could not save your progress. Please try again.')));
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Screen
@@ -91,7 +116,7 @@ class _CourseDetailBody extends StatelessWidget {
   final WidgetRef ref;
 
   BadgeVariant get _levelVariant {
-    switch ((course['level'] as String? ?? '').toLowerCase()) {
+    switch ((jStr(course['level']) ?? '').toLowerCase()) {
       case 'beginner':
         return BadgeVariant.green;
       case 'elementary':
@@ -105,11 +130,14 @@ class _CourseDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = course['title'] as String? ?? '';
-    final description = course['description'] as String? ?? '';
-    final level = course['level'] as String? ?? '';
+    final title = jStr(course['title']) ?? '';
+    final description = jStr(course['description']) ?? '';
+    final level = jStr(course['level']) ?? '';
     final lessons = course['lessons'] as List<dynamic>? ?? [];
-    final completedLessons = ref.watch(_completedLessonsProvider(courseSlug));
+    final completedLessons = <int>{
+      ...((course['completed_lesson_ids'] as List<dynamic>?) ?? const []).map(jInt).whereType<int>(),
+      ...ref.watch(_completedLessonsProvider(courseSlug)),
+    };
 
     return CustomScrollView(
       slivers: [
@@ -237,11 +265,11 @@ class _CourseDetailBody extends StatelessWidget {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final lesson = lessons[index] as Map<String, dynamic>;
-                final lessonId = lesson['id'] as int? ?? index;
+                final lessonId = jInt(lesson['id']) ?? index;
                 final lessonTitle =
-                    lesson['title'] as String? ?? 'Lesson ${index + 1}';
+                    jStr(lesson['title']) ?? 'Lesson ${index + 1}';
                 final sortOrder =
-                    lesson['sort_order'] as int? ?? (index + 1);
+                    jInt(lesson['sort_order']) ?? (index + 1);
                 final isComplete = completedLessons.contains(lessonId);
 
                 return _LessonTile(
@@ -259,18 +287,7 @@ class _CourseDetailBody extends StatelessWidget {
                     ref: ref,
                   ),
                   onMarkComplete: () {
-                    final current =
-                        ref.read(_completedLessonsProvider(courseSlug));
-                    if (isComplete) {
-                      final updated = Set<int>.from(current)..remove(lessonId);
-                      ref
-                          .read(_completedLessonsProvider(courseSlug).notifier)
-                          .state = updated;
-                    } else {
-                      ref
-                          .read(_completedLessonsProvider(courseSlug).notifier)
-                          .state = <int>{...current, lessonId};
-                    }
+                    if (!isComplete) _markLessonDone(ref, context, courseSlug, lessonId);
                   },
                 );
               },
@@ -563,7 +580,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                 ),
                 data: (lesson) {
                   final content =
-                      lesson['content'] as String? ?? '';
+                      jStr(lesson['content']) ?? '';
                   final exercises =
                       lesson['exercises'] as List<dynamic>? ?? [];
 
@@ -598,13 +615,7 @@ class _LessonBottomSheet extends ConsumerWidget {
                       const SizedBox(height: 20),
                       FilledButton.icon(
                         onPressed: () {
-                          final current = ref.read(
-                            _completedLessonsProvider(courseSlug),
-                          );
-                          ref
-                              .read(_completedLessonsProvider(courseSlug)
-                                  .notifier)
-                              .state = {...current, lessonId};
+                          _markLessonDone(ref, context, courseSlug, lessonId);
                           Navigator.pop(context);
                         },
                         style: FilledButton.styleFrom(
@@ -748,10 +759,10 @@ class _ExerciseCardState extends State<_ExerciseCard> {
 
   @override
   Widget build(BuildContext context) {
-    final question = widget.exercise['question_data'] as String? ?? '';
-    final answer = widget.exercise['answer_data'] as String? ?? '';
-    final explanation = widget.exercise['explanation'] as String? ?? '';
-    final type = widget.exercise['exercise_type'] as String? ?? 'exercise';
+    final question = jStr(widget.exercise['question_data']) ?? '';
+    final answer = jStr(widget.exercise['answer_data']) ?? '';
+    final explanation = jStr(widget.exercise['explanation']) ?? '';
+    final type = jStr(widget.exercise['exercise_type']) ?? 'exercise';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),

@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 /// Ask Ehsan: free answers grounded in the Qur'an and authentic hadith.
 ///
@@ -32,12 +33,12 @@ class AskSource {
   });
 
   factory AskSource.fromJson(Map<String, dynamic> j) => AskSource(
-        type: j['type'] as String? ?? 'quran',
-        title: j['title'] as String? ?? '',
-        arabic: j['arabic'] as String? ?? '',
-        english: j['english'] as String? ?? '',
-        grade: j['grade'] as String?,
-        url: j['url'] as String?,
+        type: jStr(j['type']) ?? 'quran',
+        title: jStr(j['title']) ?? '',
+        arabic: jStr(j['arabic']) ?? '',
+        english: jStr(j['english']) ?? '',
+        grade: jStr(j['grade']),
+        url: jStr(j['url']),
       );
 }
 
@@ -51,7 +52,7 @@ class AskMessage {
 
   factory AskMessage.fromAnswer(Map<String, dynamic> d) => AskMessage(
         fromUser: false,
-        text: d['answer'] as String? ?? '',
+        text: jStr(d['answer']) ?? '',
         crisis: d['crisis'] == true,
         sources: ((d['sources'] as List?) ?? const [])
             .whereType<Map<String, dynamic>>()
@@ -126,7 +127,7 @@ class _AskScreenState extends ConsumerState<AskScreen> {
       if (e is DioException) {
         if (e.response == null) msg = 'No connection. Check your internet and try again.';
         final data = e.response?.data;
-        if (data is Map && data['message'] is String) msg = data['message'] as String;
+        if (data is Map && data['message'] is String) msg = (jStr(data['message']) ?? '');
       }
       setState(() {
         _messages.removeLast();

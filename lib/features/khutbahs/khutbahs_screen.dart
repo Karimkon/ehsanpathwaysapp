@@ -4,18 +4,20 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // State & Providers
 // ---------------------------------------------------------------------------
 
 final _contentServiceProvider =
-    Provider<ContentService>((ref) => ContentService());
+    Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 class _KhutbahListState {
   final List<Map<String, dynamic>> items;
@@ -70,8 +72,8 @@ class _KhutbahListNotifier extends StateNotifier<_KhutbahListState> {
       state = state.copyWith(
         items: items,
         isLoading: false,
-        currentPage: (meta['current_page'] as int?) ?? 1,
-        lastPage: (meta['last_page'] as int?) ?? 1,
+        currentPage: (jInt(meta['current_page'])) ?? 1,
+        lastPage: (jInt(meta['last_page'])) ?? 1,
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -90,8 +92,8 @@ class _KhutbahListNotifier extends StateNotifier<_KhutbahListState> {
       state = state.copyWith(
         items: [...state.items, ...newItems],
         isLoadingMore: false,
-        currentPage: (meta['current_page'] as int?) ?? nextPage,
-        lastPage: (meta['last_page'] as int?) ?? state.lastPage,
+        currentPage: (jInt(meta['current_page'])) ?? nextPage,
+        lastPage: (jInt(meta['last_page'])) ?? state.lastPage,
       );
     } catch (e) {
       state = state.copyWith(isLoadingMore: false);
@@ -327,13 +329,13 @@ class _KhutbahCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = khutbah['title'] as String? ?? '';
-    final description = khutbah['description'] as String? ?? '';
-    final deliveredAt = khutbah['delivered_at'] as String?;
-    final mosqueName = khutbah['mosque_name'] as String? ?? '';
-    final isJumuah = khutbah['is_jumuah'] as bool? ?? false;
+    final title = jStr(khutbah['title']) ?? '';
+    final description = jStr(khutbah['description']) ?? '';
+    final deliveredAt = jStr(khutbah['delivered_at']);
+    final mosqueName = jStr(khutbah['mosque_name']) ?? '';
+    final isJumuah = jBool(khutbah['is_jumuah']) ?? false;
     final scholar = khutbah['scholar'] as Map<String, dynamic>?;
-    final scholarName = scholar?['name'] as String? ?? '';
+    final scholarName = jStr(scholar?['name']) ?? '';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),

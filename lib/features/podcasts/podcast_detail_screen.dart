@@ -447,8 +447,13 @@ class _CoverArtHeaderState extends State<_CoverArtHeader>
                 ],
         ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      // The header has a fixed height; scale the artwork down rather than
+      // overflowing it on short screens or with large system text.
+      child: Center(
+        child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 56),
           AnimatedBuilder(
@@ -508,6 +513,8 @@ class _CoverArtHeaderState extends State<_CoverArtHeader>
           ),
           const SizedBox(height: 10),
         ],
+      ),
+      ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/core/services/guided_share.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
@@ -9,13 +10,14 @@ import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Provider
 // ---------------------------------------------------------------------------
 
 final _contentServiceProvider =
-    Provider<ContentService>((ref) => ContentService());
+    Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 final khutbahDetailProvider =
     FutureProvider.family<Map<String, dynamic>, String>((ref, slug) async {
@@ -120,18 +122,18 @@ class _KhutbahDetailBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = khutbah['title'] as String? ?? '';
-    final description = khutbah['description'] as String? ?? '';
-    final mosqueName = khutbah['mosque_name'] as String? ?? '';
-    final city = khutbah['city'] as String? ?? '';
-    final deliveredAt = khutbah['delivered_at'] as String?;
-    final isJumuah = khutbah['is_jumuah'] as bool? ?? false;
-    final videoUuid = khutbah['video_uuid'] as String?;
+    final title = jStr(khutbah['title']) ?? '';
+    final description = jStr(khutbah['description']) ?? '';
+    final mosqueName = jStr(khutbah['mosque_name']) ?? '';
+    final city = jStr(khutbah['city']) ?? '';
+    final deliveredAt = jStr(khutbah['delivered_at']);
+    final isJumuah = jBool(khutbah['is_jumuah']) ?? false;
+    final videoUuid = jStr(khutbah['video_uuid']);
     final keyPoints = khutbah['key_points'] as List<dynamic>? ?? [];
     final scholar = khutbah['scholar'] as Map<String, dynamic>?;
-    final scholarName = scholar?['name'] as String? ?? '';
-    final scholarSlug = scholar?['slug'] as String?;
-    final scholarBio = scholar?['bio'] as String? ?? '';
+    final scholarName = jStr(scholar?['name']) ?? '';
+    final scholarSlug = jStr(scholar?['slug']);
+    final scholarBio = jStr(scholar?['bio']) ?? '';
 
     return Scaffold(
       appBar: AppBar(
@@ -495,9 +497,9 @@ class _ScholarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = scholar['name'] as String? ?? '';
-    final bio = scholar['bio'] as String? ?? '';
-    final title = scholar['title'] as String? ?? '';
+    final name = jStr(scholar['name']) ?? '';
+    final bio = jStr(scholar['bio']) ?? '';
+    final title = jStr(scholar['title']) ?? '';
 
     return Container(
       padding: const EdgeInsets.all(16),

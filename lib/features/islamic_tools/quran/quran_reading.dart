@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ===========================================================================
 // Reciters
@@ -119,11 +120,11 @@ class QuranReadingState {
 
   factory QuranReadingState.fromJson(Map<String, dynamic> j) =>
       QuranReadingState(
-        reciterId: j['reciter'] as String? ?? 'ar.alafasy',
-        arabicSize: ((j['size'] as num?) ?? 30).toDouble().clamp(20, 48),
-        showTranslation: j['translation'] as bool? ?? true,
+        reciterId: jStr(j['reciter']) ?? 'ar.alafasy',
+        arabicSize: ((jNum(j['size'])) ?? 30).toDouble().clamp(20, 48),
+        showTranslation: jBool(j['translation']) ?? true,
         bookmarks: (j['bookmarks'] as List?)?.cast<String>() ?? const [],
-        lastRead: VerseRef.parse(j['last'] as String?),
+        lastRead: VerseRef.parse(jStr(j['last'])),
       );
 }
 

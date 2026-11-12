@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ehsan_pathways/config/app_config.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
+import 'package:ehsan_pathways/core/services/api_service.dart';
 
 // ---------------------------------------------------------------------------
 // Models
@@ -19,9 +20,9 @@ class ArticleScholar {
 
   factory ArticleScholar.fromJson(Map<String, dynamic> json) {
     return ArticleScholar(
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? 'Unknown',
-      avatarUrl: json['avatar_url'] as String?,
+      slug: jStr(json['slug']) ?? '',
+      name: jStr(json['name']) ?? 'Unknown',
+      avatarUrl: jStr(json['avatar_url']),
     );
   }
 }
@@ -34,8 +35,8 @@ class ArticleCategory {
 
   factory ArticleCategory.fromJson(Map<String, dynamic> json) {
     return ArticleCategory(
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      slug: jStr(json['slug']) ?? '',
+      name: jStr(json['name']) ?? '',
     );
   }
 }
@@ -48,8 +49,8 @@ class ArticleTag {
 
   factory ArticleTag.fromJson(Map<String, dynamic> json) {
     return ArticleTag(
-      name: json['name'] as String? ?? '',
-      slug: json['slug'] as String? ?? '',
+      name: jStr(json['name']) ?? '',
+      slug: jStr(json['slug']) ?? '',
     );
   }
 }
@@ -83,14 +84,14 @@ class Article {
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
-      slug: json['slug'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      description: json['description'] as String?,
+      slug: jStr(json['slug']) ?? '',
+      title: jStr(json['title']) ?? '',
+      description: jStr(json['description']),
       content: (json['body_content'] ?? json['content']) as String?,
-      featuredImageUrl: json['featured_image_url'] as String?,
-      readingTimeMinutes: (json['reading_time_minutes'] as num?)?.toInt(),
+      featuredImageUrl: jStr(json['featured_image_url']),
+      readingTimeMinutes: (jNum(json['reading_time_minutes']))?.toInt(),
       publishedAt: json['published_at'] != null
-          ? DateTime.tryParse(json['published_at'] as String)
+          ? DateTime.tryParse((jStr(json['published_at']) ?? ''))
           : null,
       scholar: json['scholar'] != null
           ? ArticleScholar.fromJson(json['scholar'] as Map<String, dynamic>)
@@ -132,9 +133,9 @@ class PaginatedArticles {
               ?.map((e) => Article.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
-      currentPage: (meta['current_page'] as num?)?.toInt() ?? 1,
-      lastPage: (meta['last_page'] as num?)?.toInt() ?? 1,
-      total: (meta['total'] as num?)?.toInt() ?? 0,
+      currentPage: (jNum(meta['current_page']))?.toInt() ?? 1,
+      lastPage: (jNum(meta['last_page']))?.toInt() ?? 1,
+      total: (jNum(meta['total']))?.toInt() ?? 0,
     );
   }
 }
@@ -174,17 +175,8 @@ class ArticleFilter {
 // Dio provider
 // ---------------------------------------------------------------------------
 
-final _dioProvider = Provider<Dio>((ref) {
-  return Dio(BaseOptions(
-    baseUrl: AppConfig.apiBaseUrl,
-    connectTimeout: Duration(milliseconds: AppConfig.connectTimeout),
-    receiveTimeout: Duration(milliseconds: AppConfig.receiveTimeout),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  ));
-});
+/// The shared client: one base URL, and the sign-in token on every request.
+final _dioProvider = Provider<Dio>((ref) => ref.watch(apiProvider));
 
 // ---------------------------------------------------------------------------
 // Providers

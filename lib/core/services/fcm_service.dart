@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 
 import 'package:ehsan_pathways/config/app_config.dart';
 import 'package:ehsan_pathways/core/services/notification_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 /// Handles Firebase Cloud Messaging: token registration, message handling.
 class FcmService {
@@ -135,12 +136,12 @@ class FcmService {
     await NotificationService.instance.showImmediate(
       title: notification.title ?? 'Ehsan Pathways',
       body: notification.body ?? '',
-      payload: message.data['route'] as String?,
+      payload: jStr(message.data['route']),
     );
   }
 
   void _handleNotificationTap(RemoteMessage message) {
-    final route = message.data['route'] as String?;
+    final route = jStr(message.data['route']);
     if (route != null) {
       // Navigation will be handled by the router listener
       _pendingRoute = route;

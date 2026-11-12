@@ -3,26 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import 'package:ehsan_pathways/config/app_config.dart';
 import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/core/services/offline_cache.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_data.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_text.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Shared Dio (no auth needed — static data)
 // ---------------------------------------------------------------------------
-final _isToolsDioProvider = Provider<Dio>((ref) {
-  return Dio(
-    BaseOptions(
-      baseUrl: AppConfig.apiBaseUrl,
-      connectTimeout: const Duration(milliseconds: AppConfig.connectTimeout),
-      receiveTimeout: const Duration(milliseconds: AppConfig.receiveTimeout),
-      headers: {'Accept': 'application/json'},
-    ),
-  );
-});
+/// The shared client: one base URL, and the sign-in token on every request.
+final _isToolsDioProvider = Provider<Dio>((ref) => ref.watch(apiProvider));
 
 // Separate Dio for alquran.cloud (different baseUrl)
 final _quranCloudDioProvider = Provider<Dio>((ref) {
@@ -58,12 +50,12 @@ class Surah {
   });
 
   factory Surah.fromJson(Map<String, dynamic> j) => Surah(
-    no: (j['no'] as num).toInt(),
-    name: j['name'] as String? ?? '',
-    arabic: j['arabic'] as String? ?? '',
-    verses: (j['verses'] as num?)?.toInt() ?? 0,
-    type: j['type'] as String? ?? '',
-    meaning: j['meaning'] as String? ?? '',
+    no: ((jNum(j['no']) ?? 0)).toInt(),
+    name: jStr(j['name']) ?? '',
+    arabic: jStr(j['arabic']) ?? '',
+    verses: (jNum(j['verses']))?.toInt() ?? 0,
+    type: jStr(j['type']) ?? '',
+    meaning: jStr(j['meaning']) ?? '',
   );
 }
 
@@ -107,10 +99,10 @@ class QuranVerse {
   };
 
   factory QuranVerse.fromJson(Map<String, dynamic> j) => QuranVerse(
-    number: (j['n'] as num).toInt(),
-    globalNumber: (j['g'] as num).toInt(),
-    arabic: j['a'] as String,
-    translation: j['t'] as String,
+    number: ((jNum(j['n']) ?? 0)).toInt(),
+    globalNumber: ((jNum(j['g']) ?? 0)).toInt(),
+    arabic: (jStr(j['a']) ?? ''),
+    translation: (jStr(j['t']) ?? ''),
   );
 }
 
@@ -124,13 +116,13 @@ List<QuranVerse> parseQuranEditions(Object? body, int surahNo) {
     throw const FormatException('Arabic and translation verse counts differ');
   }
   return List.generate(arabic.length, (i) {
-    final number = (arabic[i]['numberInSurah'] as num).toInt();
-    final text = arabic[i]['text'] as String;
+    final number = ((jNum(arabic[i]['numberInSurah']) ?? 0)).toInt();
+    final text = (jStr(arabic[i]['text']) ?? '');
     return QuranVerse(
       number: number,
-      globalNumber: (arabic[i]['number'] as num).toInt(),
+      globalNumber: ((jNum(arabic[i]['number']) ?? 0)).toInt(),
       arabic: number == 1 ? stripLeadingBasmalah(text, surahNo) : text,
-      translation: english[i]['text'] as String,
+      translation: (jStr(english[i]['text']) ?? ''),
     );
   });
 }
@@ -185,12 +177,12 @@ class HadithCollection {
   });
 
   factory HadithCollection.fromJson(Map<String, dynamic> j) => HadithCollection(
-    id: j['id'] as String? ?? '',
-    name: j['name'] as String? ?? '',
-    arabic: j['arabic'] as String? ?? '',
-    count: (j['count'] as num?)?.toInt() ?? 0,
-    desc: j['desc'] as String? ?? '',
-    color: j['color'] as String? ?? 'green',
+    id: jStr(j['id']) ?? '',
+    name: jStr(j['name']) ?? '',
+    arabic: jStr(j['arabic']) ?? '',
+    count: (jNum(j['count']))?.toInt() ?? 0,
+    desc: jStr(j['desc']) ?? '',
+    color: jStr(j['color']) ?? 'green',
   );
 }
 
@@ -212,12 +204,12 @@ class HadithItem {
   });
 
   factory HadithItem.fromJson(Map<String, dynamic> j) => HadithItem(
-    no: (j['no'] as num).toInt(),
-    arabic: j['arabic'] as String? ?? '',
-    english: j['english'] as String? ?? '',
-    narrator: j['narrator'] as String? ?? '',
-    ref: j['ref'] as String? ?? '',
-    topic: j['topic'] as String? ?? '',
+    no: ((jNum(j['no']) ?? 0)).toInt(),
+    arabic: jStr(j['arabic']) ?? '',
+    english: jStr(j['english']) ?? '',
+    narrator: jStr(j['narrator']) ?? '',
+    ref: jStr(j['ref']) ?? '',
+    topic: jStr(j['topic']) ?? '',
   );
 }
 
@@ -269,13 +261,13 @@ class DuaCategory {
   });
 
   factory DuaCategory.fromJson(Map<String, dynamic> j) => DuaCategory(
-    id: j['id'] as String? ?? '',
-    name: j['name'] as String? ?? '',
-    arabic: j['arabic'] as String? ?? '',
-    icon: j['icon'] as String? ?? '🤲',
-    color: j['color'] as String? ?? 'green',
-    count: (j['count'] as num?)?.toInt() ?? 0,
-    desc: j['desc'] as String? ?? '',
+    id: jStr(j['id']) ?? '',
+    name: jStr(j['name']) ?? '',
+    arabic: jStr(j['arabic']) ?? '',
+    icon: jStr(j['icon']) ?? '🤲',
+    color: jStr(j['color']) ?? 'green',
+    count: (jNum(j['count']))?.toInt() ?? 0,
+    desc: jStr(j['desc']) ?? '',
   );
 }
 
@@ -297,11 +289,11 @@ class DuaItem {
   });
 
   factory DuaItem.fromJson(Map<String, dynamic> j) => DuaItem(
-    title: j['title'] as String? ?? '',
-    arabic: j['arabic'] as String? ?? '',
-    latin: j['latin'] as String? ?? '',
-    english: j['english'] as String? ?? '',
-    ref: j['ref'] as String? ?? '',
+    title: jStr(j['title']) ?? '',
+    arabic: jStr(j['arabic']) ?? '',
+    latin: jStr(j['latin']) ?? '',
+    english: jStr(j['english']) ?? '',
+    ref: jStr(j['ref']) ?? '',
     count: j['count']?.toString() ?? '',
   );
 }
@@ -631,9 +623,9 @@ class HifzNotifier extends Notifier<HifzState> {
       final remote = <int, HifzStatus>{};
       for (final row in rows) {
         if (row is! Map) continue;
-        final no = (row['surah_no'] as num?)?.toInt();
+        final no = (jNum(row['surah_no']))?.toInt();
         if (no == null) continue;
-        remote[no] = hifzFromWire(row['status'] as String?);
+        remote[no] = hifzFromWire(jStr(row['status']));
       }
 
       var localWasAhead = false;

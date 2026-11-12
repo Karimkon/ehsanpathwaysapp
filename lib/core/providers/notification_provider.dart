@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:ehsan_pathways/core/services/notification_service.dart';
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 enum NotificationLoadStatus { initial, loading, loaded, error }
 
@@ -99,23 +100,23 @@ class NotificationNotifier extends Notifier<NotificationSettings> {
     final prefs = await SharedPreferences.getInstance();
     final prayerSettings = await PrayerTimesService.loadSettings();
 
-    final methodName = prayerSettings['method'] as String;
+    final methodName = (jStr(prayerSettings['method']) ?? '');
     final method = PrayerCalculationMethod.values.firstWhere(
       (m) => m.name == methodName,
       orElse: () => PrayerCalculationMethod.muslimWorldLeague,
     );
 
-    final lat = prayerSettings['lat'] as double?;
-    final lng = prayerSettings['lng'] as double?;
-    final city = prayerSettings['city'] as String? ?? '';
-    final prayerEnabled = prayerSettings['enabled'] as bool? ?? false;
+    final lat = jDouble(prayerSettings['lat']);
+    final lng = jDouble(prayerSettings['lng']);
+    final city = jStr(prayerSettings['city']) ?? '';
+    final prayerEnabled = jBool(prayerSettings['enabled']) ?? false;
 
     final prayerToggles = {
-      Prayer.fajr: prayerSettings['notify_fajr'] as bool? ?? true,
-      Prayer.dhuhr: prayerSettings['notify_dhuhr'] as bool? ?? true,
-      Prayer.asr: prayerSettings['notify_asr'] as bool? ?? true,
-      Prayer.maghrib: prayerSettings['notify_maghrib'] as bool? ?? true,
-      Prayer.isha: prayerSettings['notify_isha'] as bool? ?? true,
+      Prayer.fajr: jBool(prayerSettings['notify_fajr']) ?? true,
+      Prayer.dhuhr: jBool(prayerSettings['notify_dhuhr']) ?? true,
+      Prayer.asr: jBool(prayerSettings['notify_asr']) ?? true,
+      Prayer.maghrib: jBool(prayerSettings['notify_maghrib']) ?? true,
+      Prayer.isha: jBool(prayerSettings['notify_isha']) ?? true,
     };
 
     final learningEnabled = prefs.getBool(_keyLearningEnabled) ?? false;

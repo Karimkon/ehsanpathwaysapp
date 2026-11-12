@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ─── Model ────────────────────────────────────────────────────────────────────
 
@@ -58,20 +59,20 @@ class WatchHistoryItem {
     final video = json['video'] as Map<String, dynamic>? ?? {};
     final scholar = video['scholar'] as Map<String, dynamic>?;
     return WatchHistoryItem(
-      id: (json['id'] as num? ?? 0).toInt(),
-      videoUuid: (json['video_uuid'] as String?) ??
-          (video['uuid'] as String?) ??
+      id: (jNum(json['id']) ?? 0).toInt(),
+      videoUuid: (jStr(json['video_uuid'])) ??
+          (jStr(video['uuid'])) ??
           '',
-      title: (video['title'] as String?) ??
-          (json['title'] as String?) ??
+      title: (jStr(video['title'])) ??
+          (jStr(json['title'])) ??
           'Unknown Video',
-      thumbnailUrl: video['thumbnail_url'] as String?,
-      scholarName: scholar?['name'] as String?,
-      scholarAvatarUrl: scholar?['avatar_url'] as String?,
-      durationFormatted: video['duration_formatted'] as String?,
-      watchedSeconds: (json['watched_seconds'] as num? ?? 0).toInt(),
-      totalSeconds: (json['total_seconds'] as num? ?? 0).toInt(),
-      watchedAt: DateTime.tryParse(json['updated_at'] as String? ?? '') ??
+      thumbnailUrl: jStr(video['thumbnail_url']),
+      scholarName: jStr(scholar?['name']),
+      scholarAvatarUrl: jStr(scholar?['avatar_url']),
+      durationFormatted: jStr(video['duration_formatted']),
+      watchedSeconds: (jNum(json['watched_seconds']) ?? 0).toInt(),
+      totalSeconds: (jNum(json['total_seconds']) ?? 0).toInt(),
+      watchedAt: DateTime.tryParse(jStr(json['updated_at']) ?? '') ??
           DateTime.now(),
     );
   }
@@ -191,7 +192,7 @@ final resumePointProvider =
     final dio = ref.read(apiProvider);
     final response = await dio.get('/progress/videos/$uuid/resume');
     final data = response.data as Map<String, dynamic>?;
-    return (data?['data']?['watched_seconds'] as num? ?? 0).toInt();
+    return (jNum(data?['data']?['watched_seconds']) ?? 0).toInt();
   } catch (_) {
     return 0;
   }

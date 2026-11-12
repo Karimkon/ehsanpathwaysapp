@@ -3,18 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Providers
 // ---------------------------------------------------------------------------
 
 final _contentServiceProvider =
-    Provider<ContentService>((ref) => ContentService());
+    Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 final sadaqahPurposesProvider = FutureProvider<List<dynamic>>((ref) async {
   final service = ref.watch(_contentServiceProvider);
@@ -303,15 +305,15 @@ class _PurposeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = purpose['name'] as String? ?? '';
-    final description = purpose['description'] as String? ?? '';
+    final name = jStr(purpose['name']) ?? '';
+    final description = jStr(purpose['description']) ?? '';
     final targetAmount =
-        (purpose['target_amount'] as num?)?.toDouble() ?? 0;
+        (jNum(purpose['target_amount']))?.toDouble() ?? 0;
     final currentAmount =
-        (purpose['current_amount'] as num?)?.toDouble() ?? 0;
+        (jNum(purpose['current_amount']))?.toDouble() ?? 0;
     final progress =
         targetAmount > 0 ? (currentAmount / targetAmount).clamp(0.0, 1.0) : 0.0;
-    final currency = purpose['currency'] as String? ?? 'USD';
+    final currency = jStr(purpose['currency']) ?? 'USD';
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -498,7 +500,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
     setState(() => _isSubmitting = true);
     try {
       final service = widget.ref.read(_contentServiceProvider);
-      final purposeId = widget.purpose['id'] as int? ?? 0;
+      final purposeId = jInt(widget.purpose['id']) ?? 0;
       await service.submitDonation(
         purposeId: purposeId,
         amount: amount,
@@ -597,7 +599,7 @@ class _DonationBottomSheetState extends State<_DonationBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final purposeName = widget.purpose['name'] as String? ?? '';
+    final purposeName = jStr(widget.purpose['name']) ?? '';
     final sheetColor =
         widget.isDark ? AppColors.slateCard : Colors.white;
 
@@ -1128,12 +1130,12 @@ class _ReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final period = report['period'] as String? ?? '';
+    final period = jStr(report['period']) ?? '';
     final totalReceived =
-        (report['total_received'] as num?)?.toDouble() ?? 0;
+        (jNum(report['total_received']))?.toDouble() ?? 0;
     final totalSpent =
-        (report['total_spent'] as num?)?.toDouble() ?? 0;
-    final currency = report['currency'] as String? ?? 'USD';
+        (jNum(report['total_spent']))?.toDouble() ?? 0;
+    final currency = jStr(report['currency']) ?? 'USD';
     final spentPercent =
         totalReceived > 0 ? (totalSpent / totalReceived).clamp(0.0, 1.0) : 0.0;
 

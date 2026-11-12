@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ehsan_pathways/config/app_config.dart';
 import 'package:ehsan_pathways/core/models/user_model.dart';
 import 'package:ehsan_pathways/core/models/user_stats_model.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 /// Handles all authentication-related API calls and token persistence.
 class AuthService {
@@ -68,7 +69,7 @@ class AuthService {
       data: {'email': email, 'password': password},
     );
     final data = _extractData(response);
-    final token = data['token'] as String;
+    final token = (jStr(data['token']) ?? '');
     await _saveToken(token);
     return (
       user: UserModel.fromJson(data['user'] as Map<String, dynamic>),
@@ -93,7 +94,7 @@ class AuthService {
       },
     );
     final data = _extractData(response);
-    final token = data['token'] as String;
+    final token = (jStr(data['token']) ?? '');
     await _saveToken(token);
     return (
       user: UserModel.fromJson(data['user'] as Map<String, dynamic>),
@@ -113,7 +114,7 @@ class AuthService {
 
     final response = await _dio.post('/auth/$provider', data: body);
     final data = _extractData(response);
-    final authToken = data['token'] as String;
+    final authToken = (jStr(data['token']) ?? '');
     await _saveToken(authToken);
     return (
       user: UserModel.fromJson(data['user'] as Map<String, dynamic>),

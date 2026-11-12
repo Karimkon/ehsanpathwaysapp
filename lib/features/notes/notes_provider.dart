@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Models
@@ -28,14 +29,14 @@ class Note {
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
-      id: json['id'] as int,
-      notableType: json['notable_type'] as String? ?? '',
-      notableId: json['notable_id'] as int? ?? 0,
-      content: json['content'] as String? ?? '',
-      timestampSeconds: json['timestamp_seconds'] as int?,
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ??
+      id: (jInt(json['id']) ?? 0),
+      notableType: jStr(json['notable_type']) ?? '',
+      notableId: jInt(json['notable_id']) ?? 0,
+      content: jStr(json['content']) ?? '',
+      timestampSeconds: jInt(json['timestamp_seconds']),
+      createdAt: DateTime.tryParse(jStr(json['created_at']) ?? '') ??
           DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updated_at'] as String? ?? '') ??
+      updatedAt: DateTime.tryParse(jStr(json['updated_at']) ?? '') ??
           DateTime.now(),
     );
   }

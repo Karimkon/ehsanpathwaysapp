@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_data.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 /// Search every verse of the Qur'an.
 ///
@@ -38,13 +39,13 @@ class QuranHit {
   });
 
   factory QuranHit.fromJson(Map<String, dynamic> j) => QuranHit(
-        verseKey: j['verse_key'] as String? ?? '',
-        surah: (j['surah'] as num?)?.toInt() ?? 1,
-        verse: (j['verse_number'] as num?)?.toInt() ?? 1,
-        surahName: j['surah_name'] as String? ?? '',
+        verseKey: jStr(j['verse_key']) ?? '',
+        surah: (jNum(j['surah']))?.toInt() ?? 1,
+        verse: (jNum(j['verse_number']))?.toInt() ?? 1,
+        surahName: jStr(j['surah_name']) ?? '',
         words: ((j['words'] as List?) ?? const []).map((e) => e.toString()).toList(),
         highlight: ((j['highlight'] as List?) ?? const []).map((e) => (e as num).toInt()).toSet(),
-        translation: j['translation'] as String? ?? '',
+        translation: jStr(j['translation']) ?? '',
         translationHighlight: ((j['translation_highlight'] as List?) ?? const [])
             .whereType<List>()
             .map((r) => r.map((e) => (e as num).toInt()).toList())
@@ -81,15 +82,15 @@ class QuranSearchResult {
       raw.forEach((k, v) => by[int.parse(k.toString())] = (v as num).toInt());
     } else if (raw is List) {
       for (var i = 0; i < raw.length; i++) {
-        if (raw[i] != null) by[i] = (raw[i] as num).toInt();
+        if (raw[i] != null) by[i] = ((jNum(raw[i]) ?? 0)).toInt();
       }
     }
     return QuranSearchResult(
-      query: j['query'] as String? ?? '',
-      total: (j['total'] as num?)?.toInt() ?? 0,
-      page: (j['page'] as num?)?.toInt() ?? 1,
-      lastPage: (j['last_page'] as num?)?.toInt() ?? 1,
-      surah: (j['surah'] as num?)?.toInt(),
+      query: jStr(j['query']) ?? '',
+      total: (jNum(j['total']))?.toInt() ?? 0,
+      page: (jNum(j['page']))?.toInt() ?? 1,
+      lastPage: (jNum(j['last_page']))?.toInt() ?? 1,
+      surah: (jNum(j['surah']))?.toInt(),
       bySurah: by,
       hits: ((j['results'] as List?) ?? const [])
           .whereType<Map<String, dynamic>>()

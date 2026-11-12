@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 /// Immutable snapshot of a day's prayer schedule for a resolved location.
 ///
@@ -92,9 +93,9 @@ final prayerScheduleProvider = FutureProvider.autoDispose<PrayerScheduleData>((
     orElse: () => PrayerCalculationMethod.muslimWorldLeague,
   );
 
-  final double? lat = settings['lat'] as double?;
-  final double? lng = settings['lng'] as double?;
-  final String city = settings['city'] as String? ?? '';
+  final double? lat = jDouble(settings['lat']);
+  final double? lng = jDouble(settings['lng']);
+  final String city = jStr(settings['city']) ?? '';
 
   // No saved location — prompt the user via the UI rather than silently
   // requesting GPS here.

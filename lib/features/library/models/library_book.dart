@@ -1,3 +1,4 @@
+import 'package:ehsan_pathways/core/json_read.dart';
 /// A scanned book in the library, as the API describes it.
 class LibraryBook {
   const LibraryBook({
@@ -44,20 +45,20 @@ class LibraryBook {
     final progress = json['progress'] as Map<String, dynamic>?;
 
     return LibraryBook(
-      slug: json['slug'] as String,
-      title: json['title'] as String? ?? '',
-      arabicTitle: json['arabic_title'] as String? ?? '',
-      author: json['author'] as String?,
-      arabicAuthor: json['arabic_author'] as String?,
-      description: json['description'] as String?,
-      category: json['category'] as String? ?? 'hadith',
-      pageCount: (json['page_count'] as num?)?.toInt() ?? 0,
-      fileSize: (json['file_size'] as num?)?.toInt() ?? 0,
-      fileSizeLabel: json['file_size_label'] as String? ?? '',
-      coverUrl: json['cover_url'] as String?,
-      pdfUrl: json['pdf_url'] as String? ?? '',
-      isDownloadable: json['is_downloadable'] as bool? ?? true,
-      downloadCount: (json['download_count'] as num?)?.toInt() ?? 0,
+      slug: (jStr(json['slug']) ?? ''),
+      title: jStr(json['title']) ?? '',
+      arabicTitle: jStr(json['arabic_title']) ?? '',
+      author: jStr(json['author']),
+      arabicAuthor: jStr(json['arabic_author']),
+      description: jStr(json['description']),
+      category: jStr(json['category']) ?? 'hadith',
+      pageCount: (jNum(json['page_count']))?.toInt() ?? 0,
+      fileSize: (jNum(json['file_size']))?.toInt() ?? 0,
+      fileSizeLabel: jStr(json['file_size_label']) ?? '',
+      coverUrl: jStr(json['cover_url']),
+      pdfUrl: jStr(json['pdf_url']) ?? '',
+      isDownloadable: jBool(json['is_downloadable']) ?? true,
+      downloadCount: (jNum(json['download_count']))?.toInt() ?? 0,
       // "continue reading" flattens these onto the book; the detail endpoint
       // nests them under `progress`.
       progressPage: (progress?['page'] ?? json['page']) as int?,
@@ -98,8 +99,8 @@ class LibraryCategory {
   final String arabic;
 
   factory LibraryCategory.fromJson(Map<String, dynamic> json) => LibraryCategory(
-        slug: json['slug'] as String,
-        label: json['label'] as String? ?? '',
-        arabic: json['arabic'] as String? ?? '',
+        slug: (jStr(json['slug']) ?? ''),
+        label: jStr(json['label']) ?? '',
+        arabic: jStr(json['arabic']) ?? '',
       );
 }

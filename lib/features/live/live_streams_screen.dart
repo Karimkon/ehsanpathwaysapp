@@ -5,18 +5,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
 import 'package:ehsan_pathways/shared/widgets/badge_chip.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Provider
 // ---------------------------------------------------------------------------
 
 final _contentServiceProvider =
-    Provider<ContentService>((ref) => ContentService());
+    Provider<ContentService>((ref) => ContentService(dio: ref.watch(apiProvider)));
 
 final liveStreamsProvider =
     FutureProvider<Map<String, dynamic>>((ref) async {
@@ -235,7 +237,7 @@ class _LiveStreamsScreenState extends ConsumerState<LiveStreamsScreen> {
                           isDark: isDark,
                           formatTime: _formatStartTime,
                           onWatch: () =>
-                              _launchUrl(stream['stream_url'] as String?),
+                              _launchUrl(jStr(stream['stream_url'])),
                         )),
                   ],
 
@@ -371,12 +373,12 @@ class _StreamCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = stream['title'] as String? ?? '';
+    final title = jStr(stream['title']) ?? '';
     final scholar = stream['scholar'] as Map<String, dynamic>?;
-    final scholarName = scholar?['name'] as String? ?? '';
-    final streamType = stream['stream_type'] as String? ?? '';
-    final startTime = stream['start_time'] as String?;
-    final description = stream['description'] as String? ?? '';
+    final scholarName = jStr(scholar?['name']) ?? '';
+    final streamType = jStr(stream['stream_type']) ?? '';
+    final startTime = jStr(stream['start_time']);
+    final description = jStr(stream['description']) ?? '';
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),

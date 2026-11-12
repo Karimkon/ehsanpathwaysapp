@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
+import 'package:ehsan_pathways/core/json_read.dart';
 
 // ---------------------------------------------------------------------------
 // Models
@@ -14,7 +15,8 @@ class Pathway {
   final String? difficultyLevel;
   final String? thumbnailUrl;
   final int totalItems;
-  final int? estimatedHours;
+  final double? estimatedHours;
+  final int stagesCount;
 
   const Pathway({
     required this.id,
@@ -25,21 +27,30 @@ class Pathway {
     this.thumbnailUrl,
     this.totalItems = 0,
     this.estimatedHours,
+    this.stagesCount = 0,
   });
 
   factory Pathway.fromJson(Map<String, dynamic> json) {
     return Pathway(
-      id: json['id'] as int? ?? 0,
-      slug: json['slug'] as String? ?? '',
-      title: json['title'] as String? ?? 'Untitled Pathway',
-      description: json['description'] as String?,
-      difficultyLevel: json['difficulty_level'] as String?,
-      thumbnailUrl: json['thumbnail_url'] as String?,
-      totalItems: json['total_items'] as int? ??
-          json['items_count'] as int? ??
+      id: jInt(json['id']) ?? 0,
+      slug: jStr(json['slug']) ?? '',
+      title: jStr(json['title']) ?? 'Untitled Pathway',
+      description: jStr(json['description']),
+      difficultyLevel: jStr(json['difficulty_level']),
+      thumbnailUrl: jStr(json['thumbnail_url']),
+      totalItems: jInt(json['total_items']) ??
+          jInt(json['items_count']) ??
           0,
-      estimatedHours: json['estimated_hours'] as int?,
+      estimatedHours: jDouble(json['estimated_hours']),
+      stagesCount: jInt(json['stages_count']) ?? 0,
     );
+  }
+
+  /// "14h" or "1.5h"; the server sends a decimal.
+  String? get hoursLabel {
+    final h = estimatedHours;
+    if (h == null || h <= 0) return null;
+    return '${h == h.roundToDouble() ? h.toInt() : h}h';
   }
 
   String get levelLabel {
@@ -81,12 +92,59 @@ class PathwayDetail {
               [])
           .map((e) => PathwayStage.fromJson(e as Map<String, dynamic>))
           .toList(),
-      isEnrolled: json['is_enrolled'] as bool? ?? false,
-      completedItems: json['completed_items'] as int? ?? 0,
+      isEnrolled: jBool(json['is_enrolled']) ?? false,
+      completedItems: jInt(json['completed_items']) ?? 0,
       progressPercentage:
-          (json['progress_percentage'] as num?)?.toDouble() ?? 0,
+          (jNum(json['progress_percentage']))?.toDouble() ?? 0,
     );
   }
+}
+
+/// One lesson inside a stage: a video, article, podcast, document or khutbah.
+class PathwayLesson {
+  final int id;
+  final String type;
+  final String key;
+  final String title;
+  final int? minutes;
+  final bool completed;
+
+  const PathwayLesson({
+    required this.id,
+    required this.type,
+    required this.key,
+    required this.title,
+    this.minutes,
+    this.completed = false,
+  });
+
+  factory PathwayLesson.fromJson(Map<String, dynamic> json) => PathwayLesson(
+        id: jInt(json['id']) ?? 0,
+        type: jStr(json['type']) ?? '',
+        key: jStr(json['key']) ?? '',
+        title: jStr(json['title']) ?? 'Untitled',
+        minutes: jInt(json['estimated_minutes']),
+        completed: jBool(json['completed']) ?? false,
+      );
+
+  /// Where tapping the lesson goes in the app, or null if the app has no
+  /// screen for that type.
+  String? get route => switch (type) {
+        'video' => '/videos/$key',
+        'article' => '/articles/$key',
+        'podcast' => '/podcasts/$key',
+        'khutbah' => '/khutbahs/$key',
+        _ => null,
+      };
+
+  String get typeLabel => switch (type) {
+        'video' => 'Video',
+        'article' => 'Article',
+        'podcast' => 'Podcast',
+        'document' => 'Reading',
+        'khutbah' => 'Khutbah',
+        _ => type,
+      };
 }
 
 class PathwayStage {
@@ -94,26 +152,28 @@ class PathwayStage {
   final int order;
   final String title;
   final String? description;
-  final String contentType;
-  final String? contentId;
+  final List<PathwayLesson> lessons;
 
   const PathwayStage({
     required this.id,
     required this.order,
     required this.title,
     this.description,
-    required this.contentType,
-    this.contentId,
+    this.lessons = const [],
   });
+
+  bool get isComplete => lessons.isNotEmpty && lessons.every((l) => l.completed);
 
   factory PathwayStage.fromJson(Map<String, dynamic> json) {
     return PathwayStage(
-      id: json['id'] as int? ?? 0,
-      order: json['order'] as int? ?? json['stage_number'] as int? ?? 0,
-      title: json['title'] as String? ?? 'Stage',
-      description: json['description'] as String?,
-      contentType: json['content_type'] as String? ?? '',
-      contentId: json['content_id']?.toString(),
+      id: jInt(json['id']) ?? 0,
+      order: jInt(json['order']) ?? jInt(json['stage_number']) ?? 0,
+      title: jStr(json['title']) ?? 'Stage',
+      description: jStr(json['description']),
+      lessons: (json['items'] as List<dynamic>? ?? const [])
+          .whereType<Map<String, dynamic>>()
+          .map(PathwayLesson.fromJson)
+          .toList(),
     );
   }
 }
@@ -148,3 +208,22 @@ final pathwayDetailProvider =
   final data = body['data'] as Map<String, dynamic>? ?? body;
   return PathwayDetail.fromJson(data);
 });
+
+/// Enrol, and mark lessons done. Both return the updated detail and refresh
+/// the screen; progress is kept on the server, the same as the website.
+class PathwayActions {
+  PathwayActions(this.ref);
+  final Ref ref;
+
+  Future<void> enroll(String slug) async {
+    await ref.read(apiProvider).post('/pathways/$slug/enroll');
+    ref.invalidate(pathwayDetailProvider(slug));
+  }
+
+  Future<void> complete(String slug, int lessonId) async {
+    await ref.read(apiProvider).post('/pathways/$slug/items/$lessonId/complete');
+    ref.invalidate(pathwayDetailProvider(slug));
+  }
+}
+
+final pathwayActionsProvider = Provider<PathwayActions>(PathwayActions.new);
