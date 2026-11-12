@@ -6,10 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
+import 'package:ehsan_pathways/core/services/guided_share.dart';
 import 'package:ehsan_pathways/features/articles/article_provider.dart';
 import 'package:ehsan_pathways/features/bookmarks/bookmark_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/scholar_avatar.dart';
@@ -455,8 +455,14 @@ class _ArticleDetailBody extends ConsumerWidget {
   }
 
   void _onShare(BuildContext context) {
-    final url = 'https://ehsanpathways.com/articles/${article.slug}';
-    Share.share('${article.title}\n\n$url', subject: article.title);
+    GuidedShare.share(
+      context,
+      type: 'article',
+      key: article.slug,
+      fallbackPath: '/articles/${article.slug}',
+      subject: article.title,
+      text: (url) => '${article.title}\n\n$url',
+    );
   }
 }
 

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:ehsan_pathways/core/services/guided_share.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/features/islamic_tools/islamic_tools_provider.dart';
@@ -466,7 +466,14 @@ class _VerseTile extends ConsumerWidget {
                 _VerseAction(
                   icon: Icons.ios_share_rounded,
                   tooltip: 'Share verse',
-                  onTap: () => Share.share(_shareText, subject: _reference),
+                  onTap: () => GuidedShare.share(
+                    context,
+                    type: 'verse',
+                    key: '${surah.no}:${verse.number}',
+                    fallbackPath: '/quran/${surah.no}#v${verse.number}',
+                    subject: _reference,
+                    text: (url) => '$_shareText\n\n$url',
+                  ),
                 ),
               ],
             ),

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:ehsan_pathways/core/services/guided_share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -147,8 +147,14 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
   // ── Share ──────────────────────────────────────────────────────────────────
 
   void _share(Video video) {
-    final url = 'https://ehsanpathways.com/videos/${video.uuid}';
-    Share.share('${video.title}\n\n$url', subject: video.title);
+    GuidedShare.share(
+      context,
+      type: 'video',
+      key: video.uuid,
+      fallbackPath: '/videos/${video.uuid}',
+      subject: video.title,
+      text: (url) => '${video.title}\n\n$url',
+    );
   }
 
   // ── Quick Note sheet ───────────────────────────────────────────────────────

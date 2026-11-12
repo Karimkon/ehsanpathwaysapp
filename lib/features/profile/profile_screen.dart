@@ -403,6 +403,30 @@ class _AuthenticatedProfile extends ConsumerWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _QuickAccessTile(
+                        icon: Icons.volunteer_activism_rounded,
+                        label: 'My Impact',
+                        color: AppColors.emerald600,
+                        isDark: isDark,
+                        onTap: () => context.push('/impact'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _QuickAccessTile(
+                        icon: Icons.forum_rounded,
+                        label: 'Ask Ehsan',
+                        color: AppColors.sapphire,
+                        isDark: isDark,
+                        onTap: () => context.push('/ask'),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

@@ -55,6 +55,7 @@ import 'package:ehsan_pathways/features/tasbih/tasbih_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/calendar/hijri_calendar_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/names/asma_ul_husna_screen.dart';
 import 'package:ehsan_pathways/features/videos/category_videos_screen.dart';
+import 'package:ehsan_pathways/features/impact/impact_screen.dart';
 
 /// Holds the initial route to open on cold start.
 /// Overridden in main() after async-checking SharedPreferences.
@@ -301,6 +302,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           initialQuery: state.uri.queryParameters['q'] ?? '',
           initialSurah: int.tryParse(state.uri.queryParameters['surah'] ?? ''),
         ),
+      ),
+      // My Impact: what the user's shares reached, and their intention.
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/impact',
+        name: 'impact',
+        builder: (context, state) => const ImpactScreen(),
       ),
       // Ask Ehsan: free Q&A grounded in the Qur'an and hadith.
       GoRoute(

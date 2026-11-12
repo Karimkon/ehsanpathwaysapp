@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shimmer/shimmer.dart';
 
-import 'package:share_plus/share_plus.dart';
+import 'package:ehsan_pathways/core/services/guided_share.dart';
 
 import 'package:ehsan_pathways/features/podcasts/podcast_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/scholar_avatar.dart';
@@ -234,11 +234,13 @@ class _PodcastDetailScreenState extends ConsumerState<PodcastDetailScreen> {
                 Center(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      final url =
-                          'https://ehsanpathways.com/podcasts/${podcast.slug}';
-                      Share.share(
-                        '${podcast.title}\n\n$url',
+                      GuidedShare.share(
+                        context,
+                        type: 'podcast',
+                        key: podcast.slug,
+                        fallbackPath: '/podcasts/${podcast.slug}',
                         subject: podcast.title,
+                        text: (url) => '${podcast.title}\n\n$url',
                       );
                     },
                     icon: const Icon(Icons.share_rounded, size: 18),

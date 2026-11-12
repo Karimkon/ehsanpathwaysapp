@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:share_plus/share_plus.dart' show Share;
+import 'package:ehsan_pathways/core/services/guided_share.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
 import 'package:ehsan_pathways/core/services/content_service.dart';
@@ -108,9 +108,13 @@ class _KhutbahDetailBody extends StatelessWidget {
   }
 
   void _onShare(BuildContext context, String title) {
-    Share.share(
-      'Listen to "$title" on Ehsan Pathways\nhttps://ehsanpathways.com',
+    GuidedShare.share(
+      context,
+      type: 'khutbah',
+      key: slug,
+      fallbackPath: '/khutbahs/$slug',
       subject: title,
+      text: (url) => 'Listen to "$title" on Ehsan Pathways\n$url',
     );
   }
 
