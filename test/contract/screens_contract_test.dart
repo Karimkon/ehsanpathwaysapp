@@ -19,6 +19,7 @@ import 'package:ehsan_pathways/features/arabic/arabic_screen.dart';
 import 'package:ehsan_pathways/features/articles/article_detail_screen.dart';
 import 'package:ehsan_pathways/features/articles/articles_screen.dart';
 import 'package:ehsan_pathways/features/bookmarks/bookmarks_screen.dart';
+import 'package:ehsan_pathways/features/hajj/hajj_guide_detail_screen.dart';
 import 'package:ehsan_pathways/features/hajj/hajj_umrah_screen.dart';
 import 'package:ehsan_pathways/features/history/history_screen.dart';
 import 'package:ehsan_pathways/features/islamic_tools/dua/dua_screen.dart';
@@ -80,6 +81,7 @@ final _routes = <(RegExp, String)>[
   (RegExp(r'^/arabic/courses/[\w-]+$'), 'arabic_course_detail'),
   (RegExp(r'^/arabic/courses/[\w-]+/lessons/\d+$'), 'arabic_lesson'),
   (RegExp(r'^/hajj-umrah$'), 'hajj_umrah'),
+  (RegExp(r'^/hajj-umrah/[\w-]+$'), 'hajj_detail'),
   (RegExp(r'^/live-streams$'), 'live_streams'),
   (RegExp(r'^/sadaqah/purposes$'), 'sadaqah_purposes'),
   (RegExp(r'^/sadaqah/reports$'), 'sadaqah_reports'),
@@ -235,7 +237,8 @@ void main() {
     ('Library', () => const LibraryScreen(), ['Sahih al-Bukhari'], {'library_books': 'live:library_books'}),
     ('Hadith books', () => const HadithBooksScreen(), ['Sahih al-Bukhari'], {}),
     ('Duas', () => const DuaScreen(), ['Morning Adhkar'], {}),
-    ('Hajj & Umrah (none yet)', () => const HajjUmrahScreen(), [], {}),
+    ('Hajj & Umrah', () => const HajjUmrahScreen(), ['Hajj Step by Step', 'Duas & Adhkar'], {}),
+    ('Hajj guide detail', () => const HajjGuideDetailScreen(slug: 'complete-umrah-guide'), ['Complete Umrah Guide', 'Tawaf', 'Checklists'], {}),
     ('Live streams (none yet)', () => const LiveStreamsScreen(), [], {}),
     ('Sadaqah (none yet)', () => const SadaqahScreen(), [], {}),
   ];

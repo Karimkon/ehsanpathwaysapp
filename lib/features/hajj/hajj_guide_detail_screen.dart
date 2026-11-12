@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -95,6 +96,10 @@ class _GuideDetailBody extends StatelessWidget {
     final title = jStr(guide['title']) ?? '';
     final guideType = jStr(guide['guide_type']) ?? '';
     final sections = guide['sections'] as List<dynamic>? ?? [];
+    final intro = jStr(guide['description']) ?? '';
+    final checklists = (guide['checklists'] as List<dynamic>? ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .toList();
     final isHajj = guideType.toLowerCase() == 'hajj';
     final accentColor =
         isHajj ? AppTheme.primaryGreen : AppColors.gold;
@@ -124,8 +129,10 @@ class _GuideDetailBody extends StatelessWidget {
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 56, 20, 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         BadgeChip(
@@ -155,11 +162,27 @@ class _GuideDetailBody extends StatelessWidget {
                         ),
                       ],
                     ),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
+
+          if (intro.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 4),
+                child: Text(
+                  intro,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    height: 1.65,
+                    color: isDark ? AppColors.onDarkMuted : AppColors.ink2,
+                  ),
+                ),
+              ),
+            ),
 
           // ── Sections list ────────────────────────────────────────────────
           if (sections.isEmpty)
@@ -188,7 +211,70 @@ class _GuideDetailBody extends StatelessWidget {
               ),
             ),
 
+          if (checklists.isNotEmpty)
+            SliverToBoxAdapter(
+              child: _Checklists(lists: checklists, isDark: isDark),
+            ),
+
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Preparation checklists, from the guide. Ticks are kept for this session.
+class _Checklists extends StatefulWidget {
+  const _Checklists({required this.lists, required this.isDark});
+
+  final List<Map<String, dynamic>> lists;
+  final bool isDark;
+
+  @override
+  State<_Checklists> createState() => _ChecklistsState();
+}
+
+class _ChecklistsState extends State<_Checklists> {
+  final Set<String> _ticked = {};
+
+  @override
+  Widget build(BuildContext context) {
+    final d = widget.isDark;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 8),
+            child: Text('Checklists',
+                style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18, fontWeight: FontWeight.w800, color: d ? Colors.white : AppColors.ink)),
+          ),
+          ...widget.lists.map((list) {
+            final title = jStr(list['title']) ?? jStr(list['type']) ?? '';
+            final items = (list['items'] as List<dynamic>? ?? const []).map((e) => jStr(e) ?? '').where((e) => e.isNotEmpty).toList();
+            return Card(
+              margin: const EdgeInsets.only(bottom: 10),
+              color: d ? AppColors.slateCard : Colors.white,
+              child: ExpansionTile(
+                title: Text(title,
+                    style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, color: d ? Colors.white : AppColors.ink)),
+                subtitle: Text('${items.where((i) => _ticked.contains('$title|$i')).length} of ${items.length} done',
+                    style: GoogleFonts.plusJakartaSans(fontSize: 12, color: d ? AppColors.onDarkMuted : AppColors.muted)),
+                children: items
+                    .map((item) => CheckboxListTile(
+                          dense: true,
+                          value: _ticked.contains('$title|$item'),
+                          onChanged: (v) => setState(() => v == true ? _ticked.add('$title|$item') : _ticked.remove('$title|$item')),
+                          title: Text(item,
+                              style: GoogleFonts.plusJakartaSans(fontSize: 13.5, color: d ? AppColors.onDarkMuted : AppColors.ink2)),
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ))
+                    .toList(),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -334,6 +420,39 @@ class _SectionContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Guides are written as HTML on the website; render them as such.
+    if (content.contains('<')) {
+      final body = isDark ? AppColors.onDarkMuted : AppColors.ink2;
+      return Html(
+        data: content,
+        style: {
+          'body': Style(
+            margin: Margins.zero,
+            padding: HtmlPaddings.zero,
+            fontSize: FontSize(14),
+            lineHeight: LineHeight(1.65),
+            color: body,
+            fontFamily: GoogleFonts.plusJakartaSans().fontFamily,
+          ),
+          'h3': Style(
+            fontSize: FontSize(15),
+            fontWeight: FontWeight.w700,
+            color: AppTheme.primaryGreen,
+            margin: Margins.only(top: 12, bottom: 4),
+          ),
+          'p': Style(margin: Margins.only(bottom: 8)),
+          'li': Style(margin: Margins.only(bottom: 4)),
+          'p[dir=rtl]': Style(
+            fontSize: FontSize(22),
+            lineHeight: LineHeight(2),
+            textAlign: TextAlign.right,
+            direction: TextDirection.rtl,
+            color: isDark ? Colors.white : AppColors.ink,
+          ),
+        },
+      );
+    }
+
     final lines = content.split('\n');
     int stepCounter = 0;
 
