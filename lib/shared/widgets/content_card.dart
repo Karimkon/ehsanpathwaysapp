@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ehsan_pathways/config/theme.dart';
+import 'package:ehsan_pathways/shared/widgets/motion.dart';
 
 /// The type of content a card represents.
 enum ContentType { video, article, podcast, document, khutbah }
@@ -10,7 +11,7 @@ enum ContentType { video, article, podcast, document, khutbah }
 /// A gorgeous, reusable content card for videos, articles, podcasts,
 /// documents, and khutbahs. Features smooth tap animation, shimmer image
 /// loading, and colour-coded type badges.
-class ContentCard extends StatefulWidget {
+class ContentCard extends StatelessWidget {
   const ContentCard({
     super.key,
     required this.title,
@@ -47,35 +48,6 @@ class ContentCard extends StatefulWidget {
   /// Optional fixed height for the image area.
   final double? height;
 
-  @override
-  State<ContentCard> createState() => _ContentCardState();
-}
-
-class _ContentCardState extends State<ContentCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 120),
-      lowerBound: 0.0,
-      upperBound: 0.04,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
   // -- Badge colours keyed by content type ----------------------------------
 
   static const Map<ContentType, Color> _badgeColors = {
@@ -107,236 +79,221 @@ class _ContentCardState extends State<ContentCard>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return AnimatedBuilder(
-      animation: _scaleAnimation,
-      builder: (context, child) => Transform.scale(
-        scale: _scaleAnimation.value,
-        child: child,
-      ),
-      child: GestureDetector(
-        onTapDown: (_) => _controller.forward(),
-        onTapUp: (_) {
-          _controller.reverse();
-          widget.onTap?.call();
-        },
-        onTapCancel: () => _controller.reverse(),
-        child: Container(
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.slateCard : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.3)
-                    : Colors.black.withValues(alpha: 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: isDark
-                    ? Colors.black.withValues(alpha: 0.2)
-                    : Colors.black.withValues(alpha: 0.02),
-                blurRadius: 4,
-                offset: const Offset(0, 1),
-              ),
-            ],
+    final card = Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.slateCard : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // -- Thumbnail ------------------------------------------------
-              if (widget.imageUrl != null)
-                SizedBox(
-                  height: widget.height ?? 180,
-                  width: double.infinity,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: widget.imageUrl!,
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) => Shimmer.fromColors(
-                          baseColor: isDark
-                              ? AppColors.slateRaised
-                              : AppColors.sand,
-                          highlightColor: isDark
-                              ? AppColors.slateLine
-                              : AppColors.creamDeep,
-                          child: Container(color: Colors.white),
-                        ),
-                        errorWidget: (_, __, ___) => Container(
-                          color: isDark
-                              ? AppColors.slateRaised
-                              : AppColors.creamDeep,
-                          child: Icon(
-                            Icons.image_not_supported_outlined,
-                            size: 40,
-                            color: isDark
-                                ? Colors.white38
-                                : Colors.black26,
-                          ),
-                        ),
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.2)
+                : Colors.black.withValues(alpha: 0.02),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // -- Thumbnail ------------------------------------------------
+          if (imageUrl != null)
+            SizedBox(
+              height: height ?? 180,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: imageUrl!,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => Shimmer.fromColors(
+                      baseColor: isDark
+                          ? AppColors.slateRaised
+                          : AppColors.sand,
+                      highlightColor: isDark
+                          ? AppColors.slateLine
+                          : AppColors.creamDeep,
+                      child: Container(color: Colors.white),
+                    ),
+                    errorWidget: (_, __, ___) => Container(
+                      color: isDark
+                          ? AppColors.slateRaised
+                          : AppColors.creamDeep,
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        size: 40,
+                        color: isDark ? Colors.white38 : Colors.black26,
                       ),
-
-                      // Subtle bottom gradient for legibility
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: 60,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withValues(alpha: 0.35),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Type badge
-                      if (widget.contentType != null)
-                        Positioned(
-                          top: 12,
-                          left: 12,
-                          child: _TypeBadge(
-                            type: widget.contentType!,
-                            color: _badgeColors[widget.contentType]!,
-                            icon: _badgeIcons[widget.contentType]!,
-                            label: _badgeLabels[widget.contentType]!,
-                          ),
-                        ),
-
-                      // Trailing info on image
-                      if (widget.trailingInfo != null)
-                        Positioned(
-                          bottom: 10,
-                          right: 12,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.6),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (widget.trailingIcon != null) ...[
-                                  Icon(
-                                    widget.trailingIcon,
-                                    size: 14,
-                                    color: Colors.white,
-                                  ),
-                                  const SizedBox(width: 4),
-                                ],
-                                Text(
-                                  widget.trailingInfo!,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
+                    ),
                   ),
-                ),
 
-              // -- Text content ---------------------------------------------
-              Padding(
-                padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Type badge (when there is no image)
-                    if (widget.imageUrl == null && widget.contentType != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _TypeBadge(
-                          type: widget.contentType!,
-                          color: _badgeColors[widget.contentType]!,
-                          icon: _badgeIcons[widget.contentType]!,
-                          label: _badgeLabels[widget.contentType]!,
+                  // Subtle bottom gradient for legibility
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: 60,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.35),
+                          ],
                         ),
                       ),
+                    ),
+                  ),
 
-                    Text(
-                      widget.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        height: 1.35,
-                        color: isDark ? Colors.white : AppColors.ink,
+                  // Type badge
+                  if (contentType != null)
+                    Positioned(
+                      top: 12,
+                      left: 12,
+                      child: _TypeBadge(
+                        type: contentType!,
+                        color: _badgeColors[contentType]!,
+                        icon: _badgeIcons[contentType]!,
+                        label: _badgeLabels[contentType]!,
                       ),
                     ),
 
-                    if (widget.subtitle != null) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        widget.subtitle!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: isDark
-                              ? AppColors.onDarkMuted
-                              : AppColors.muted,
+                  // Trailing info on image
+                  if (trailingInfo != null)
+                    Positioned(
+                      bottom: 10,
+                      right: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
                         ),
-                      ),
-                    ],
-
-                    // Trailing info (when there is no image)
-                    if (widget.imageUrl == null && widget.trailingInfo != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (widget.trailingIcon != null) ...[
-                              Icon(
-                                widget.trailingIcon,
-                                size: 14,
-                                color: isDark
-                                    ? AppColors.onDarkMuted
-                                    : AppColors.muted,
-                              ),
+                            if (trailingIcon != null) ...[
+                              Icon(trailingIcon, size: 14, color: Colors.white),
                               const SizedBox(width: 4),
                             ],
                             Text(
-                              widget.trailingInfo!,
+                              trailingInfo!,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: isDark
-                                    ? AppColors.onDarkMuted
-                                    : AppColors.muted,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
                               ),
                             ),
                           ],
                         ),
                       ),
-                  ],
-                ),
+                    ),
+                ],
               ),
-            ],
+            ),
+
+          // -- Text content ---------------------------------------------
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Type badge (when there is no image)
+                if (imageUrl == null && contentType != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _TypeBadge(
+                      type: contentType!,
+                      color: _badgeColors[contentType]!,
+                      icon: _badgeIcons[contentType]!,
+                      label: _badgeLabels[contentType]!,
+                    ),
+                  ),
+
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    height: 1.35,
+                    color: isDark ? Colors.white : AppColors.ink,
+                  ),
+                ),
+
+                if (subtitle != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    subtitle!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? AppColors.onDarkMuted : AppColors.muted,
+                    ),
+                  ),
+                ],
+
+                // Trailing info (when there is no image)
+                if (imageUrl == null && trailingInfo != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      children: [
+                        if (trailingIcon != null) ...[
+                          Icon(
+                            trailingIcon,
+                            size: 14,
+                            color: isDark
+                                ? AppColors.onDarkMuted
+                                : AppColors.muted,
+                          ),
+                          const SizedBox(width: 4),
+                        ],
+                        Text(
+                          trailingInfo!,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: isDark
+                                ? AppColors.onDarkMuted
+                                : AppColors.muted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
+
+    // A card with no destination is not a button and must not pretend to
+    // be one: no press, no Semantics button, no misleading affordance.
+    if (onTap == null) {
+      return card;
+    }
+
+    return PressableCard(onTap: onTap!, semanticLabel: title, child: card);
   }
 }
 

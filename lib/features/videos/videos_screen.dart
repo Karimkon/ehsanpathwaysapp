@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:ehsan_pathways/features/videos/video_provider.dart';
 import 'package:ehsan_pathways/shared/widgets/content_card.dart';
+import 'package:ehsan_pathways/shared/widgets/motion.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
 import 'package:ehsan_pathways/shared/widgets/empty_state.dart';
 import 'package:ehsan_pathways/config/theme.dart';
@@ -229,15 +230,23 @@ class _VideosScreenState extends ConsumerState<VideosScreen> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 final video = state.videos[index];
-                return ContentCard(
-                  title: video.title,
-                  subtitle: video.scholar?.name,
-                  imageUrl: video.thumbnailUrl,
-                  contentType: ContentType.video,
-                  trailingInfo: video.durationFormatted,
-                  trailingIcon: Icons.access_time_rounded,
-                  height: 120,
-                  onTap: () => context.push('/videos/${video.uuid}'),
+
+                // Built as it nears the viewport, so this reads as a scroll
+                // reveal. The stagger is across the row -- two columns, so
+                // index % 2 -- which cascades without making the second card
+                // of every row feel late.
+                return Reveal(
+                  index: index % 2,
+                  child: ContentCard(
+                    title: video.title,
+                    subtitle: video.scholar?.name,
+                    imageUrl: video.thumbnailUrl,
+                    contentType: ContentType.video,
+                    trailingInfo: video.durationFormatted,
+                    trailingIcon: Icons.access_time_rounded,
+                    height: 120,
+                    onTap: () => context.push('/videos/${video.uuid}'),
+                  ),
                 );
               },
               childCount: state.videos.length,
