@@ -13,6 +13,7 @@ import 'package:ehsan_pathways/features/islamic_tools/hadith/hadith_library_prov
 import 'package:ehsan_pathways/features/prayer/prayer_provider.dart';
 import 'package:ehsan_pathways/core/services/prayer_times_service.dart';
 import 'package:ehsan_pathways/shared/widgets/content_card.dart';
+import 'package:ehsan_pathways/shared/widgets/motion.dart';
 import 'package:ehsan_pathways/shared/widgets/section_header.dart';
 import 'package:ehsan_pathways/shared/widgets/scholar_avatar.dart';
 import 'package:ehsan_pathways/shared/widgets/loading_shimmer.dart';
@@ -82,111 +83,92 @@ class _HomeContent extends ConsumerWidget {
           parent: BouncingScrollPhysics(),
         ),
         slivers: [
-          // -- App bar -------------------------------------------------------
           _SliverAppBar(isDark: isDark),
 
-          // -- Greeting ------------------------------------------------------
-          SliverToBoxAdapter(child: _GreetingBanner(isDark: isDark)),
-
-          // -- Next Prayer ---------------------------------------------------
-          const SliverToBoxAdapter(child: _NextPrayerCard()),
-
-          // -- Quick Actions -------------------------------------------------
-          SliverToBoxAdapter(child: _QuickActions(isDark: isDark)),
-
-          // -- Ask Ehsan + Seek Guidance -------------------------------------
-          SliverToBoxAdapter(child: _AskBar(isDark: isDark)),
-          SliverToBoxAdapter(child: _DailyDeedBanner(isDark: isDark)),
-          SliverToBoxAdapter(child: _GuidanceBanner(isDark: isDark)),
-
-          // -- Daily Hadith --------------------------------------------------
-          SliverToBoxAdapter(child: _DailyHadithCard(isDark: isDark)),
-
-          // -- Featured Video ------------------------------------------------
-          if (data.featuredVideo != null)
-            SliverToBoxAdapter(
-              child: _FeaturedVideoHero(
-                video: data.featuredVideo!,
-                isDark: isDark,
-              ),
-            ),
-
-          // -- Categories ----------------------------------------------------
-          if (data.categories.isNotEmpty)
-            SliverToBoxAdapter(
-              child: _CategoriesRow(categories: data.categories),
-            ),
-
-          // -- Recent Videos -------------------------------------------------
-          if (data.recentVideos.isNotEmpty) ...[
-            SliverToBoxAdapter(
-              child: SectionHeader(
-                title: 'Recent Videos',
-                subtitle: 'Continue your learning journey',
-                onTrailingTap: () => context.push('/videos'),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: _VideosCarousel(videos: data.recentVideos),
-            ),
-          ],
-
-          // -- Recent Articles -----------------------------------------------
-          if (data.recentArticles.isNotEmpty) ...[
-            SliverToBoxAdapter(
-              child: SectionHeader(
-                title: 'Recent Articles',
-                subtitle: 'Read and reflect',
-                onTrailingTap: () => context.push('/articles'),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: _ArticlesCarousel(articles: data.recentArticles),
-            ),
-          ],
-
-          // -- Recent Podcasts -----------------------------------------------
-          if (data.recentPodcasts.isNotEmpty) ...[
-            SliverToBoxAdapter(
-              child: SectionHeader(
-                title: 'Recent Podcasts',
-                subtitle: 'Listen on the go',
-                onTrailingTap: () => context.push('/podcasts'),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: _PodcastsCarousel(podcasts: data.recentPodcasts),
-            ),
-          ],
-
-          // -- Scholars ------------------------------------------------------
-          if (data.scholars.isNotEmpty) ...[
-            SliverToBoxAdapter(
-              child: SectionHeader(
-                title: 'Featured Scholars',
-                subtitle: 'Learn from the best',
-                onTrailingTap: () => context.push('/scholars'),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: _ScholarsRow(scholars: data.scholars),
-            ),
-          ],
-
-          // -- Daily Dua -----------------------------------------------------
-          SliverToBoxAdapter(child: _DailyDuaCard(isDark: isDark)),
-
-          // -- Islamic Quote -------------------------------------------------
-          SliverToBoxAdapter(child: _IslamicQuoteSection(isDark: isDark)),
-
-          // -- Explore More --------------------------------------------------
-          SliverToBoxAdapter(child: _DiscoverGrid(isDark: isDark)),
-
-          // -- Bottom spacing ------------------------------------------------
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          // One lazy list rather than fifteen SliverToBoxAdapters.
+          //
+          // An adapter builds its whole subtree immediately, on-screen or
+          // not, so every carousel, grid and gradient below the fold was
+          // being laid out before the first frame -- and each section's
+          // entrance animation would have finished long before anyone
+          // scrolled to it. A SliverList builds each section as it nears
+          // the viewport, which is both cheaper and the reason the reveals
+          // below read as a scroll reveal.
+          SliverList.list(children: _sections(context, isDark)),
         ],
       ),
     );
+  }
+
+  /// The page, in order, each section revealed as it arrives.
+  ///
+  /// The stagger index is the section's position, so the first screenful
+  /// cascades in; Motion caps the delay so nothing further down is kept
+  /// waiting.
+  List<Widget> _sections(BuildContext context, bool isDark) {
+    final sections = <Widget>[
+      _GreetingBanner(isDark: isDark),
+      const _NextPrayerCard(),
+      _QuickActions(isDark: isDark),
+      _AskBar(isDark: isDark),
+      _DailyDeedBanner(isDark: isDark),
+      _GuidanceBanner(isDark: isDark),
+      _DailyHadithCard(isDark: isDark),
+
+      if (data.featuredVideo != null)
+        _FeaturedVideoHero(video: data.featuredVideo!, isDark: isDark),
+
+      if (data.categories.isNotEmpty)
+        _CategoriesRow(categories: data.categories),
+
+      if (data.recentVideos.isNotEmpty) ...[
+        SectionHeader(
+          title: 'Recent Videos',
+          subtitle: 'Continue your learning journey',
+          onTrailingTap: () => context.push('/videos'),
+        ),
+        _VideosCarousel(videos: data.recentVideos),
+      ],
+
+      if (data.recentArticles.isNotEmpty) ...[
+        SectionHeader(
+          title: 'Recent Articles',
+          subtitle: 'Read and reflect',
+          onTrailingTap: () => context.push('/articles'),
+        ),
+        _ArticlesCarousel(articles: data.recentArticles),
+      ],
+
+      if (data.recentPodcasts.isNotEmpty) ...[
+        SectionHeader(
+          title: 'Recent Podcasts',
+          subtitle: 'Listen on the go',
+          onTrailingTap: () => context.push('/podcasts'),
+        ),
+        _PodcastsCarousel(podcasts: data.recentPodcasts),
+      ],
+
+      if (data.scholars.isNotEmpty) ...[
+        SectionHeader(
+          title: 'Featured Scholars',
+          subtitle: 'Learn from the best',
+          onTrailingTap: () => context.push('/scholars'),
+        ),
+        _ScholarsRow(scholars: data.scholars),
+      ],
+
+      _DailyDuaCard(isDark: isDark),
+      _IslamicQuoteSection(isDark: isDark),
+      _DiscoverGrid(isDark: isDark),
+    ];
+
+    return [
+      for (final (index, section) in sections.indexed)
+        Reveal(index: index, child: section),
+
+      // Clears the floating tab bar.
+      const SizedBox(height: 100),
+    ];
   }
 }
 
@@ -229,21 +211,25 @@ class _SliverAppBar extends StatelessWidget {
               ],
             ),
             child: const Center(
-              child: Icon(
-                Icons.auto_awesome,
-                size: 20,
-                color: Colors.white,
-              ),
+              child: Icon(Icons.auto_awesome, size: 20, color: Colors.white),
             ),
           ),
           const SizedBox(width: 12),
-          Text(
-            'Ehsan Pathways',
-            style: GoogleFonts.lora(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : AppColors.ink,
-              letterSpacing: -0.3,
+          // Flexible, because a 22pt title next to a 36px mark fits the
+          // 305px the app bar leaves only at the default text size. Anyone
+          // who has turned text up for readability -- which is most people
+          // who need to -- pushed the name off the right edge.
+          Flexible(
+            child: Text(
+              'Ehsan Pathways',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.lora(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : AppColors.ink,
+                letterSpacing: -0.3,
+              ),
             ),
           ),
         ],
@@ -376,9 +362,7 @@ class _GreetingBanner extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: isDark
-                          ? AppColors.onDarkMuted
-                          : AppColors.muted,
+                      color: isDark ? AppColors.onDarkMuted : AppColors.muted,
                       height: 1.5,
                     ),
                   ),
@@ -404,11 +388,7 @@ class _GreetingBanner extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(
-                info.icon,
-                color: Colors.white,
-                size: 28,
-              ),
+              child: Icon(info.icon, color: Colors.white, size: 28),
             ),
           ],
         ),
@@ -457,9 +437,7 @@ class _FeaturedVideoHero extends StatelessWidget {
                   imageUrl: video.thumbnailUrl!,
                   fit: BoxFit.cover,
                   placeholder: (_, __) => Container(
-                    color: isDark
-                        ? AppColors.slateRaised
-                        : AppColors.sand,
+                    color: isDark ? AppColors.slateRaised : AppColors.sand,
                   ),
                   errorWidget: (_, __, ___) => Container(
                     decoration: const BoxDecoration(
@@ -508,8 +486,10 @@ class _FeaturedVideoHero extends StatelessWidget {
                 top: 16,
                 left: 16,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [_accentGold, AppColors.goldLight],
@@ -526,7 +506,11 @@ class _FeaturedVideoHero extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.star_rounded, size: 14, color: Colors.white),
+                      const Icon(
+                        Icons.star_rounded,
+                        size: 14,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Featured',
@@ -548,8 +532,10 @@ class _FeaturedVideoHero extends StatelessWidget {
                   top: 16,
                   right: 16,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(8),
@@ -557,8 +543,11 @@ class _FeaturedVideoHero extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.schedule_rounded,
-                            size: 13, color: Colors.white70),
+                        const Icon(
+                          Icons.schedule_rounded,
+                          size: 13,
+                          color: Colors.white70,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           video.formattedDuration,
@@ -767,11 +756,7 @@ class _CategoryChip extends StatelessWidget {
                       : _primaryGreen.withValues(alpha: 0.12),
                 ),
               ),
-              child: Icon(
-                icon,
-                size: 26,
-                color: _primaryGreen,
-              ),
+              child: Icon(icon, size: 26, color: _primaryGreen),
             ),
             const SizedBox(height: 8),
             Text(
@@ -869,8 +854,7 @@ class _ArticlesCarousel extends StatelessWidget {
               imageUrl: a.featuredImageUrl,
               contentType: ContentType.article,
               trailingInfo: readTime,
-              trailingIcon:
-                  readTime != null ? Icons.menu_book_rounded : null,
+              trailingIcon: readTime != null ? Icons.menu_book_rounded : null,
               height: 130,
               onTap: () => context.push('/articles/${a.slug}'),
             ),
@@ -979,9 +963,7 @@ class _ScholarsRow extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: isDark
-                          ? AppColors.onDarkSubtle
-                          : AppColors.subtle,
+                      color: isDark ? AppColors.onDarkSubtle : AppColors.subtle,
                     ),
                   ),
                 ],
@@ -1052,7 +1034,11 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.mosque_rounded, color: _primaryGreen, size: 22),
+                const Icon(
+                  Icons.mosque_rounded,
+                  color: _primaryGreen,
+                  size: 22,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -1103,8 +1089,11 @@ class _NextPrayerCardState extends ConsumerState<_NextPrayerCard> {
                       color: Colors.white.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Icon(Icons.mosque_rounded,
-                        color: _accentGold, size: 24),
+                    child: const Icon(
+                      Icons.mosque_rounded,
+                      color: _accentGold,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Column(
@@ -1180,17 +1169,31 @@ class _DailyDeedBanner extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Today's two minutes",
-                          style: GoogleFonts.plusJakartaSans(
-                              fontSize: 15, fontWeight: FontWeight.w800, color: isDark ? Colors.white : AppColors.ink)),
+                      Text(
+                        "Today's two minutes",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? Colors.white : AppColors.ink,
+                        ),
+                      ),
                       const SizedBox(height: 2),
-                      Text("One verse, one dhikr, one du'a",
-                          style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13, color: isDark ? AppColors.onDarkMuted : AppColors.muted)),
+                      Text(
+                        "One verse, one dhikr, one du'a",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          color: isDark
+                              ? AppColors.onDarkMuted
+                              : AppColors.muted,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: isDark ? AppColors.emerald400 : AppColors.emerald700),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                ),
               ],
             ),
           ),
@@ -1221,21 +1224,30 @@ class _AskBar extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: isDark ? AppColors.slateLine : AppColors.sand),
+              border: Border.all(
+                color: isDark ? AppColors.slateLine : AppColors.sand,
+              ),
             ),
             child: Row(
               children: [
-                Icon(Icons.auto_awesome_rounded,
-                    color: isDark ? AppColors.goldLight : AppColors.goldDeep),
+                Icon(
+                  Icons.auto_awesome_rounded,
+                  color: isDark ? AppColors.goldLight : AppColors.goldDeep,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text('Ask Ehsan anything about Islam…',
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: isDark ? AppColors.onDarkMuted : AppColors.muted)),
+                  child: Text(
+                    'Ask Ehsan anything about Islam…',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: isDark ? AppColors.onDarkMuted : AppColors.muted,
+                    ),
+                  ),
                 ),
-                Icon(Icons.arrow_forward_rounded,
-                    color: isDark ? AppColors.emerald400 : AppColors.emerald700),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  color: isDark ? AppColors.emerald400 : AppColors.emerald700,
+                ),
               ],
             ),
           ),
@@ -1278,20 +1290,32 @@ class _GuidanceBanner extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.support_agent_rounded, color: AppColors.goldLight),
+                  child: const Icon(
+                    Icons.support_agent_rounded,
+                    color: AppColors.goldLight,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Seek Guidance',
-                          style: GoogleFonts.lora(
-                              fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white)),
+                      Text(
+                        'Seek Guidance',
+                        style: GoogleFonts.lora(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
                       const SizedBox(height: 2),
-                      Text('Marriage, family, faith, struggles. Private and free.',
-                          style: TextStyle(
-                              fontSize: 13, color: Colors.white.withValues(alpha: 0.82))),
+                      Text(
+                        'Marriage, family, faith, struggles. Private and free.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.82),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1394,9 +1418,7 @@ class _QuickActionItem extends StatelessWidget {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: isDark
-                      ? color.withValues(alpha: 0.9)
-                      : color,
+                  color: isDark ? color.withValues(alpha: 0.9) : color,
                 ),
               ),
             ],
@@ -1491,10 +1513,16 @@ class _HomeShimmer extends StatelessWidget {
                             child: Column(
                               children: const [
                                 ShimmerBox(
-                                    width: 56, height: 56, borderRadius: 16),
+                                  width: 56,
+                                  height: 56,
+                                  borderRadius: 16,
+                                ),
                                 SizedBox(height: 8),
                                 ShimmerBox(
-                                    width: 50, height: 10, borderRadius: 4),
+                                  width: 50,
+                                  height: 10,
+                                  borderRadius: 4,
+                                ),
                               ],
                             ),
                           ),
@@ -1604,8 +1632,10 @@ class _DailyHadithCard extends ConsumerWidget {
   // device; these are what it falls back to with no connection.
   static const _hadithCollection = [
     (
-      arabic: 'مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الْجَنَّةِ',
-      english: 'Whoever takes a path seeking knowledge, Allah will make easy for him a path to Paradise.',
+      arabic:
+          'مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الْجَنَّةِ',
+      english:
+          'Whoever takes a path seeking knowledge, Allah will make easy for him a path to Paradise.',
       source: 'Sahih Muslim',
     ),
     (
@@ -1619,8 +1649,10 @@ class _DailyHadithCard extends ConsumerWidget {
       source: 'Sunan Ibn Majah',
     ),
     (
-      arabic: 'إِنَّ اللَّهَ يُحِبُّ إِذَا عَمِلَ أَحَدُكُمْ عَمَلًا أَنْ يُتْقِنَهُ',
-      english: 'Indeed, Allah loves that when one of you does a deed, he does it with excellence (ihsan).',
+      arabic:
+          'إِنَّ اللَّهَ يُحِبُّ إِذَا عَمِلَ أَحَدُكُمْ عَمَلًا أَنْ يُتْقِنَهُ',
+      english:
+          'Indeed, Allah loves that when one of you does a deed, he does it with excellence (ihsan).',
       source: 'Al-Bayhaqi',
     ),
     (
@@ -1680,8 +1712,9 @@ class _DailyHadithCard extends ConsumerWidget {
           ).toString()
         : '/islamic-tools/hadith';
 
-    return _PressableCard(
+    return PressableCard(
       onTap: () => context.push(target),
+      semanticLabel: "Today's hadith. Opens it in its collection.",
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -1694,10 +1727,7 @@ class _DailyHadithCard extends ConsumerWidget {
                     AppColors.emerald900.withValues(alpha: 0.6),
                     AppColors.emerald950.withValues(alpha: 0.4),
                   ]
-                : [
-                    AppColors.emerald950,
-                    AppColors.emerald900,
-                  ],
+                : [AppColors.emerald950, AppColors.emerald900],
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
@@ -1738,21 +1768,28 @@ class _DailyHadithCard extends ConsumerWidget {
                   ),
                 ),
                 const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    hadith.source,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white.withValues(alpha: 0.7),
+                // The API sends sources like "Forty Hadith of Shah
+                // Waliullah #22"; without this the chip pushes the row off
+                // the right edge of the phone.
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      hadith.source,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
                     ),
                   ),
                 ),
@@ -1805,14 +1842,21 @@ class _DailyHadithCard extends ConsumerWidget {
             const SizedBox(height: 14),
             Row(
               children: [
-                Text(
-                  daily != null && daily.isAddressable
-                      ? 'Read it in ${daily.bookName ?? 'the collection'}'
-                      : 'Browse the collections',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: _accentGold.withValues(alpha: 0.9),
+                // Flexible + ellipsis: "Forty Hadith of Shah Waliullah"
+                // is a real collection name, and an unbounded Text inside a
+                // Row overflows rather than wrapping.
+                Flexible(
+                  child: Text(
+                    daily != null && daily.isAddressable
+                        ? 'Read it in ${daily.bookName ?? 'the collection'}'
+                        : 'Browse the collections',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: _accentGold.withValues(alpha: 0.9),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -1824,61 +1868,6 @@ class _DailyHadithCard extends ConsumerWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// ===========================================================================
-// Pressable card
-// ===========================================================================
-
-/// Wraps a card so it responds to touch.
-///
-/// A plain GestureDetector gives no feedback, and an InkWell ripple is
-/// invisible over a card that paints its own gradient. This dips the card
-/// slightly while the finger is down and lets it spring back — the same
-/// gesture language across the home screen.
-class _PressableCard extends StatefulWidget {
-  const _PressableCard({
-    required this.child,
-    required this.onTap,
-    this.padding = EdgeInsets.zero,
-  });
-
-  final Widget child;
-  final VoidCallback onTap;
-  final EdgeInsets padding;
-
-  @override
-  State<_PressableCard> createState() => _PressableCardState();
-}
-
-class _PressableCardState extends State<_PressableCard> {
-  bool _down = false;
-
-  void _set(bool value) {
-    if (_down != value && mounted) {
-      setState(() => _down = value);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: widget.padding,
-      child: GestureDetector(
-        onTap: widget.onTap,
-        onTapDown: (_) => _set(true),
-        onTapUp: (_) => _set(false),
-        onTapCancel: () => _set(false),
-        behavior: HitTestBehavior.opaque,
-        child: AnimatedScale(
-          scale: _down ? 0.975 : 1,
-          duration: const Duration(milliseconds: 140),
-          curve: Curves.easeOut,
-          child: widget.child,
         ),
       ),
     );
@@ -1902,20 +1891,26 @@ class _DailyDuaCard extends StatelessWidget {
       occasion: 'Before studying',
     ),
     (
-      arabic: 'اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي وَعَلِّمْنِي مَا يَنْفَعُنِي',
-      english: 'O Allah, benefit me with what You have taught me, and teach me that which will benefit me.',
+      arabic:
+          'اللَّهُمَّ انْفَعْنِي بِمَا عَلَّمْتَنِي وَعَلِّمْنِي مَا يَنْفَعُنِي',
+      english:
+          'O Allah, benefit me with what You have taught me, and teach me that which will benefit me.',
       reference: 'An-Nasa\'i',
       occasion: 'Seeking knowledge',
     ),
     (
-      arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
-      english: 'Our Lord, give us good in this world and good in the Hereafter, and protect us from the torment of the Fire.',
+      arabic:
+          'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
+      english:
+          'Our Lord, give us good in this world and good in the Hereafter, and protect us from the torment of the Fire.',
       reference: 'Quran 2:201',
       occasion: 'General supplication',
     ),
     (
-      arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا طَيِّبًا وَعَمَلًا مُتَقَبَّلًا',
-      english: 'O Allah, I ask You for beneficial knowledge, good provision, and accepted deeds.',
+      arabic:
+          'اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا طَيِّبًا وَعَمَلًا مُتَقَبَّلًا',
+      english:
+          'O Allah, I ask You for beneficial knowledge, good provision, and accepted deeds.',
       reference: 'Ibn Majah',
       occasion: 'After Fajr prayer',
     ),
@@ -1927,7 +1922,8 @@ class _DailyDuaCard extends StatelessWidget {
     ),
     (
       arabic: 'حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ',
-      english: 'Allah is sufficient for me; there is no deity except Him. On Him I have relied.',
+      english:
+          'Allah is sufficient for me; there is no deity except Him. On Him I have relied.',
       reference: 'Quran 9:129',
       occasion: 'When anxious',
     ),
@@ -1941,11 +1937,15 @@ class _DailyDuaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dayIndex =
-        DateTime.now().difference(DateTime(2026)).inDays.abs() + 3;
+    final dayIndex = DateTime.now().difference(DateTime(2026)).inDays.abs() + 3;
     final dua = _duaCollection[dayIndex % _duaCollection.length];
 
-    return Padding(
+    // Was a card with no gesture, like the hadith one beside it. The du'a
+    // library is a whole section of this app that the home screen never
+    // mentioned a way into.
+    return PressableCard(
+      onTap: () => context.push('/islamic-tools/dua'),
+      semanticLabel: "Today's du'a. Opens the du'a library.",
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: Container(
         padding: const EdgeInsets.all(18),
@@ -1980,8 +1980,11 @@ class _DailyDuaCard extends StatelessWidget {
                     color: _accentGold.withValues(alpha: isDark ? 0.15 : 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.wb_sunny_rounded,
-                      size: 15, color: _accentGold),
+                  child: Icon(
+                    Icons.wb_sunny_rounded,
+                    size: 15,
+                    color: _accentGold,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -1995,8 +1998,10 @@ class _DailyDuaCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.06)
@@ -2008,9 +2013,7 @@ class _DailyDuaCard extends StatelessWidget {
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: isDark
-                          ? AppColors.onDarkMuted
-                          : AppColors.muted,
+                      color: isDark ? AppColors.onDarkMuted : AppColors.muted,
                     ),
                   ),
                 ),
@@ -2026,9 +2029,7 @@ class _DailyDuaCard extends StatelessWidget {
               style: GoogleFonts.amiri(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: isDark
-                    ? AppColors.goldLight
-                    : AppColors.goldDarkest,
+                color: isDark ? AppColors.goldLight : AppColors.goldDarkest,
                 height: 1.7,
               ),
             ),
@@ -2041,9 +2042,7 @@ class _DailyDuaCard extends StatelessWidget {
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
                 fontStyle: FontStyle.italic,
-                color: isDark
-                    ? AppColors.onDarkMuted
-                    : AppColors.muted,
+                color: isDark ? AppColors.onDarkMuted : AppColors.muted,
                 height: 1.5,
               ),
             ),
@@ -2055,10 +2054,30 @@ class _DailyDuaCard extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: isDark
-                    ? AppColors.onDarkSubtle
-                    : AppColors.subtle,
+                color: isDark ? AppColors.onDarkSubtle : AppColors.subtle,
               ),
+            ),
+
+            // Names the destination. A card that moves under the finger but
+            // does not say where it goes is a guess, not an invitation.
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Flexible(
+                  child: Text(
+                    "More du'as for every occasion",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: _accentGold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(Icons.arrow_forward_rounded, size: 14, color: _accentGold),
+              ],
             ),
           ],
         ),
@@ -2078,7 +2097,13 @@ class _IslamicQuoteSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    // It cites Surah Al-Ma'idah 5:2 and did nothing with it. The reader
+    // takes a verse, so tapping lands on that exact ayah rather than at the
+    // top of a 120-verse surah.
+    return PressableCard(
+      onTap: () => context.push('/islamic-tools/quran/5?verse=2'),
+      semanticLabel: 'Opens Surah Al-Maidah, verse 2, in the Quran reader.',
+      scale: 0.985,
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
@@ -2091,10 +2116,7 @@ class _IslamicQuoteSection extends StatelessWidget {
                     _primaryGreen.withValues(alpha: 0.12),
                     _accentGold.withValues(alpha: 0.06),
                   ]
-                : [
-                    AppColors.emerald50,
-                    AppColors.goldTint,
-                  ],
+                : [AppColors.emerald50, AppColors.goldTint],
           ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
@@ -2118,9 +2140,7 @@ class _IslamicQuoteSection extends StatelessWidget {
               style: GoogleFonts.amiri(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
-                color: isDark
-                    ? AppColors.goldLight
-                    : AppColors.goldDarkest,
+                color: isDark ? AppColors.goldLight : AppColors.goldDarkest,
                 height: 1.6,
               ),
             ),
@@ -2148,6 +2168,30 @@ class _IslamicQuoteSection extends StatelessWidget {
                     ? Colors.white.withValues(alpha: 0.4)
                     : AppColors.subtle,
               ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    'Read it in the Qur\'an',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? AppColors.goldLight : AppColors.goldDeep,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 14,
+                  color: isDark ? AppColors.goldLight : AppColors.goldDeep,
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Text(
@@ -2177,12 +2221,48 @@ class _DiscoverGrid extends StatelessWidget {
   final bool isDark;
 
   static const _items = [
-    _DiscoverItem(label: 'Arabic', sublabel: 'Learn the language', icon: Icons.translate_rounded, route: '/arabic', color: AppColors.amethyst),
-    _DiscoverItem(label: 'Khutbahs', sublabel: 'Friday sermons', icon: Icons.record_voice_over_rounded, route: '/khutbahs', color: AppColors.emerald700),
-    _DiscoverItem(label: 'Hajj & Umrah', sublabel: 'Complete guides', icon: Icons.home_work_rounded, route: '/hajj-umrah', color: AppColors.gold),
-    _DiscoverItem(label: 'Live', sublabel: 'Watch live streams', icon: Icons.live_tv_rounded, route: '/live', color: AppColors.danger),
-    _DiscoverItem(label: 'Sadaqah', sublabel: 'Give in charity', icon: Icons.volunteer_activism_rounded, route: '/sadaqah', color: AppColors.sapphire),
-    _DiscoverItem(label: 'Pathways', sublabel: 'Structured learning', icon: Icons.route_rounded, route: '/pathways', color: AppColors.ruby),
+    _DiscoverItem(
+      label: 'Arabic',
+      sublabel: 'Learn the language',
+      icon: Icons.translate_rounded,
+      route: '/arabic',
+      color: AppColors.amethyst,
+    ),
+    _DiscoverItem(
+      label: 'Khutbahs',
+      sublabel: 'Friday sermons',
+      icon: Icons.record_voice_over_rounded,
+      route: '/khutbahs',
+      color: AppColors.emerald700,
+    ),
+    _DiscoverItem(
+      label: 'Hajj & Umrah',
+      sublabel: 'Complete guides',
+      icon: Icons.home_work_rounded,
+      route: '/hajj-umrah',
+      color: AppColors.gold,
+    ),
+    _DiscoverItem(
+      label: 'Live',
+      sublabel: 'Watch live streams',
+      icon: Icons.live_tv_rounded,
+      route: '/live',
+      color: AppColors.danger,
+    ),
+    _DiscoverItem(
+      label: 'Sadaqah',
+      sublabel: 'Give in charity',
+      icon: Icons.volunteer_activism_rounded,
+      route: '/sadaqah',
+      color: AppColors.sapphire,
+    ),
+    _DiscoverItem(
+      label: 'Pathways',
+      sublabel: 'Structured learning',
+      icon: Icons.route_rounded,
+      route: '/pathways',
+      color: AppColors.ruby,
+    ),
   ];
 
   @override
@@ -2196,7 +2276,9 @@ class _DiscoverGrid extends StatelessWidget {
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
         childAspectRatio: 1.0,
-        children: _items.map((item) => _DiscoverTile(item: item, isDark: isDark)).toList(),
+        children: _items
+            .map((item) => _DiscoverTile(item: item, isDark: isDark))
+            .toList(),
       ),
     );
   }
@@ -2208,7 +2290,13 @@ class _DiscoverItem {
   final IconData icon;
   final String route;
   final Color color;
-  const _DiscoverItem({required this.label, required this.sublabel, required this.icon, required this.route, required this.color});
+  const _DiscoverItem({
+    required this.label,
+    required this.sublabel,
+    required this.icon,
+    required this.route,
+    required this.color,
+  });
 }
 
 class _DiscoverTile extends StatelessWidget {
@@ -2224,19 +2312,46 @@ class _DiscoverTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? AppColors.slateCard : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: item.color.withValues(alpha: 0.12), shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: item.color.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
               child: Icon(item.icon, color: item.color, size: 24),
             ),
             const SizedBox(height: 8),
-            Text(item.label, style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w600, color: isDark ? Colors.white : AppColors.ink)),
-            Text(item.sublabel, style: GoogleFonts.plusJakartaSans(fontSize: 10, color: Colors.grey.shade500), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(
+              item.label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : AppColors.ink,
+              ),
+            ),
+            Text(
+              item.sublabel,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 10,
+                color: Colors.grey.shade500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
       ),
