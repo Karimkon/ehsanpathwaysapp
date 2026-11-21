@@ -13,11 +13,17 @@ class HadithReaderScreen extends ConsumerStatefulWidget {
     required this.slug,
     this.chapter,
     this.title,
+    this.highlight,
   });
 
   final String slug;
   final int? chapter;
   final String? title;
+
+  /// Hadith number to scroll to and mark, used when arriving from the Daily
+  /// Hadith card. Opening the right chapter is not enough: a chapter can run
+  /// to dozens of hadith and the one you tapped would be somewhere in it.
+  final String? highlight;
 
   @override
   ConsumerState<HadithReaderScreen> createState() => _HadithReaderScreenState();
@@ -25,6 +31,11 @@ class HadithReaderScreen extends ConsumerStatefulWidget {
 
 class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
   final _scroll = ScrollController();
+
+  /// Anchor for the highlighted hadith, so it can be brought into view once
+  /// the list has actually laid out.
+  final _highlightKey = GlobalKey();
+  bool _hasScrolledToHighlight = false;
 
   late final HadithQuery _query = HadithQuery(
     bookSlug: widget.slug,
@@ -35,6 +46,24 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
   void initState() {
     super.initState();
     _scroll.addListener(_maybeLoadMore);
+  }
+
+  /// Runs after the frame that first builds the highlighted card. Guarded by
+  /// a flag because the list rebuilds on every page load.
+  void _revealHighlight() {
+    if (_hasScrolledToHighlight) return;
+
+    final context = _highlightKey.currentContext;
+    if (context == null) return;
+
+    _hasScrolledToHighlight = true;
+
+    Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 520),
+      curve: Curves.easeOutCubic,
+      alignment: 0.18,
+    );
   }
 
   void _maybeLoadMore() {
@@ -158,10 +187,108 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
               );
             }
 
-            return HadithCard(hadith: page.items[i]);
+            final hadith = page.items[i];
+            final isTarget =
+                widget.highlight != null && hadith.number == widget.highlight;
+
+            if (!isTarget) {
+              return HadithCard(hadith: hadith);
+            }
+
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => _revealHighlight(),
+            );
+
+            return _HighlightedHadith(
+              key: _highlightKey,
+              isDark: isDark,
+              child: HadithCard(hadith: hadith),
+            );
           },
         ),
       ),
+    );
+  }
+}
+
+/// Marks the hadith you arrived for.
+///
+/// A ring and a wash of gold that fade out after a few seconds: long enough
+/// to say "this one", short enough that it is not a permanent decoration on
+/// a page meant for reading.
+class _HighlightedHadith extends StatefulWidget {
+  const _HighlightedHadith({
+    super.key,
+    required this.child,
+    required this.isDark,
+  });
+
+  final Widget child;
+  final bool isDark;
+
+  @override
+  State<_HighlightedHadith> createState() => _HighlightedHadithState();
+}
+
+class _HighlightedHadithState extends State<_HighlightedHadith>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2600),
+  );
+
+  late final Animation<double> _strength = TweenSequence<double>([
+    // Hold, then release — the scroll has to land before it starts fading.
+    TweenSequenceItem(tween: ConstantTween<double>(1), weight: 62),
+    TweenSequenceItem(
+      tween: Tween<double>(begin: 1, end: 0).chain(
+        CurveTween(curve: Curves.easeOutCubic),
+      ),
+      weight: 38,
+    ),
+  ]).animate(_controller);
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _strength,
+      builder: (context, child) {
+        final t = _strength.value;
+
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            color: AppColors.gold.withValues(alpha: 0.09 * t),
+            border: Border.all(
+              color: AppColors.gold.withValues(alpha: 0.55 * t),
+              width: 1.4,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.gold.withValues(
+                  alpha: (widget.isDark ? 0.22 : 0.3) * t,
+                ),
+                blurRadius: 22 * t,
+                spreadRadius: 1.5 * t,
+              ),
+            ],
+          ),
+          child: child,
+        );
+      },
+      child: widget.child,
     );
   }
 }

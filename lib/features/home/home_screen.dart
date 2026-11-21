@@ -1663,7 +1663,25 @@ class _DailyHadithCard extends ConsumerWidget {
                 : '${daily.bookName} #${daily.number}',
           );
 
-    return Padding(
+    // The card showed the hadith of the day and went nowhere: no gesture, no
+    // affordance, nothing to tap. It opens the hadith in its chapter now, with
+    // that hadith marked, and falls back to the collections when the daily
+    // request has not landed (the bundled fallback has no book to open).
+    final target = daily != null && daily.isAddressable
+        ? Uri(
+            path: '/hadith-library/${daily.bookSlug}/read',
+            queryParameters: <String, String>{
+              if (daily.chapterNumber != null)
+                'chapter': daily.chapterNumber.toString(),
+              if ((daily.chapterName ?? '').isNotEmpty)
+                'title': daily.chapterName!,
+              'highlight': daily.number,
+            },
+          ).toString()
+        : '/islamic-tools/hadith';
+
+    return _PressableCard(
+      onTap: () => context.push(target),
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
       child: Container(
         padding: const EdgeInsets.all(20),
@@ -1781,7 +1799,86 @@ class _DailyHadithCard extends ConsumerWidget {
                 height: 1.6,
               ),
             ),
+
+            // Says where tapping goes. Without this the card looks like a
+            // notice rather than a door.
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Text(
+                  daily != null && daily.isAddressable
+                      ? 'Read it in ${daily.bookName ?? 'the collection'}'
+                      : 'Browse the collections',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: _accentGold.withValues(alpha: 0.9),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 14,
+                  color: _accentGold.withValues(alpha: 0.9),
+                ),
+              ],
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ===========================================================================
+// Pressable card
+// ===========================================================================
+
+/// Wraps a card so it responds to touch.
+///
+/// A plain GestureDetector gives no feedback, and an InkWell ripple is
+/// invisible over a card that paints its own gradient. This dips the card
+/// slightly while the finger is down and lets it spring back — the same
+/// gesture language across the home screen.
+class _PressableCard extends StatefulWidget {
+  const _PressableCard({
+    required this.child,
+    required this.onTap,
+    this.padding = EdgeInsets.zero,
+  });
+
+  final Widget child;
+  final VoidCallback onTap;
+  final EdgeInsets padding;
+
+  @override
+  State<_PressableCard> createState() => _PressableCardState();
+}
+
+class _PressableCardState extends State<_PressableCard> {
+  bool _down = false;
+
+  void _set(bool value) {
+    if (_down != value && mounted) {
+      setState(() => _down = value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: widget.padding,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        onTapDown: (_) => _set(true),
+        onTapUp: (_) => _set(false),
+        onTapCancel: () => _set(false),
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedScale(
+          scale: _down ? 0.975 : 1,
+          duration: const Duration(milliseconds: 140),
+          curve: Curves.easeOut,
+          child: widget.child,
         ),
       ),
     );

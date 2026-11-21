@@ -65,6 +65,7 @@ class Hadith {
     this.grade,
     this.gradeSource,
     this.chapterName,
+    this.chapterNumber,
     this.bookName,
     this.bookSlug,
   });
@@ -75,8 +76,17 @@ class Hadith {
   final String? grade;
   final String? gradeSource;
   final String? chapterName;
+
+  /// The chapter this hadith sits in. The API has always sent it; the model
+  /// used to drop it, which left the Daily Hadith card with nowhere to go --
+  /// the reader is addressed by book slug plus chapter.
+  final int? chapterNumber;
+
   final String? bookName;
   final String? bookSlug;
+
+  /// Whether this hadith can be opened in the reader.
+  bool get isAddressable => (bookSlug ?? '').isNotEmpty;
 
   factory Hadith.fromJson(Map<String, dynamic> j) {
     final book = j['book'] as Map<String, dynamic>?;
@@ -91,6 +101,12 @@ class Hadith {
       grade: jStr(j['grade']),
       gradeSource: jStr(j['grade_source']),
       chapterName: (chapter?['name'] ?? j['chapter_name']) as String?,
+      chapterNumber: switch (chapter?['number'] ?? j['chapter_number']) {
+        final int n => n,
+        final String s => int.tryParse(s),
+        final num n => n.toInt(),
+        _ => null,
+      },
       bookName: (book?['name'] ?? j['book_name']) as String?,
       bookSlug: (book?['slug'] ?? j['book_slug']) as String?,
     );

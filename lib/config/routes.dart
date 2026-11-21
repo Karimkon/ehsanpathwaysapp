@@ -249,6 +249,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                     slug: state.pathParameters['slug']!,
                     chapter: chapter == null ? null : int.tryParse(chapter),
                     title: state.uri.queryParameters['title'],
+                    highlight: state.uri.queryParameters['highlight'],
                   );
                 },
               ),
