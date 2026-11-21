@@ -251,11 +251,19 @@ class _VideosScreenState extends ConsumerState<VideosScreen> {
               },
               childCount: state.videos.length,
             ),
+            // A fixed height, not an aspect ratio.
+            //
+            // childAspectRatio: 0.68 tied the card's height to its width, so
+            // on a 320px phone each card got 201px for content that needs
+            // about 210 -- an 8.5px overflow on every card, on the smallest
+            // size App Review tests. The content inside is a 120px thumbnail
+            // plus text whose height does not shrink with the screen, so the
+            // extent is stated instead of derived.
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 16,
               crossAxisSpacing: 14,
-              childAspectRatio: 0.68,
+              mainAxisExtent: 252,
             ),
           ),
         ),
@@ -384,11 +392,14 @@ class _SliverShimmerGrid extends StatelessWidget {
           (_, __) => const ShimmerCard(imageHeight: 120),
           childCount: 6,
         ),
+        // Matches the real grid below. It carried the same 0.68 ratio and
+        // the same 8.5px overflow on a 320px phone -- and this is the
+        // loading state, so it is what everyone sees first.
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           mainAxisSpacing: 16,
           crossAxisSpacing: 14,
-          childAspectRatio: 0.68,
+          mainAxisExtent: 252,
         ),
       ),
     );

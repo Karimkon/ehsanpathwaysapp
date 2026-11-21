@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
+import 'package:ehsan_pathways/shared/widgets/motion.dart';
 import 'package:ehsan_pathways/features/library/library_provider.dart';
 import 'package:ehsan_pathways/features/library/models/library_book.dart';
 import 'package:ehsan_pathways/features/library/widgets/book_cover.dart';
@@ -181,7 +182,10 @@ class _Shelves extends ConsumerWidget {
               mainAxisExtent: coverWidth / BookCover.aspect + 62,
             ),
             delegate: SliverChildBuilderDelegate(
-              (context, i) => _BookTile(book: books[i], width: coverWidth),
+              (context, i) => Reveal(
+                index: i % 3,
+                child: _BookTile(book: books[i], width: coverWidth),
+              ),
               childCount: books.length,
             ),
           ),

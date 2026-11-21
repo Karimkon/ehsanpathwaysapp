@@ -22,9 +22,7 @@ class ProfileScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColors.slate
-          : AppColors.cream,
+      backgroundColor: isDark ? AppColors.slate : AppColors.cream,
       body:
           authState.status == AuthStatus.authenticated && authState.user != null
           ? _AuthenticatedProfile(user: authState.user!, isDark: isDark)
@@ -102,9 +100,7 @@ class _UnauthenticatedProfile extends StatelessWidget {
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: isDark
-                    ? AppColors.onDarkMuted
-                    : AppColors.muted,
+                color: isDark ? AppColors.onDarkMuted : AppColors.muted,
                 height: 1.6,
               ),
             ),
@@ -327,7 +323,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
                     const SizedBox(height: 20),
 
                     // Learning stats strip
-                    _buildStatsRow(statsAsync),
+                    _buildStatsRow(context, statsAsync),
                   ],
                 ),
               ),
@@ -544,9 +540,7 @@ class _AuthenticatedProfile extends ConsumerWidget {
   Widget _divider(bool isDark) => Divider(
     height: 1,
     indent: 56,
-    color: isDark
-        ? Colors.white.withValues(alpha: 0.06)
-        : AppColors.creamDeep,
+    color: isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.creamDeep,
   );
 
   Future<void> _showDeleteAccountDialog(
@@ -793,8 +787,7 @@ class _SettingsTile extends StatelessWidget {
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color:
-                          titleColor ??
-                          (isDark ? Colors.white : AppColors.ink),
+                          titleColor ?? (isDark ? Colors.white : AppColors.ink),
                     ),
                   ),
                   if (subtitle != null)
@@ -833,7 +826,10 @@ class _SettingsTile extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 extension on _AuthenticatedProfile {
-  Widget _buildStatsRow(AsyncValue<UserStatsModel> statsAsync) {
+  Widget _buildStatsRow(
+    BuildContext context,
+    AsyncValue<UserStatsModel> statsAsync,
+  ) {
     final stats = statsAsync.asData?.value;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -843,13 +839,32 @@ extension on _AuthenticatedProfile {
       ),
       child: Row(
         children: [
-          _StatItem(value: _fmt(stats?.videosWatched), label: 'Watched'),
+          // Each figure opens what it counts. The Quick Access tiles below
+          // already lead to these four, so the numbers were the only part
+          // of this card that looked like a way in and was not one.
+          _StatItem(
+            value: _fmt(stats?.videosWatched),
+            label: 'Watched',
+            onTap: () => context.push('/history'),
+          ),
           _vDiv(),
-          _StatItem(value: _fmt(stats?.bookmarks), label: 'Saved'),
+          _StatItem(
+            value: _fmt(stats?.bookmarks),
+            label: 'Saved',
+            onTap: () => context.push('/bookmarks'),
+          ),
           _vDiv(),
-          _StatItem(value: _fmt(stats?.notes), label: 'Notes'),
+          _StatItem(
+            value: _fmt(stats?.notes),
+            label: 'Notes',
+            onTap: () => context.push('/notes'),
+          ),
           _vDiv(),
-          _StatItem(value: _fmt(stats?.pathwaysEnrolled), label: 'Paths'),
+          _StatItem(
+            value: _fmt(stats?.pathwaysEnrolled),
+            label: 'Paths',
+            onTap: () => context.push('/pathways'),
+          ),
         ],
       ),
     );
@@ -861,14 +876,20 @@ extension on _AuthenticatedProfile {
 }
 
 class _StatItem extends StatelessWidget {
-  const _StatItem({required this.value, required this.label});
+  const _StatItem({required this.value, required this.label, this.onTap});
 
   final String value;
   final String label;
 
+  /// Where this figure leads. A count with nowhere to go is decoration.
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    final figure = Padding(
+      // Touch target: the text alone is about 20px tall, well under the
+      // 48dp both platforms ask for.
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -891,6 +912,18 @@ class _StatItem extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+
+    if (onTap == null) {
+      return Expanded(child: figure);
+    }
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Semantics(button: true, label: '$value $label', child: figure),
       ),
     );
   }

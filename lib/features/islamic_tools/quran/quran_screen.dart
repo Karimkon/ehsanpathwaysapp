@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:ehsan_pathways/config/theme.dart';
+import 'package:ehsan_pathways/shared/widgets/motion.dart';
 import 'package:ehsan_pathways/features/islamic_tools/islamic_tools_provider.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_data.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_reading.dart';
@@ -100,7 +101,9 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                   onChanged: (v) => setState(() => _query = v),
                   onSubmitted: (v) {
                     if (v.trim().isNotEmpty) {
-                      context.push('/quran-search?q=${Uri.encodeQueryComponent(v.trim())}');
+                      context.push(
+                        '/quran-search?q=${Uri.encodeQueryComponent(v.trim())}',
+                      );
                     }
                   },
                   style: AppTheme.ui(
@@ -161,18 +164,34 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                   color: isDark ? AppColors.slateCard : AppColors.emerald50,
                   borderRadius: BorderRadius.circular(14),
                   child: ListTile(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    leading: Icon(Icons.manage_search_rounded,
-                        color: isDark ? AppColors.emerald400 : AppColors.emerald700),
-                    title: Text('Search every verse for "${_query.trim()}"',
-                        style: AppTheme.ui(size: 14.5, weight: FontWeight.w600,
-                            color: isDark ? AppColors.onDark : AppColors.ink)),
-                    subtitle: Text('With or without harakat, anywhere in the Quran',
-                        style: AppTheme.ui(size: 12.5,
-                            color: isDark ? AppColors.onDarkMuted : AppColors.muted)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    leading: Icon(
+                      Icons.manage_search_rounded,
+                      color: isDark
+                          ? AppColors.emerald400
+                          : AppColors.emerald700,
+                    ),
+                    title: Text(
+                      'Search every verse for "${_query.trim()}"',
+                      style: AppTheme.ui(
+                        size: 14.5,
+                        weight: FontWeight.w600,
+                        color: isDark ? AppColors.onDark : AppColors.ink,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'With or without harakat, anywhere in the Quran',
+                      style: AppTheme.ui(
+                        size: 12.5,
+                        color: isDark ? AppColors.onDarkMuted : AppColors.muted,
+                      ),
+                    ),
                     trailing: const Icon(Icons.chevron_right_rounded),
                     onTap: () => context.push(
-                        '/quran-search?q=${Uri.encodeQueryComponent(_query.trim())}'),
+                      '/quran-search?q=${Uri.encodeQueryComponent(_query.trim())}',
+                    ),
                   ),
                 ),
               ),
@@ -216,7 +235,13 @@ class _QuranScreenState extends ConsumerState<QuranScreen> {
                 itemCount: surahs.length,
                 separatorBuilder: (_, _) =>
                     const Divider(indent: 72, endIndent: 8),
-                itemBuilder: (context, i) => _SurahTile(surah: surahs[i]),
+                // Revealed as it scrolls in. The list is lazy, so the
+                // stagger runs over the few tiles entering together
+                // rather than over all 114.
+                itemBuilder: (context, i) => Reveal(
+                  index: i % 3,
+                  child: _SurahTile(surah: surahs[i]),
+                ),
               ),
             ),
         ],
