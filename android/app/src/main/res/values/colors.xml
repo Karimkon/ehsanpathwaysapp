@@ -2,5 +2,7 @@
 <resources>
     <color name="notification_color">#0E7C5A</color>
     <color name="ic_launcher_background">#FFFFFF</color>
-    <color name="launch_background">#FAF6EC</color>
+    <!-- The brand lockup is drawn on dark; a cream splash made it read
+         as a tile pasted on the page. Same in both appearances. -->
+    <color name="launch_background">#0C1A16</color>
 </resources>
