@@ -49,6 +49,9 @@ class VideoDetailScreen extends ConsumerStatefulWidget {
 class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
     with WidgetsBindingObserver {
   YoutubePlayerController? _ytController;
+
+  /// v10 reports state on a Stream instead of as a ChangeNotifier.
+  StreamSubscription<YoutubePlayerValue>? _playerSub;
   final _scrollController = ScrollController();
 
   bool _descriptionExpanded = false;
@@ -72,7 +75,9 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
     WidgetsBinding.instance.removeObserver(this);
     _progressTimer?.cancel();
     _flushProgress();
-    _ytController?.dispose();
+    // v10's controller closes rather than disposes.
+    _ytController?.close();
+    _playerSub?.cancel();
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
@@ -101,18 +106,23 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
 
   void _ensureYoutubeController(String? youtubeUrl) {
     if (_ytController != null || youtubeUrl == null) return;
-    final videoId = YoutubePlayer.convertUrlToId(youtubeUrl);
+    final videoId = YoutubePlayerController.convertUrlToId(youtubeUrl);
     if (videoId == null) return;
 
-    _ytController = YoutubePlayerController(
-      initialVideoId: videoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
+    _ytController = YoutubePlayerController.fromVideoId(
+      videoId: videoId,
+      autoPlay: false,
+      params: const YoutubePlayerParams(
         mute: false,
         enableCaption: true,
-        forceHD: false,
+        showFullscreenButton: true,
       ),
-    )..addListener(_onPlayerUpdate);
+    );
+
+    // The player publishes its state; the position itself is read back
+    // asynchronously, so the subscription only marks that it is worth
+    // asking again.
+    _playerSub = _ytController!.stream.listen((_) => _onPlayerUpdate());
 
     // Start 30-second save timer
     _progressTimer = Timer.periodic(
@@ -123,10 +133,15 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
     if (mounted) setState(() {});
   }
 
-  void _onPlayerUpdate() {
-    if (_ytController == null) return;
-    final pos = _ytController!.value.position.inSeconds;
-    final dur = _ytController!.metadata.duration.inSeconds;
+  Future<void> _onPlayerUpdate() async {
+    final controller = _ytController;
+    if (controller == null) return;
+
+    // Both are futures in v10: the iframe is asked over a channel rather
+    // than holding the value locally.
+    final pos = (await controller.currentTime).round();
+    final dur = (await controller.duration).round();
+
     if (pos > 0) {
       _watchedSeconds = pos;
       if (dur > 0) _totalSeconds = dur;
@@ -454,16 +469,11 @@ class _VideoDetailScreenState extends ConsumerState<VideoDetailScreen>
     return Container(
       color: Colors.black,
       padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
+      // v10 renders the iframe's own controls; the per-colour progress
+      // bar arguments are gone rather than renamed.
       child: YoutubePlayer(
         controller: _ytController!,
-        showVideoProgressIndicator: true,
-        progressIndicatorColor: _primaryGreen,
-        progressColors: const ProgressBarColors(
-          playedColor: _primaryGreen,
-          handleColor: _primaryGreen,
-          backgroundColor: Colors.white24,
-          bufferedColor: Colors.white38,
-        ),
+        aspectRatio: 16 / 9,
       ),
     );
   }

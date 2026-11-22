@@ -46,3 +46,4 @@ app.*.map.json
 
 # Kotlin compiler session files written during Gradle builds
 android/.kotlin/
+android/build/

@@ -1,6 +1,9 @@
 import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 
+// CupertinoPageTransitionsBuilder moved out of material/page_transitions_theme.dart
+// and into cupertino/route.dart, so material.dart alone no longer exports it.
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';

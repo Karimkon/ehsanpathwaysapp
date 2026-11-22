@@ -19,7 +19,11 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.4.0+16
 
 environment:
-  sdk: ^3.10.4
+  # Raised from ^3.10.4 for pdfrx 2.5.0, which fixes pages that stay blank
+  # when their bitmaps are evicted before being fetched -- the scanned books
+  # opened to white pages. pub resolves for the whole declared range, so the
+  # floor has to clear 3.12 even though the installed SDK is newer.
+  sdk: ^3.12.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -39,7 +43,7 @@ dependencies:
   dio: ^5.9.1
   flutter_secure_storage: ^10.0.0
   shared_preferences: ^2.5.4
-  youtube_player_flutter: ^9.1.3
+  youtube_player_flutter: ^10.0.2
   just_audio: ^0.10.5
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
@@ -72,7 +76,7 @@ dependencies:
   # Scanned book library. pdfrx renders with PDFium on mobile and WASM on the
   # web, and fetches by byte range, so a 26 MB scan opens without a full
   # download. Pinned below 2.3 because 2.4+ requires Flutter 3.41.
-  pdfrx: ^2.2.24
+  pdfrx: ">=2.5.0 <2.6.0"
   path_provider: ^2.1.5
   scrollable_positioned_list: ^0.3.8
   hijri: ^3.0.1

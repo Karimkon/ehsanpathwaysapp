@@ -1,5 +1,6 @@
 import java.util.Properties
 import java.io.FileInputStream
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
@@ -27,9 +28,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
 
     signingConfigs {
         create("release") {
@@ -61,4 +59,13 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+
+// AGP 9 turns on the new DSL by default and kotlinOptions is gone with it.
+// The JVM target lives here now; the Java compileOptions above stay as they
+// were, and the two must agree or the build warns about mismatched targets.
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
 }
