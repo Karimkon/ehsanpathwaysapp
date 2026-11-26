@@ -923,14 +923,14 @@ class _ReaderError extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              'This surah is not available offline yet',
+              'This surah could not be opened',
               textAlign: TextAlign.center,
               style: AppTheme.ui(size: 16, weight: FontWeight.w800),
             ),
             const SizedBox(height: 6),
             Text(
-              'Connect to the internet once and it will be saved on this '
-              'device for offline reading.',
+              'The Qur\'an is stored on this device, so this is unexpected. '
+              'Try again, and reinstall the app if it keeps happening.',
               textAlign: TextAlign.center,
               style: AppTheme.ui(
                 size: 13.5,

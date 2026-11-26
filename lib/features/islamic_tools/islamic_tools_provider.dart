@@ -7,6 +7,7 @@ import 'package:ehsan_pathways/core/providers/auth_provider.dart';
 import 'package:ehsan_pathways/core/services/api_service.dart';
 import 'package:ehsan_pathways/core/services/offline_cache.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_data.dart';
+import 'package:ehsan_pathways/features/islamic_tools/quran/quran_offline_text.dart';
 import 'package:ehsan_pathways/features/islamic_tools/quran/quran_text.dart';
 import 'package:ehsan_pathways/core/json_read.dart';
 
@@ -128,12 +129,21 @@ List<QuranVerse> parseQuranEditions(Object? body, int surahNo) {
 }
 
 /// Verses of a surah: Uthmani Arabic with the Saheeh International
-/// translation. The text never changes, so a surah read once is served from
-/// the offline cache from then on.
+/// translation.
+///
+/// The whole Qur'an ships with the app (assets/quran/quran.json), so this
+/// never needs a connection. The cache-then-network path below is kept only
+/// for the case where that asset is somehow unreadable.
 final quranVersesProvider = FutureProvider.family<List<QuranVerse>, int>((
   ref,
   surahNo,
 ) async {
+  try {
+    return await QuranOfflineText.instance.versesFor(surahNo);
+  } catch (_) {
+    // Fall through to the cache/network path below.
+  }
+
   final cache = OfflineCache.instance;
   final key = 'quran_v2_surah_$surahNo';
 
